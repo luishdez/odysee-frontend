@@ -5,6 +5,7 @@ import * as ICONS from 'constants/icons';
 import Button from 'component/button';
 import Card from 'component/common/card';
 import CardVerify from 'component/cardVerify';
+import CHATS from 'constants/community_chats';
 import I18nMessage from 'component/i18nMessage';
 import LbcSymbol from 'component/common/lbc-symbol';
 import React from 'react';
@@ -12,6 +13,7 @@ import React from 'react';
 type Props = {
   errorMessage: ?string,
   isPending: boolean,
+  language: string,
   fetchUser: () => void,
   onSkip: () => void,
   verifyPhone: () => void,
@@ -30,7 +32,9 @@ class UserVerify extends React.PureComponent<Props> {
   }
 
   render() {
-    const { errorMessage, isPending, fetchUser, onSkip, verifyPhone } = this.props;
+    const { errorMessage, isPending, language, fetchUser, onSkip, verifyPhone } = this.props;
+    const englishLanguage = language === 'en';
+    const communityChat = CHATS[language];
 
     return (
       <div className="main__auth-content">
@@ -113,7 +117,13 @@ class UserVerify extends React.PureComponent<Props> {
               </p>
               <p>{__('You will be asked to provide proof of identity.')}</p>
             </>,
-            <Button href="https://chat.lbry.com" button="primary" label={__('Join the Foundation Chat')} />
+            <Button
+              href={communityChat || CHATS['en']}
+              button="primary"
+              label={
+                englishLanguage || !communityChat ? __('Join the Foundation Chat') : __("Join the Community's Chat")
+              }
+            />
           )}
 
           <Card
