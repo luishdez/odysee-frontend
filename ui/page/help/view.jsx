@@ -4,13 +4,21 @@ import * as ICONS from 'constants/icons';
 import * as React from 'react';
 import Button from 'component/button';
 import Card from 'component/common/card';
+import CHATS from 'constants/community_chats';
 import I18nMessage from 'component/i18nMessage';
 import Page from 'component/page';
 
-type Props = {};
+type Props = {
+  language: string,
+};
 
 class HelpPage extends React.PureComponent<Props> {
   render() {
+    const { language } = this.props;
+
+    const englishLanguage = language === 'en';
+    const communityChat = CHATS[language];
+
     return (
       <Page className="card-stack">
         <Card
@@ -46,9 +54,11 @@ class HelpPage extends React.PureComponent<Props> {
             <div className="section__actions">
               <Button
                 button="secondary"
-                label={__('Join the Foundation Chat')}
+                label={
+                  englishLanguage || !communityChat ? __('Join the Foundation Chat') : __("Join the Community's Chat")
+                }
                 icon={ICONS.CHAT}
-                href="https://chat.lbry.com"
+                href={communityChat || CHATS['en']}
               />
               <Button button="secondary" label={__('Email Us')} icon={ICONS.WEB} href={`mailto:${SITE_HELP_EMAIL}`} />
             </div>
