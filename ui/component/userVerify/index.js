@@ -1,26 +1,19 @@
-import * as MODALS from 'constants/modal_types';
 import { connect } from 'react-redux';
 import { doOpenModal } from 'redux/actions/app';
 import { doUserIdentityVerify, doUserFetch } from 'redux/actions/user';
-import { makeSelectRewardByType } from 'redux/selectors/rewards';
-import rewards from 'rewards';
 import { selectIdentityVerifyIsPending, selectIdentityVerifyErrorMessage } from 'redux/selectors/user';
+import * as MODALS from 'constants/modal_types';
 import UserVerify from './view';
 
-const select = state => {
-  const selectReward = makeSelectRewardByType();
+const select = (state) => ({
+  errorMessage: selectIdentityVerifyErrorMessage(state),
+  isPending: selectIdentityVerifyIsPending(state),
+});
 
-  return {
-    isPending: selectIdentityVerifyIsPending(state),
-    errorMessage: selectIdentityVerifyErrorMessage(state),
-    reward: selectReward(state, rewards.TYPE_NEW_USER),
-  };
-};
-
-const perform = dispatch => ({
-  verifyUserIdentity: token => dispatch(doUserIdentityVerify(token)),
-  verifyPhone: () => dispatch(doOpenModal(MODALS.PHONE_COLLECTION)),
+const perform = (dispatch) => ({
   fetchUser: () => dispatch(doUserFetch()),
+  verifyPhone: () => dispatch(doOpenModal(MODALS.PHONE_COLLECTION)),
+  verifyUserIdentity: (token) => dispatch(doUserIdentityVerify(token)),
 });
 
 export default connect(select, perform)(UserVerify);

@@ -36,10 +36,8 @@ const selectClaimRewardError = (state, props) => selectClaimErrorsByType(state, 
 
 export const makeSelectClaimRewardError = () => createSelector(selectClaimRewardError, (errorMessage) => errorMessage);
 
-const selectRewardByType = (state, rewardType) =>
-  selectUnclaimedRewards(state).find((reward) => reward.reward_type === rewardType);
-
-export const makeSelectRewardByType = () => createSelector(selectRewardByType, (reward) => reward);
+export const selectRewardByType = (state, rewardType) =>
+  selectUnclaimedRewards(state).find(({ reward_type }) => reward_type === rewardType);
 
 const selectRewardByClaimCode = (state, claimCode) =>
   selectUnclaimedRewards(state).find((reward) => reward.claim_code === claimCode);
