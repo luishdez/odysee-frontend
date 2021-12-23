@@ -2,7 +2,6 @@
 import 'easymde/dist/easymde.min.css';
 
 import { FF_MAX_CHARS_DEFAULT } from 'constants/form-field';
-import { openEditorMenu, stopContextMenu } from 'util/context-menu';
 import { lazyImport } from 'util/lazyImport';
 import MarkdownPreview from 'component/common/markdown-preview';
 import React from 'react';
@@ -173,8 +172,6 @@ export class FormField extends React.PureComponent<Props, State> {
           </FormFieldWrapper>
         );
       case 'markdown':
-        const handleEvents = { contextmenu: openEditorMenu };
-
         const getInstance = (editor) => {
           // SimpleMDE max char check
           editor.codemirror.on('beforeChange', (instance, changes) => {
@@ -231,7 +228,7 @@ export class FormField extends React.PureComponent<Props, State> {
 
         return (
           <FormFieldWrapper {...wrapperProps}>
-            <div className="form-field--SimpleMDE" onContextMenu={stopContextMenu}>
+            <div className="form-field--SimpleMDE">
               <fieldset-section>
                 <div className="form-field__two-column">
                   <div>
@@ -245,7 +242,6 @@ export class FormField extends React.PureComponent<Props, State> {
                   {...inputProps}
                   id={name}
                   type="textarea"
-                  events={handleEvents}
                   getMdeInstance={getInstance}
                   options={{
                     spellChecker: true,
