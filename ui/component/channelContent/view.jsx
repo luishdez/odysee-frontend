@@ -1,5 +1,5 @@
 // @flow
-import { SHOW_ADS, SIMPLE_SITE } from 'config';
+import { SHOW_ADS } from 'config';
 import * as CS from 'constants/claim_search';
 import * as ICONS from 'constants/icons';
 import React, { Fragment } from 'react';
@@ -166,7 +166,7 @@ function ChannelContent(props: Props) {
             hideFilters={!showFilters}
             hideAdvancedFilter={!showFilters}
             tileLayout={tileLayout}
-            streamType={SIMPLE_SITE ? CS.CONTENT_ALL : undefined}
+            streamType={CS.CONTENT_ALL}
             channelIds={[claimId]}
             claimId={claimId}
             claimType={claimType}
@@ -174,7 +174,7 @@ function ChannelContent(props: Props) {
             defaultOrderBy={CS.ORDER_BY_NEW}
             pageSize={dynamicPageSize}
             infiniteScroll={defaultInfiniteScroll}
-            injectedItem={SHOW_ADS && !isAuthenticated && IS_WEB && <Ads type="video" />}
+            injectedItem={SHOW_ADS && !isAuthenticated && <Ads type="video" />}
             meta={
               showFilters && (
                 <Form onSubmit={() => {}} className="wunderbar--inline">
@@ -204,7 +204,7 @@ function ChannelContent(props: Props) {
             hideFilters={!showFilters}
             hideAdvancedFilter={!showFilters}
             tileLayout={tileLayout}
-            streamType={SIMPLE_SITE ? CS.CONTENT_ALL : undefined}
+            streamType={CS.CONTENT_ALL}
             channelIds={[claimId]}
             claimType={claimType}
             feeAmount={CS.FEE_AMOUNT_ANY}
