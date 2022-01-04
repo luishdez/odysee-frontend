@@ -263,7 +263,6 @@ function ClaimMenuList(props: Props) {
     push(`/$/${PAGES.REPORT_CONTENT}?claimId=${contentClaim && contentClaim.claim_id}`);
   }
 
-  const shouldShow = !IS_WEB || (IS_WEB && isAuthenticated);
   return (
     <Menu>
       <MenuButton
@@ -322,7 +321,7 @@ function ClaimMenuList(props: Props) {
               )}
             </>
           ) : (
-            shouldShow &&
+            isAuthenticated &&
             isPlayable && (
               <>
                 {/* WATCH LATER */}
@@ -361,7 +360,7 @@ function ClaimMenuList(props: Props) {
           )}
         </>
 
-        {shouldShow && (
+        {isAuthenticated && (
           <>
             {!isChannelPage && (
               <>
@@ -449,7 +448,7 @@ function ClaimMenuList(props: Props) {
           </div>
         </MenuItem>
 
-        {isChannelPage && IS_WEB && rssUrl && (
+        {isChannelPage && rssUrl && (
           <MenuItem className="comment__menu-option" onSelect={handleCopyRssLink}>
             <div className="menu__link">
               <Icon aria-hidden icon={ICONS.RSS} />

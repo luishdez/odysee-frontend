@@ -33,7 +33,7 @@ const select = (state, props) => {
     claim: makeSelectClaimForUri(uri)(state),
     thumbnail: channel_url && selectThumbnailForUri(state, channel_url),
     channelIsBlocked: channel_url && makeSelectChannelIsMuted(channel_url)(state),
-    commentingEnabled: IS_WEB ? Boolean(selectUserVerifiedEmail(state)) : true,
+    commentingEnabled: Boolean(selectUserVerifiedEmail(state)),
     othersReacts: selectOthersReactsForComment(state, reactionKey),
     activeChannelClaim,
     hasChannels: selectHasChannels(state),

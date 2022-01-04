@@ -247,7 +247,7 @@ function CommentMenuList(props: Props) {
         </>
       )}
 
-      {IS_WEB && !isLiveComment && (
+      {!isLiveComment && (
         <MenuItem className="comment__menu-option" onSelect={handleCopyCommentLink}>
           <div className="menu__link">
             <Icon aria-hidden icon={ICONS.COPY_LINK} />

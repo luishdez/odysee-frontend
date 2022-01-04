@@ -8,23 +8,17 @@ import { useIsLargeScreen } from 'effects/use-screensize';
 import { lazyImport } from 'util/lazyImport';
 import { LINKED_COMMENT_QUERY_PARAM } from 'constants/comment';
 import { parseURI, isURIValid } from 'util/lbryURI';
-import { SITE_TITLE, WELCOME_VERSION } from 'config';
+import { SITE_TITLE } from 'config';
 import LoadingBarOneOff from 'component/loadingBarOneOff';
 import { GetLinksData } from 'util/buildHomepage';
 import * as CS from 'constants/claim_search';
 
 import HomePage from 'page/home';
 
-// @if TARGET='app'
-const BackupPage = lazyImport(() => import('page/backup' /* webpackChunkName: "backup" */));
-// @endif
-
-// @if TARGET='web'
 const Code2257Page = lazyImport(() => import('web/page/code2257' /* webpackChunkName: "code2257" */));
 const PrivacyPolicyPage = lazyImport(() => import('web/page/privacypolicy' /* webpackChunkName: "privacypolicy" */));
 const TOSPage = lazyImport(() => import('web/page/tos' /* webpackChunkName: "tos" */));
 const YouTubeTOSPage = lazyImport(() => import('web/page/youtubetos' /* webpackChunkName: "youtubetos" */));
-// @endif
 
 const SignInPage = lazyImport(() => import('page/signIn' /* webpackChunkName: "signIn" */));
 const SignInWalletPasswordPage = lazyImport(() =>
@@ -146,7 +140,7 @@ function PrivateRoute(props: PrivateRouteProps) {
     <Route
       {...rest}
       render={(props) =>
-        isAuthenticated || !IS_WEB ? (
+        isAuthenticated ? (
           <Component {...props} />
         ) : (
           <Redirect to={`/$/${PAGES.AUTH}?redirect=${redirectUrl || props.location.pathname}`} />
@@ -164,7 +158,6 @@ function AppRouter(props: Props) {
     history,
     uri,
     title,
-    welcomeVersion,
     hasNavigated,
     setHasNavigated,
     hasUnclaimedRefereeReward,
@@ -218,7 +211,7 @@ function AppRouter(props: Props) {
   useEffect(() => {
     const getDefaultTitle = (pathname: string) => {
       const title = pathname.startsWith('/$/') ? PAGE_TITLE[pathname.substring(3)] : '';
-      return __(title) || (IS_WEB ? SITE_TITLE : 'Odysee');
+      return __(title) || SITE_TITLE;
     };
 
     if (uri) {
@@ -236,10 +229,6 @@ function AppRouter(props: Props) {
     } else {
       document.title = getDefaultTitle(pathname);
     }
-
-    // @if TARGET='app'
-    entries[entryIndex].title = document.title;
-    // @endif
   }, [pathname, entries, entryIndex, title, uri]);
 
   useEffect(() => {
@@ -267,9 +256,6 @@ function AppRouter(props: Props) {
   return (
     <React.Suspense fallback={<LoadingBarOneOff />}>
       <Switch>
-        {/* @if TARGET='app' */}
-        {welcomeVersion < WELCOME_VERSION && <Route path="/*" component={Welcome} />}
-        {/* @endif */}
         <Redirect
           from={`/$/${PAGES.DEPRECATED__CHANNELS_FOLLOWING_MANAGE}`}
           to={`/$/${PAGES.CHANNELS_FOLLOWING_DISCOVER}`}
@@ -294,15 +280,10 @@ function AppRouter(props: Props) {
         <Route path={`/$/${PAGES.WELCOME}`} exact component={Welcome} />
 
         <Route path={`/$/${PAGES.HELP}`} exact component={HelpPage} />
-        {/* @if TARGET='app' */}
-        <Route path={`/$/${PAGES.BACKUP}`} exact component={BackupPage} />
-        {/* @endif */}
-        {/* @if TARGET='web' */}
         <Route path={`/$/${PAGES.CODE_2257}`} exact component={Code2257Page} />
         <Route path={`/$/${PAGES.PRIVACY_POLICY}`} exact component={PrivacyPolicyPage} />
         <Route path={`/$/${PAGES.TOS}`} exact component={TOSPage} />
         <Route path={`/$/${PAGES.YOUTUBE_TOS}`} exact component={YouTubeTOSPage} />
-        {/* @endif */}
         <Route path={`/$/${PAGES.AUTH_VERIFY}`} exact component={SignInVerifyPage} />
         <Route path={`/$/${PAGES.SEARCH}`} exact component={SearchPage} />
         <Route path={`/$/${PAGES.TOP}`} exact component={TopPage} />
@@ -318,7 +299,7 @@ function AppRouter(props: Props) {
           {...props}
           exact
           path={`/$/${PAGES.CHANNELS_FOLLOWING}`}
-          component={isAuthenticated || !IS_WEB ? ChannelsFollowingPage : DiscoverPage}
+          component={isAuthenticated ? ChannelsFollowingPage : DiscoverPage}
         />
         <PrivateRoute {...props} path={`/$/${PAGES.SETTINGS_NOTIFICATIONS}`} component={SettingsNotificationsPage} />
         <PrivateRoute {...props} path={`/$/${PAGES.SETTINGS_STRIPE_CARD}`} component={SettingsStripeCard} />

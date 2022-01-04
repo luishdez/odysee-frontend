@@ -15,7 +15,7 @@ import { formatLbryUrlForWeb, generateListSearchUrlParams } from 'util/url';
 import { formatClaimPreviewTitle } from 'util/formatAriaLabel';
 import { parseURI } from 'util/lbryURI';
 import PreviewOverlayProperties from 'component/previewOverlayProperties';
-import FileDownloadLink from 'component/fileDownloadLink';
+// import FileDownloadLink from 'component/fileDownloadLink';
 import FileWatchLaterLink from 'component/fileWatchLaterLink';
 import ClaimRepostAuthor from 'component/claimRepostAuthor';
 import ClaimMenuList from 'component/claimMenuList';
@@ -78,7 +78,7 @@ function ClaimPreviewTile(props: Props) {
   } = props;
   const isRepost = claim && claim.repost_channel_url;
   const isCollection = claim && claim.value_type === 'collection';
-  const isStream = claim && claim.value_type === 'stream';
+  // const isStream = claim && claim.value_type === 'stream';
   // $FlowFixMe
   const isPlayable =
     claim &&
@@ -196,11 +196,11 @@ function ClaimPreviewTile(props: Props) {
               <div className="claim-preview__hover-actions">
                 {isPlayable && <FileWatchLaterLink focusable={false} uri={repostedContentUri} />}
               </div>
-              {/* @if TARGET='app' */}
+              {/* }
               <div className="claim-preview__hover-actions">
                 {isStream && <FileDownloadLink focusable={false} uri={canonicalUrl} hideOpenButton />}
               </div>
-              {/* @endif */}
+              { */}
 
               <div className="claim-preview__file-property-overlay">
                 <PreviewOverlayProperties uri={uri} properties={liveProperty || properties} />

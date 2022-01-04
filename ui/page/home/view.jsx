@@ -1,7 +1,7 @@
 // @flow
 import * as ICONS from 'constants/icons';
 import * as PAGES from 'constants/pages';
-import { SITE_NAME, SIMPLE_SITE, ENABLE_NO_SOURCE_CLAIMS, SHOW_ADS } from 'config';
+import { ENABLE_NO_SOURCE_CLAIMS, SHOW_ADS } from 'config';
 import Ads, { injectAd } from 'web/component/ads';
 import React, { useState } from 'react';
 import Page from 'component/page';
@@ -17,9 +17,7 @@ import ScheduledStreams from 'component/scheduledStreams';
 import { splitBySeparator } from 'util/lbryURI';
 import classnames from 'classnames';
 
-// @if TARGET='web'
 import Meme from 'web/component/meme';
-// @endif
 
 type Props = {
   authenticated: boolean,
@@ -45,8 +43,8 @@ function HomePage(props: Props) {
     fetchingActiveLivestreams,
     hideScheduledLivestreams,
   } = props;
-  const showPersonalizedChannels = (authenticated || !IS_WEB) && subscribedChannels && subscribedChannels.length > 0;
-  const showPersonalizedTags = (authenticated || !IS_WEB) && followedTags && followedTags.length > 0;
+  const showPersonalizedChannels = authenticated && subscribedChannels && subscribedChannels.length > 0;
+  const showPersonalizedTags = authenticated && followedTags && followedTags.length > 0;
   const showIndividualTags = showPersonalizedTags && followedTags.length < 5;
   const isLargeScreen = useIsLargeScreen();
 
@@ -150,25 +148,8 @@ function HomePage(props: Props) {
 
   return (
     <Page className="homePage-wrapper" fullWidthPage>
-      {!SIMPLE_SITE && (authenticated || !IS_WEB) && !subscribedChannels.length && (
-        <div className="notice-message">
-          <h1 className="section__title">
-            {__("%SITE_NAME% is more fun if you're following channels", { SITE_NAME })}
-          </h1>
-          <p className="section__actions">
-            <Button
-              button="primary"
-              navigate={`/$/${PAGES.CHANNELS_FOLLOWING_DISCOVER}`}
-              label={__('Find new channels to follow')}
-            />
-          </p>
-        </div>
-      )}
-
-      {/* @if TARGET='web' */}
-      {SIMPLE_SITE && <Meme />}
+      <Meme />
       <Ads type="homepage" />
-      {/* @endif */}
 
       {!fetchingActiveLivestreams && (
         <>
