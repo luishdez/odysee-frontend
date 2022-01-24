@@ -1,4 +1,5 @@
 // @flow
+import { useIsMobile } from 'effects/use-screensize';
 import { SITE_NAME, ENABLE_FILE_REACTIONS } from 'config';
 import * as PAGES from 'constants/pages';
 import * as MODALS from 'constants/modal_types';
@@ -58,6 +59,8 @@ export default function FileActions(props: Props) {
     location: { pathname, search },
   } = useHistory();
 
+  const isMobile = useIsMobile();
+
   const [downloadClicked, setDownloadClicked] = React.useState(false);
 
   const { claim_id: claimId, signing_channel: signingChannel, value, meta: claimMeta } = claim;
@@ -107,6 +110,71 @@ export default function FileActions(props: Props) {
     }
   }
 
+  const repostButton = () =>
+    isMobile ? (
+      <MenuItem className="comment__menu-option" onSelect={handleRepostClick}>
+        <div className="menu__link">
+          <Icon aria-hidden icon={ICONS.REPOST} />
+          {claim.meta.reposted > 1 ? __(`%repost_total% Reposts`, { repost_total: claim.meta.reposted }) : __('Repost')}
+        </div>
+      </MenuItem>
+    ) : (
+      <Tooltip title={__('Repost')} arrow={false}>
+        <Button
+          button="alt"
+          className="button--file-action"
+          icon={ICONS.REPOST}
+          label={
+            claimMeta.reposted > 1 ? __(`%repost_total% Reposts`, { repost_total: claimMeta.reposted }) : __('Repost')
+          }
+          requiresAuth
+          onClick={handleRepostClick}
+        />
+      </Tooltip>
+    );
+
+  const myClaimButtons = () =>
+    isMobile ? (
+      <>
+        <MenuItem className="comment__menu-option" onSelect={() => doEditForChannel(claim, editUri)}>
+          <div className="menu__link">
+            <Icon aria-hidden icon={ICONS.EDIT} />
+            {isLivestreamClaim ? __('Update or Publish Replay') : __('Edit')}
+          </div>
+        </MenuItem>
+
+        <MenuItem className="comment__menu-option" onSelect={() => doOpenModal(MODALS.CONFIRM_FILE_REMOVE, { uri })}>
+          <div className="menu__link">
+            <Icon aria-hidden icon={ICONS.DELETE} />
+            {__('Delete')}
+          </div>
+        </MenuItem>
+      </>
+    ) : (
+      <>
+        <Tooltip title={isLivestreamClaim ? __('Update or Publish Replay') : __('Edit')} arrow={false}>
+          <div style={{ margin: '0px' }}>
+            <Button
+              className="button--file-action"
+              icon={ICONS.EDIT}
+              label={isLivestreamClaim ? __('Update or Publish Replay') : __('Edit')}
+              navigate={`/$/${PAGES.UPLOAD}`}
+              onClick={() => doEditForChannel(claim, editUri)}
+            />
+          </div>
+        </Tooltip>
+
+        <Tooltip title={__('Remove from your library')} arrow={false}>
+          <Button
+            className="button--file-action"
+            icon={ICONS.DELETE}
+            description={__('Delete')}
+            onClick={() => doOpenModal(MODALS.CONFIRM_FILE_REMOVE, { uri })}
+          />
+        </Tooltip>
+      </>
+    );
+
   return (
     <div className="media__actions section__actions--no-margin">
       {ENABLE_FILE_REACTIONS && <FileReactions uri={uri} />}
@@ -115,20 +183,7 @@ export default function FileActions(props: Props) {
 
       <ClaimCollectionAddButton uri={uri} fileAction />
 
-      {!hideRepost && (
-        <Tooltip title={__('Repost')} arrow={false}>
-          <Button
-            button="alt"
-            className="button--file-action"
-            icon={ICONS.REPOST}
-            label={
-              claimMeta.reposted > 1 ? __(`%repost_total% Reposts`, { repost_total: claimMeta.reposted }) : __('Repost')
-            }
-            requiresAuth
-            onClick={handleRepostClick}
-          />
-        </Tooltip>
-      )}
+      {!isMobile && !hideRepost && repostButton()}
 
       <Tooltip title={__('Share')} arrow={false}>
         <Button
@@ -139,32 +194,9 @@ export default function FileActions(props: Props) {
         />
       </Tooltip>
 
-      {claimIsMine && (
-        <>
-          <Tooltip title={isLivestreamClaim ? __('Update or Publish Replay') : __('Edit')} arrow={false}>
-            <div style={{ margin: '0px' }}>
-              <Button
-                className="button--file-action"
-                icon={ICONS.EDIT}
-                label={isLivestreamClaim ? __('Update or Publish Replay') : __('Edit')}
-                navigate={`/$/${PAGES.UPLOAD}`}
-                onClick={() => doEditForChannel(claim, editUri)}
-              />
-            </div>
-          </Tooltip>
+      {!isMobile && claimIsMine && myClaimButtons()}
 
-          <Tooltip title={__('Remove from your library')} arrow={false}>
-            <Button
-              className="button--file-action"
-              icon={ICONS.DELETE}
-              description={__('Delete')}
-              onClick={() => doOpenModal(MODALS.CONFIRM_FILE_REMOVE, { uri })}
-            />
-          </Tooltip>
-        </>
-      )}
-
-      {(!isLivestreamClaim || !claimIsMine) && (
+      {(!isLivestreamClaim || !claimIsMine || isMobile) && (
         <Menu>
           <MenuButton
             className="button--file-action"
@@ -177,6 +209,14 @@ export default function FileActions(props: Props) {
           </MenuButton>
 
           <MenuList className="menu__list">
+            {isMobile && (
+              <>
+                {repostButton()}
+
+                {claimIsMine && myClaimButtons()}
+              </>
+            )}
+
             {!isLivestreamClaim && (
               <MenuItem className="comment__menu-option" onSelect={handleWebDownload}>
                 <div className="menu__link">
