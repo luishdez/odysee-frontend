@@ -387,6 +387,17 @@
   padding-bottom: 0;
   margin: 0;
   margin-bottom: var(--spacing-m);
+
+  @media (max-width: $breakpoint-small) {
+    margin-bottom: 0px;
+    padding-bottom: var(--spacing-xxs);
+  }
+}
+
+@media (max-width: $breakpoint-small) {
+  .card__main-actions:nth-child(1) {
+    margin-top: var(--spacing-l);
+  }
 }
 
 .card__bottom-gutter {
@@ -409,6 +420,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @media (max-width: $breakpoint-small) {
+    font-size: var(--font-small);
+
+    .button--link {
+      font-size: var(--font-xsmall);
+      margin: 0px;
+    }
+  }
 }
 
 .card__bottom-actions--comments {
