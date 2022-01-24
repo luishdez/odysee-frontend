@@ -280,10 +280,15 @@
   flex-wrap: wrap;
 
   @media (max-width: $breakpoint-small) {
-    padding: var(--spacing-s);
+    padding: var(--spacing-xxs);
     padding-bottom: 0;
     margin: 0;
-    margin-bottom: var(--spacing-s);
+
+    h1 {
+      font-size: 1.2rem;
+      font-weight: var(--font-weight-bold);
+      line-height: 1.25;
+    }
   }
 }
 
@@ -312,7 +317,22 @@
   }
 
   @media (max-width: $breakpoint-small) {
+    margin-bottom: var(--spacing-s) !important;
     padding: 0 !important;
+
+    .file__viewdate {
+      padding-left: var(--spacing-xxs);
+
+      span {
+        font-size: var(--font-xxsmall);
+        margin: 0;
+      }
+
+      .media__subtitle--centered::before {
+        content: '•';
+        margin: 0 5px;
+      }
+    }
   }
 }
 
