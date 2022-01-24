@@ -37,9 +37,12 @@ type Props = {
   isSupport: boolean,
   title: string,
   uri: string,
+  isTipOnly?: boolean,
+  hasSelectedTab?: string,
   doHideModal: () => void,
   doSendCashTip: (TipParams, boolean, UserParams, string, ?string) => string,
   doSendTip: (SupportParams, boolean) => void, // function that comes from lbry-redux
+  setAmount?: (number) => void,
 };
 
 function WalletSendTip(props: Props) {
@@ -55,9 +58,12 @@ function WalletSendTip(props: Props) {
     isPending,
     title,
     uri,
+    isTipOnly,
+    hasSelectedTab,
     doHideModal,
     doSendCashTip,
     doSendTip,
+    setAmount,
   } = props;
 
   /** WHAT TAB TO SHOW **/
@@ -71,6 +77,8 @@ function WalletSendTip(props: Props) {
 
   // loads the default tab if nothing else is there yet
   const [activeTab, setActiveTab] = usePersistedState(defaultTabToShow);
+
+  if (hasSelectedTab && activeTab !== hasSelectedTab) setActiveTab(hasSelectedTab);
 
   // if a broken default is set, set it to the proper default
   if (activeTab !== TAB_BOOST && activeTab !== TAB_LBC && activeTab !== TAB_FIAT) {
@@ -166,6 +174,12 @@ function WalletSendTip(props: Props) {
   function handleSubmit() {
     if (!tipAmount || !claimId) return;
 
+    if (setAmount) {
+      setAmount(tipAmount);
+      doHideModal();
+      return;
+    }
+
     // send an instant tip (no need to go to an exchange first)
     if (instantTipEnabled && activeTab !== TAB_FIAT) {
       if (instantTipMax.currency === 'LBC') {
@@ -255,7 +269,7 @@ function WalletSendTip(props: Props) {
                 {stripeEnvironment && getTabButton(ICONS.FINANCE, __('Tip'), TAB_FIAT)}
 
                 {/* support LBC tab button */}
-                {getTabButton(ICONS.TRENDING, __('Boost'), TAB_BOOST)}
+                {!isTipOnly && getTabButton(ICONS.TRENDING, __('Boost'), TAB_BOOST)}
               </div>
             )}
 

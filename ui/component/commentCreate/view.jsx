@@ -12,6 +12,7 @@ import { useHistory } from 'react-router';
 import * as ICONS from 'constants/icons';
 import * as KEYCODES from 'constants/keycodes';
 import * as PAGES from 'constants/pages';
+import * as MODALS from 'constants/modal_types';
 import Button from 'component/button';
 import ChannelThumbnail from 'component/channelThumbnail';
 import classnames from 'classnames';
@@ -29,6 +30,7 @@ import type { ElementRef } from 'react';
 import UriIndicator from 'component/uriIndicator';
 import usePersistedState from 'effects/use-persisted-state';
 import WalletTipAmountSelector from 'component/walletTipAmountSelector';
+import { useIsMobile } from 'effects/use-screensize';
 
 import { getStripeEnvironment } from 'util/stripe';
 const stripeEnvironment = getStripeEnvironment();
@@ -67,6 +69,7 @@ type Props = {
   sendTip: ({}, (any) => void, (any) => void) => void,
   setQuickReply: (any) => void,
   toast: (string) => void,
+  doOpenModal: (id: string, any) => void,
 };
 
 export function CommentCreate(props: Props) {
@@ -85,6 +88,7 @@ export function CommentCreate(props: Props) {
     settingsByChannelId,
     shouldFetchComment,
     supportDisabled,
+    uri,
     disableInput,
     createComment,
     doFetchCreatorSettings,
@@ -95,7 +99,10 @@ export function CommentCreate(props: Props) {
     sendCashTip,
     sendTip,
     setQuickReply,
+    doOpenModal,
   } = props;
+
+  const isMobile = useIsMobile();
 
   const formFieldRef: ElementRef<any> = React.useRef();
   const buttonRef: ElementRef<any> = React.useRef();
@@ -377,9 +384,13 @@ export function CommentCreate(props: Props) {
   // Render
   // **************************************************************************
 
-  const getActionButton = (title: string, label?: string, icon: string, handleClick: () => void) => (
-    <Button title={title} label={label} button="alt" icon={icon} onClick={handleClick} />
-  );
+  const getActionButton = (
+    title: string,
+    label?: string,
+    icon: string,
+    handleClick: () => void,
+    disabled?: boolean
+  ) => <Button title={title} label={label} button="alt" icon={icon} onClick={handleClick} disabled={disabled} />;
 
   if (channelSettings && !channelSettings.comments_enabled) {
     return <Empty padded text={__('This channel has disabled comments on their page.')} />;
@@ -601,9 +612,23 @@ export function CommentCreate(props: Props) {
                     isSupportComment ? __('Switch to Credits') : undefined,
                     ICONS.LBC,
                     () => {
-                      setIsSupportComment(true);
                       setActiveTab(TAB_LBC);
-                    }
+
+                      if (isMobile) {
+                        doOpenModal(MODALS.SEND_TIP, {
+                          uri,
+                          isTipOnly: true,
+                          hasSelectedTab: TAB_LBC,
+                          setAmount: (amount) => {
+                            setTipAmount(amount);
+                            setReviewingSupportComment(true);
+                          },
+                        });
+                      } else {
+                        setIsSupportComment(true);
+                      }
+                    },
+                    !commentValue.length
                   )}
 
                 {stripeEnvironment &&
@@ -613,9 +638,23 @@ export function CommentCreate(props: Props) {
                     isSupportComment ? __('Switch to Cash') : undefined,
                     ICONS.FINANCE,
                     () => {
-                      setIsSupportComment(true);
                       setActiveTab(TAB_FIAT);
-                    }
+
+                      if (isMobile) {
+                        doOpenModal(MODALS.SEND_TIP, {
+                          uri,
+                          isTipOnly: true,
+                          hasSelectedTab: TAB_FIAT,
+                          setAmount: (amount) => {
+                            setTipAmount(amount);
+                            setReviewingSupportComment(true);
+                          },
+                        });
+                      } else {
+                        setIsSupportComment(true);
+                      }
+                    },
+                    !commentValue.length
                   )}
               </>
             )}
