@@ -6,42 +6,43 @@ import classnames from 'classnames';
 import Button from 'component/button';
 import { formatNumberWithCommas } from 'util/number';
 import NudgeFloating from 'component/nudgeFloating';
-import { SIMPLE_SITE } from 'config';
+import Tooltip from 'component/common/tooltip';
+
+const LIVE_REACTION_FETCH_MS = 1000 * 45;
 
 type Props = {
-  claim: StreamClaim,
-  doFetchReactions: (string) => void,
-  doReactionLike: (string) => void,
-  doReactionDislike: (string) => void,
   uri: string,
+  // redux
+  claimId?: string,
+  channelName?: string,
+  isCollection?: boolean,
   likeCount: number,
   dislikeCount: number,
   myReaction: ?string,
-  livestream?: boolean,
+  isLivestreamClaim?: boolean,
+  doFetchReactions: (claimId: ?string) => void,
+  doReactionLike: (uri: string) => void,
+  doReactionDislike: (uri: string) => void,
 };
 
-function FileReactions(props: Props) {
+export default function FileReactions(props: Props) {
   const {
-    claim,
     uri,
-    doFetchReactions,
-    doReactionLike,
-    doReactionDislike,
+    claimId,
+    channelName,
+    isCollection,
     myReaction,
     likeCount,
     dislikeCount,
-    livestream,
+    isLivestreamClaim,
+    doFetchReactions,
+    doReactionLike,
+    doReactionDislike,
   } = props;
 
-  const claimId = claim && claim.claim_id;
-  const channel = claim && claim.signing_channel && claim.signing_channel.name;
-  const isCollection = claim && claim.value_type === 'collection'; // hack because nudge gets cut off by card on cols.
-  const likeIcon = SIMPLE_SITE ? (myReaction === REACTION_TYPES.LIKE ? ICONS.FIRE_ACTIVE : ICONS.FIRE) : ICONS.UPVOTE;
-  const dislikeIcon = SIMPLE_SITE
-    ? myReaction === REACTION_TYPES.DISLIKE
-      ? ICONS.SLIME_ACTIVE
-      : ICONS.SLIME
-    : ICONS.DOWNVOTE;
+  const likeIcon = myReaction === REACTION_TYPES.LIKE ? ICONS.FIRE_ACTIVE : ICONS.FIRE;
+  const dislikeIcon = myReaction === REACTION_TYPES.DISLIKE ? ICONS.SLIME_ACTIVE : ICONS.SLIME;
+
   React.useEffect(() => {
     function fetchReactions() {
       doFetchReactions(claimId);
@@ -51,8 +52,8 @@ function FileReactions(props: Props) {
     if (claimId) {
       fetchReactions();
 
-      if (livestream) {
-        fetchInterval = setInterval(fetchReactions, 45000);
+      if (isLivestreamClaim) {
+        fetchInterval = setInterval(fetchReactions, LIVE_REACTION_FETCH_MS);
       }
     }
 
@@ -61,65 +62,70 @@ function FileReactions(props: Props) {
         clearInterval(fetchInterval);
       }
     };
-  }, [claimId, doFetchReactions, livestream]);
+  }, [claimId, doFetchReactions, isLivestreamClaim]);
 
   return (
     <>
-      {channel && !isCollection && (
+      {channelName && !isCollection && (
         <NudgeFloating
           name="nudge:support-acknowledge"
-          text={__('Let %channel% know you enjoyed this!', { channel })}
+          text={__('Let %channel% know you enjoyed this!', { channel: channelName })}
         />
       )}
 
-      <Button
-        title={__('I like this')}
-        requiresAuth={IS_WEB}
-        authSrc="filereaction_like"
-        className={classnames('button--file-action', { 'button--fire': myReaction === REACTION_TYPES.LIKE })}
-        label={
-          <>
-            {myReaction === REACTION_TYPES.LIKE && SIMPLE_SITE && (
+      <Tooltip title={__('I like this')} arrow={false}>
+        <div style={{ margin: '0' }}>
+          <Button
+            requiresAuth
+            authSrc="filereaction_like"
+            className={classnames('button--file-action', { 'button--fire': myReaction === REACTION_TYPES.LIKE })}
+            label={
               <>
-                <div className="button__fire-glow" />
-                <div className="button__fire-particle1" />
-                <div className="button__fire-particle2" />
-                <div className="button__fire-particle3" />
-                <div className="button__fire-particle4" />
-                <div className="button__fire-particle5" />
-                <div className="button__fire-particle6" />
+                {myReaction === REACTION_TYPES.LIKE && (
+                  <>
+                    <div className="button__fire-glow" />
+                    <div className="button__fire-particle1" />
+                    <div className="button__fire-particle2" />
+                    <div className="button__fire-particle3" />
+                    <div className="button__fire-particle4" />
+                    <div className="button__fire-particle5" />
+                    <div className="button__fire-particle6" />
+                  </>
+                )}
+                {formatNumberWithCommas(likeCount, 0)}
               </>
-            )}
-            {formatNumberWithCommas(likeCount, 0)}
-          </>
-        }
-        iconSize={18}
-        icon={likeIcon}
-        onClick={() => doReactionLike(uri)}
-      />
-      <Button
-        requiresAuth={IS_WEB}
-        authSrc={'filereaction_dislike'}
-        title={__('I dislike this')}
-        className={classnames('button--file-action', { 'button--slime': myReaction === REACTION_TYPES.DISLIKE })}
-        label={
-          <>
-            {myReaction === REACTION_TYPES.DISLIKE && SIMPLE_SITE && (
+            }
+            iconSize={18}
+            icon={likeIcon}
+            onClick={() => doReactionLike(uri)}
+          />
+        </div>
+      </Tooltip>
+
+      <Tooltip title={__('I dislike this')} arrow={false}>
+        <div style={{ margin: '0' }}>
+          <Button
+            requiresAuth
+            authSrc={'filereaction_dislike'}
+            className={classnames('button--file-action', { 'button--slime': myReaction === REACTION_TYPES.DISLIKE })}
+            label={
               <>
-                <div className="button__slime-stain" />
-                <div className="button__slime-drop1" />
-                <div className="button__slime-drop2" />
+                {myReaction === REACTION_TYPES.DISLIKE && (
+                  <>
+                    <div className="button__slime-stain" />
+                    <div className="button__slime-drop1" />
+                    <div className="button__slime-drop2" />
+                  </>
+                )}
+                {formatNumberWithCommas(dislikeCount, 0)}
               </>
-            )}
-            {formatNumberWithCommas(dislikeCount, 0)}
-          </>
-        }
-        iconSize={18}
-        icon={dislikeIcon}
-        onClick={() => doReactionDislike(uri)}
-      />
+            }
+            iconSize={18}
+            icon={dislikeIcon}
+            onClick={() => doReactionDislike(uri)}
+          />
+        </div>
+      </Tooltip>
     </>
   );
 }
-
-export default FileReactions;
