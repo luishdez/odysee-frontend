@@ -9,7 +9,6 @@ const select = (state, props) => {
 
   const claim = selectClaimForUri(state, uri);
   const permanentUrl = claim && claim.permanent_url;
-  // $FlowFixMe
   const streamType = (claim && claim.value && claim.value.stream_type) || '';
 
   return {
