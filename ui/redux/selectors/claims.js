@@ -592,7 +592,7 @@ export const selectChannelForClaimUri = createCachedSelector(
       return includePrefix ? permanentUrl : permanentUrl.slice('lbry://'.length);
     }
   }
-)((state, uri) => String(uri));
+)((state, uri, includePrefix) => `${String(uri)}:${String(includePrefix)}`);
 
 // Returns the associated channel uri for a given claim uri
 // accepts a regular claim uri lbry://something
