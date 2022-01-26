@@ -74,7 +74,7 @@ export default function FileReactions(props: Props) {
       )}
 
       <Tooltip title={__('I like this')} arrow={false}>
-        <div style={{ margin: '0' }}>
+        <div className="file-reaction__tooltip-inner">
           <Button
             requiresAuth
             authSrc="filereaction_like"
@@ -103,7 +103,7 @@ export default function FileReactions(props: Props) {
       </Tooltip>
 
       <Tooltip title={__('I dislike this')} arrow={false}>
-        <div style={{ margin: '0' }}>
+        <div className="file-reaction__tooltip-inner">
           <Button
             requiresAuth
             authSrc={'filereaction_dislike'}

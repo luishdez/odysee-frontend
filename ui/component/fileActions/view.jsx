@@ -155,7 +155,7 @@ export default function FileActions(props: Props) {
     ) : (
       <>
         <Tooltip title={isLivestreamClaim ? __('Update or Publish Replay') : __('Edit')} arrow={false}>
-          <div style={{ margin: '0px' }}>
+          <div className="file-reaction__tooltip-inner">
             <Button
               className="button--file-action"
               icon={ICONS.EDIT}
