@@ -29,6 +29,7 @@ type Props = {
   hasChannels: boolean,
   isLivestreamClaim: boolean,
   streamingUrl: ?string,
+  disableDownloadButton: boolean,
   doOpenModal: (id: string, { uri: string, claimIsMine?: boolean, isSupport?: boolean }) => void,
   doEditForChannel: (claim: Claim, uri: string) => void,
   doClearPlayingUri: () => void,
@@ -47,6 +48,7 @@ export default function FileActions(props: Props) {
     hideRepost,
     isLivestreamClaim,
     streamingUrl,
+    disableDownloadButton,
     doOpenModal,
     doEditForChannel,
     doClearPlayingUri,
@@ -106,7 +108,7 @@ export default function FileActions(props: Props) {
       push(`/$/${PAGES.CHANNEL_NEW}?redirect=${pathname}`);
       doToast({ message: __('A channel is required to repost on %SITE_NAME%', { SITE_NAME }) });
     } else {
-      push(`/$/${PAGES.REPOST_NEW}?from=${encodeURIComponent(uri)}&redirect=${pathname}`);
+      push(`/$/${PAGES.REPOST_NEW}?from=${encodeURIComponent(uri)}&redirect=${encodeURIComponent(pathname)}`);
     }
   }
 
@@ -217,7 +219,7 @@ export default function FileActions(props: Props) {
               </>
             )}
 
-            {!isLivestreamClaim && (
+            {!isLivestreamClaim && !disableDownloadButton && (
               <MenuItem className="comment__menu-option" onSelect={handleWebDownload}>
                 <div className="menu__link">
                   <Icon aria-hidden icon={ICONS.DOWNLOAD} />

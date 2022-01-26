@@ -4,6 +4,7 @@ import {
   selectClaimForUri,
   selectHasChannels,
   selectIsStreamPlaceholderForUri,
+  makeSelectTagInClaimOrChannelForUri,
 } from 'redux/selectors/claims';
 import { makeSelectStreamingUrlForUri } from 'redux/selectors/file_info';
 import { doEditForChannel } from 'redux/actions/publish';
@@ -13,6 +14,7 @@ import { doToast } from 'redux/actions/notifications';
 import { doOpenModal } from 'redux/actions/app';
 import FileActions from './view';
 import { makeSelectFileRenderModeForUri } from 'redux/selectors/content';
+import { DISABLE_DOWNLOAD_BUTTON_TAG } from 'constants/tags';
 
 const select = (state, props) => {
   const { uri } = props;
@@ -27,6 +29,7 @@ const select = (state, props) => {
     hasChannels: selectHasChannels(state),
     isLivestreamClaim: selectIsStreamPlaceholderForUri(state, uri),
     streamingUrl: makeSelectStreamingUrlForUri(uri)(state),
+    disableDownloadButton: makeSelectTagInClaimOrChannelForUri(uri, DISABLE_DOWNLOAD_BUTTON_TAG)(state),
   };
 };
 
