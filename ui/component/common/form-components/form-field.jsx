@@ -47,6 +47,8 @@ type Props = {
   openEmoteMenu?: () => void,
   quickActionHandler?: (any) => any,
   render?: () => React$Node,
+  handleTip?: (isLBC: boolean) => any,
+  handleSubmit?: () => any,
 };
 
 export class FormField extends React.PureComponent<Props> {
@@ -91,6 +93,8 @@ export class FormField extends React.PureComponent<Props> {
       openEmoteMenu,
       quickActionHandler,
       render,
+      handleTip,
+      handleSubmit,
       ...inputProps
     } = this.props;
 
@@ -237,7 +241,7 @@ export class FormField extends React.PureComponent<Props> {
               {(label || quickAction) && (
                 <div className="form-field__two-column">
                   <label htmlFor={name}>{label}</label>
-                  {quickAction}
+                  {countInfo}
                 </div>
               )}
 
@@ -257,6 +261,9 @@ export class FormField extends React.PureComponent<Props> {
                     maxLength={textAreaMaxLength || FF_MAX_CHARS_DEFAULT}
                     inputRef={this.input}
                     isLivestream={isLivestream}
+                    handleEmojis={openEmoteMenu}
+                    handleTip={handleTip}
+                    handleSubmit={handleSubmit}
                     {...inputProps}
                   />
                 </React.Suspense>
@@ -273,7 +280,6 @@ export class FormField extends React.PureComponent<Props> {
                     iconSize={20}
                   />
                 )}
-                {countInfo}
               </div>
             </fieldset-section>
           );
