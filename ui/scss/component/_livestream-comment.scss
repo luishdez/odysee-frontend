@@ -58,6 +58,7 @@
 
 .livestream__comment--superchat {
   background-color: var(--color-card-background-highlighted);
+  display: unset;
 
   + .livestream__comment--superchat {
     margin-bottom: var(--spacing-xxs);
@@ -72,6 +73,10 @@
 
   .livestreamComment__info {
     margin-top: calc(var(--spacing-xxs) / 2);
+  }
+
+  .livestreamComment__menu {
+    position: absolute;
   }
 
   &::before {
