@@ -3,16 +3,12 @@
 import { Global } from '@emotion/react';
 // $FlowFixMe
 import { grey } from '@mui/material/colors';
-// $FlowFixMe
-import Typography from '@mui/material/Typography';
 
 import { HEADER_HEIGHT_MOBILE } from 'component/fileRenderMobile/view';
 import { SwipeableDrawer as MUIDrawer } from '@mui/material';
 import * as ICONS from 'constants/icons';
 import * as React from 'react';
 import Button from 'component/button';
-import Icon from 'component/common/icon';
-import Portal from '@mui/material/Portal';
 
 const DRAWER_PULLER_HEIGHT = 42;
 
@@ -22,13 +18,12 @@ type Props = {
   theme: string,
   mobilePlayerDimensions?: { height: number },
   title: any,
-  didInitialDisplay?: boolean,
   actions?: any,
   toggleDrawer: () => void,
 };
 
 export default function SwipeableDrawer(props: Props) {
-  const { mobilePlayerDimensions, title, children, open, theme, didInitialDisplay, actions, toggleDrawer } = props;
+  const { mobilePlayerDimensions, title, children, open, theme, actions, toggleDrawer } = props;
 
   const [coverHeight, setCoverHeight] = React.useState();
 
@@ -49,7 +44,6 @@ export default function SwipeableDrawer(props: Props) {
     <Global
       styles={{
         '.main-wrapper__inner--filepage': {
-          paddingBottom: didInitialDisplay ? `${DRAWER_PULLER_HEIGHT}px !important` : 'inherit',
           overflow: open ? 'hidden' : 'unset',
           maxHeight: open ? '100vh' : 'unset',
         },
@@ -97,22 +91,10 @@ export default function SwipeableDrawer(props: Props) {
         disableSwipeToOpen
         ModalProps={{ keepMounted: true }}
       >
-        {didInitialDisplay && (
+        {open && (
           <div className="swipeable-drawer__header" style={{ top: -DRAWER_PULLER_HEIGHT }}>
-            {open ? (
-              <>
-                <Puller />
-
-                <HeaderContents />
-              </>
-            ) : (
-              <Portal>
-                <div className="swipeable-drawer__expand" onClick={toggleDrawer}>
-                  <Typography sx={{ p: 1.5, color: 'var(--color-text)' }}>{title}</Typography>
-                  <Icon icon={ICONS.UP} />
-                </div>
-              </Portal>
-            )}
+            <Puller />
+            <HeaderContents />
           </div>
         )}
 

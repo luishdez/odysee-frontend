@@ -54,8 +54,6 @@ export default function LivestreamLayout(props: Props) {
   const [superchatsHidden, setSuperchatsHidden] = React.useState(false);
   const [chatViewMode, setChatViewMode] = React.useState(VIEW_MODES.CHAT);
 
-  const drawerWasToggled = showChat !== undefined;
-
   if (!claim || !claim.signing_channel) return null;
 
   const { name: channelName, claim_id: channelClaimId } = claim.signing_channel;
@@ -144,7 +142,6 @@ export default function LivestreamLayout(props: Props) {
                   toggleSuperchats={() => setSuperchatsHidden(!superchatsHidden)}
                 />
               }
-              didInitialDisplay={drawerWasToggled}
             >
               <LivestreamChatLayout
                 uri={uri}

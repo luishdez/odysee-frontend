@@ -73,7 +73,6 @@ export default function FilePage(props: Props) {
 
   const [showComments, setShowComments] = React.useState(undefined);
 
-  const drawerWasToggled = showComments !== undefined;
   const cost = costInfo ? costInfo.cost : null;
   const hasFileInfo = fileInfo !== undefined;
   const isMarkdown = renderMode === RENDER_MODES.MARKDOWN;
@@ -221,7 +220,6 @@ export default function FilePage(props: Props) {
                   open={Boolean(showComments)}
                   toggleDrawer={() => setShowComments(!showComments)}
                   title={commentsListTitle}
-                  didInitialDisplay={drawerWasToggled}
                 >
                   {commentsListElement}
                 </SwipeableDrawer>
