@@ -57,31 +57,6 @@ export default function LivestreamLayout(props: Props) {
   if (!claim || !claim.signing_channel) return null;
 
   const { name: channelName, claim_id: channelClaimId } = claim.signing_channel;
-  const { superChatsFiatAmount, superChatsLBCAmount } = getTipValues(superChats);
-
-  const ChatModeSelector = () => (
-    <Menu>
-      <MenuButton>
-        <span className="swipeable-drawer__title-menu">
-          {chatViewMode === VIEW_MODES.CHAT ? __('Live Chat') : __('Super Chats')}
-          <Icon icon={ICONS.DOWN} />
-        </span>
-      </MenuButton>
-
-      <MenuList className="menu__list--header">
-        <MenuItem className="menu__link" onSelect={() => setChatViewMode(VIEW_MODES.CHAT)}>
-          {__('Live Chat')}
-        </MenuItem>
-
-        <MenuItem className="menu__link" onSelect={() => setChatViewMode(VIEW_MODES.SUPERCHAT)}>
-          <div className="recommended-content__toggles">
-            <CreditAmount amount={superChatsLBCAmount || 0} size={8} /> /
-            <CreditAmount amount={superChatsFiatAmount || 0} size={8} isFiat /> {__('Tipped')}
-          </div>
-        </MenuItem>
-      </MenuList>
-    </Menu>
-  );
 
   return (
     <>
@@ -134,7 +109,13 @@ export default function LivestreamLayout(props: Props) {
             <SwipeableDrawer
               open={Boolean(showChat)}
               toggleDrawer={() => setShowChat(!showChat)}
-              title={<ChatModeSelector />}
+              title={
+                <ChatModeSelector
+                  superChats={superChats}
+                  chatViewMode={chatViewMode}
+                  setChatViewMode={(mode) => setChatViewMode(mode)}
+                />
+              }
               actions={
                 <LivestreamMenu
                   noSuperchats={!superChats || superChats.length === 0}
@@ -168,3 +149,32 @@ export default function LivestreamLayout(props: Props) {
     </>
   );
 }
+
+const ChatModeSelector = (chatSelectorProps: any) => {
+  const { superChats, chatViewMode, setChatViewMode } = chatSelectorProps;
+  const { superChatsFiatAmount, superChatsLBCAmount } = getTipValues(superChats);
+
+  return (
+    <Menu>
+      <MenuButton>
+        <span className="swipeable-drawer__title-menu">
+          {chatViewMode === VIEW_MODES.CHAT ? __('Live Chat') : __('Super Chats')}
+          <Icon icon={ICONS.DOWN} />
+        </span>
+      </MenuButton>
+
+      <MenuList className="menu__list--header">
+        <MenuItem className="menu__link" onSelect={() => setChatViewMode(VIEW_MODES.CHAT)}>
+          {__('Live Chat')}
+        </MenuItem>
+
+        <MenuItem className="menu__link" onSelect={() => setChatViewMode(VIEW_MODES.SUPERCHAT)}>
+          <div className="recommended-content__toggles">
+            <CreditAmount amount={superChatsLBCAmount || 0} size={8} /> /
+            <CreditAmount amount={superChatsFiatAmount || 0} size={8} isFiat /> {__('Tipped')}
+          </div>
+        </MenuItem>
+      </MenuList>
+    </Menu>
+  );
+};

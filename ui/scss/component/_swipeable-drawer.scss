@@ -40,6 +40,10 @@
 .swipeable-drawer__header-actions {
   display: flex;
 
+  button {
+    padding: 0.3rem;
+  }
+
   button:not(:last-child) {
     margin-right: var(--spacing-xxs);
   }

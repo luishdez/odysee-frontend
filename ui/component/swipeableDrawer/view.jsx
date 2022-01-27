@@ -14,7 +14,7 @@ const DRAWER_PULLER_HEIGHT = 42;
 
 type Props = {
   children: Node,
-  open: Boolean,
+  open: boolean,
   theme: string,
   mobilePlayerDimensions?: { height: number },
   title: any,
@@ -60,22 +60,6 @@ export default function SwipeableDrawer(props: Props) {
     />
   );
 
-  const Puller = () => (
-    <span className="swipeable-drawer__puller" style={{ backgroundColor: theme === 'light' ? grey[300] : grey[800] }} />
-  );
-
-  const HeaderContents = () => (
-    <div className="swipeable-drawer__header-content">
-      {title}
-
-      <div className="swipeable-drawer__header-actions">
-        {actions}
-
-        <Button icon={ICONS.REMOVE} iconSize={16} onClick={toggleDrawer} />
-      </div>
-    </div>
-  );
-
   return (
     <>
       <DrawerGlobalStyles />
@@ -93,8 +77,8 @@ export default function SwipeableDrawer(props: Props) {
       >
         {open && (
           <div className="swipeable-drawer__header" style={{ top: -DRAWER_PULLER_HEIGHT }}>
-            <Puller />
-            <HeaderContents />
+            <Puller theme={theme} />
+            <HeaderContents title={title} actions={actions} toggleDrawer={toggleDrawer} />
           </div>
         )}
 
@@ -103,3 +87,37 @@ export default function SwipeableDrawer(props: Props) {
     </>
   );
 }
+
+type PullerProps = {
+  theme: string,
+};
+
+const Puller = (pullerProps: PullerProps) => {
+  const { theme } = pullerProps;
+
+  return (
+    <span className="swipeable-drawer__puller" style={{ backgroundColor: theme === 'light' ? grey[300] : grey[800] }} />
+  );
+};
+
+type HeaderProps = {
+  title: any,
+  actions?: any,
+  toggleDrawer: () => void,
+};
+
+const HeaderContents = (headerProps: HeaderProps) => {
+  const { title, actions, toggleDrawer } = headerProps;
+
+  return (
+    <div className="swipeable-drawer__header-content">
+      {title}
+
+      <div className="swipeable-drawer__header-actions">
+        {actions}
+
+        <Button icon={ICONS.REMOVE} iconSize={16} onClick={toggleDrawer} />
+      </div>
+    </div>
+  );
+};

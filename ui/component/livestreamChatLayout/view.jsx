@@ -16,6 +16,7 @@ import React from 'react';
 import Spinner from 'component/spinner';
 import Yrbl from 'component/yrbl';
 import { getTipValues } from 'util/livestream';
+import Slide from '@mui/material/Slide';
 
 const VIEW_MODES = {
   CHAT: 'chat',
@@ -248,31 +249,50 @@ export default function LivestreamChatLayout(props: Props) {
 
       <div ref={commentsRef} className="livestreamComments__wrapper">
         <div className="livestream-comments__top-actions">
-          {viewMode === VIEW_MODES.CHAT && superChatsByAmount && !superchatsHidden && (
-            <LivestreamSuperchats superChats={superChatsByAmount} toggleSuperChat={toggleSuperChat} />
+          {isMobile && (showPinned || !superchatsHidden) && <div className="livestream__top-gradient" />}
+          {viewMode === VIEW_MODES.CHAT && superChatsByAmount && (
+            <LivestreamSuperchats
+              superChats={superChatsByAmount}
+              toggleSuperChat={toggleSuperChat}
+              superchatsHidden={superchatsHidden}
+            />
           )}
 
-          {pinnedComment && showPinned && viewMode === VIEW_MODES.CHAT && (
-            <div className="livestreamPinned__wrapper">
-              <LivestreamComment
-                comment={pinnedComment}
-                key={pinnedComment.comment_id}
-                uri={uri}
-                pushMention={setMention}
-                handleDismissPin={() => setShowPinned(false)}
-              />
+          {pinnedComment &&
+            viewMode === VIEW_MODES.CHAT &&
+            (isMobile ? (
+              <Slide direction="left" in={showPinned} mountOnEnter unmountOnExit>
+                <div className="livestream-pinned__wrapper">
+                  <LivestreamComment
+                    comment={pinnedComment}
+                    key={pinnedComment.comment_id}
+                    uri={uri}
+                    pushMention={setMention}
+                    handleDismissPin={() => setShowPinned(false)}
+                  />
+                </div>
+              </Slide>
+            ) : (
+              showPinned && (
+                <div className="livestream-pinned__wrapper">
+                  <LivestreamComment
+                    comment={pinnedComment}
+                    key={pinnedComment.comment_id}
+                    uri={uri}
+                    pushMention={setMention}
+                    handleDismissPin={() => setShowPinned(false)}
+                  />
 
-              {!isMobile && (
-                <Button
-                  title={__('Dismiss pinned comment')}
-                  button="inverse"
-                  className="close-button"
-                  onClick={() => setShowPinned(false)}
-                  icon={ICONS.REMOVE}
-                />
-              )}
-            </div>
-          )}
+                  <Button
+                    title={__('Dismiss pinned comment')}
+                    button="inverse"
+                    className="close-button"
+                    onClick={() => setShowPinned(false)}
+                    icon={ICONS.REMOVE}
+                  />
+                </div>
+              )
+            ))}
         </div>
 
         {viewMode === VIEW_MODES.SUPERCHAT && resolvingSuperChats ? (

@@ -43,11 +43,11 @@ $recent-msg-button__height: 2rem;
     height: 95vh !important;
   }
 
-  .livestreamSuperchats__wrapper {
+  .livestream-superchats__wrapper {
     width: 100%;
   }
 
-  .livestreamPinned__wrapper {
+  .livestream-pinned__wrapper {
     width: 100%;
   }
 }
@@ -168,7 +168,7 @@ $recent-msg-button__height: 2rem;
   }
 }
 
-.livestreamSuperchats__wrapper {
+.livestream-superchats__wrapper {
   flex-shrink: 0;
   position: relative;
   overflow-x: scroll;
@@ -207,10 +207,28 @@ $recent-msg-button__height: 2rem;
     > div:not(:first-child) {
       margin-top: var(--spacing-xxs);
     }
+
+    .livestream__top-gradient {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+
+      &:after {
+        position: absolute;
+        bottom: 0;
+        opacity: 1;
+        content: '';
+        height: 100%;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background: linear-gradient(180deg, var(--color-gray-2) 0, transparent 65%);
+      }
+    }
   }
 }
 
-.livestreamPinned__wrapper {
+.livestream-pinned__wrapper {
   display: flex;
   flex-shrink: 0;
   position: relative;
@@ -288,7 +306,7 @@ $recent-msg-button__height: 2rem;
   }
 }
 
-.livestreamSuperchats__inner {
+.livestream-superchats {
   display: flex;
 
   .close-button {
@@ -296,7 +314,7 @@ $recent-msg-button__height: 2rem;
   }
 }
 
-.livestream__superchat {
+.livestream-superchat {
   display: flex;
   margin-right: var(--spacing-xs);
   padding: var(--spacing-xxs);

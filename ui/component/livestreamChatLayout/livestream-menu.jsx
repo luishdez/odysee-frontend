@@ -42,19 +42,9 @@ export default function LivestreamMenu(props: Props) {
     }
   }
 
-  const MenuGlobalStyles = () => (
-    <Global
-      styles={{
-        ':root': {
-          '--live-timestamp-opacity': showTimestamps ? '0.5' : '0',
-        },
-      }}
-    />
-  );
-
   return (
     <>
-      <MenuGlobalStyles />
+      <MenuGlobalStyles showTimestamps={showTimestamps} />
 
       <Menu>
         <MenuButton className="menu__button">
@@ -103,3 +93,21 @@ export default function LivestreamMenu(props: Props) {
     </>
   );
 }
+
+type GlobalStylesProps = {
+  showTimestamps?: boolean,
+};
+
+const MenuGlobalStyles = (globalStylesProps: GlobalStylesProps) => {
+  const { showTimestamps } = globalStylesProps;
+
+  return (
+    <Global
+      styles={{
+        ':root': {
+          '--live-timestamp-opacity': showTimestamps ? '0.5' : '0',
+        },
+      }}
+    />
+  );
+};
