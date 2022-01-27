@@ -4,6 +4,7 @@ import 'scss/component/_livestream-comment.scss';
 import { getStickerUrl } from 'util/comments';
 import { Menu, MenuButton } from '@reach/menu-button';
 import { parseURI } from 'util/lbryURI';
+import { useIsMobile } from 'effects/use-screensize';
 import * as ICONS from 'constants/icons';
 import Button from 'component/button';
 import ChannelThumbnail from 'component/channelThumbnail';
@@ -43,6 +44,8 @@ export default function LivestreamComment(props: Props) {
     support_amount: supportAmount,
     timestamp,
   } = comment;
+
+  const isMobile = useIsMobile();
 
   const [hasUserMention, setUserMention] = React.useState(false);
 
@@ -121,25 +124,27 @@ export default function LivestreamComment(props: Props) {
         </div>
       </div>
 
-      <div className="livestreamComment__menu">
-        <Menu>
-          <MenuButton className="menu__button">
-            <Icon size={18} icon={ICONS.MORE_VERTICAL} />
-          </MenuButton>
+      {!isMobile && (
+        <div className="livestreamComment__menu">
+          <Menu>
+            <MenuButton className="menu__button">
+              <Icon size={18} icon={ICONS.MORE_VERTICAL} />
+            </MenuButton>
 
-          <CommentMenuList
-            uri={uri}
-            commentId={commentId}
-            authorUri={authorUri}
-            commentIsMine={commentIsMine}
-            isPinned={isPinned}
-            isTopLevel
-            disableEdit
-            disableRemove={comment.removed}
-            isLiveComment
-          />
-        </Menu>
-      </div>
+            <CommentMenuList
+              uri={uri}
+              commentId={commentId}
+              authorUri={authorUri}
+              commentIsMine={commentIsMine}
+              isPinned={isPinned}
+              isTopLevel
+              disableEdit
+              disableRemove={comment.removed}
+              isLiveComment
+            />
+          </Menu>
+        </div>
+      )}
     </li>
   );
 }

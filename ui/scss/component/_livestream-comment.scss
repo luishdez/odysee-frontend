@@ -30,6 +30,22 @@
   .channel-name {
     font-size: var(--font-xsmall);
   }
+
+  @media (max-width: $breakpoint-small) {
+    display: flex;
+    justify-content: space-between;
+
+    .livestreamComment__menu {
+      position: relative;
+      right: 0;
+      top: 0;
+    }
+
+    span,
+    p {
+      font-size: var(--font-xxsmall) !important;
+    }
+  }
 }
 
 .livestream__comment--mentioned {

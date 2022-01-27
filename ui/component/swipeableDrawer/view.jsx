@@ -5,6 +5,7 @@ import { Global } from '@emotion/react';
 import { grey } from '@mui/material/colors';
 // $FlowFixMe
 import Typography from '@mui/material/Typography';
+
 import { HEADER_HEIGHT_MOBILE } from 'component/fileRenderMobile/view';
 import { SwipeableDrawer as MUIDrawer } from '@mui/material';
 import * as ICONS from 'constants/icons';
@@ -20,20 +21,21 @@ type Props = {
   open: Boolean,
   theme: string,
   mobilePlayerDimensions?: { height: number },
-  title: string,
+  title: any,
   didInitialDisplay?: boolean,
+  actions?: any,
   toggleDrawer: () => void,
 };
 
 export default function SwipeableDrawer(props: Props) {
-  const { mobilePlayerDimensions, title, children, open, theme, didInitialDisplay, toggleDrawer } = props;
+  const { mobilePlayerDimensions, title, children, open, theme, didInitialDisplay, actions, toggleDrawer } = props;
 
   const [coverHeight, setCoverHeight] = React.useState();
 
   const videoHeight = coverHeight || (mobilePlayerDimensions ? mobilePlayerDimensions.height : 0);
 
   React.useEffect(() => {
-    if (open && !mobilePlayerDimensions) {
+    if (open && !mobilePlayerDimensions && !coverHeight) {
       const element = document.querySelector(`.file-page__video-container`);
 
       if (element) {
@@ -41,15 +43,15 @@ export default function SwipeableDrawer(props: Props) {
         setCoverHeight(rect.height);
       }
     }
-  }, [mobilePlayerDimensions, open]);
+  }, [coverHeight, mobilePlayerDimensions, open]);
 
-  const drawerGlobalStyles = (
+  const DrawerGlobalStyles = () => (
     <Global
       styles={{
         '.main-wrapper__inner--filepage': {
-          'padding-bottom': didInitialDisplay ? `${DRAWER_PULLER_HEIGHT}px !important` : 'inherit',
+          paddingBottom: didInitialDisplay ? `${DRAWER_PULLER_HEIGHT}px !important` : 'inherit',
           overflow: open ? 'hidden' : 'unset',
-          'max-height': open ? '100vh' : 'unset',
+          maxHeight: open ? '100vh' : 'unset',
         },
         '.MuiDrawer-root': {
           top: `calc(${HEADER_HEIGHT_MOBILE}px + ${videoHeight}px) !important`,
@@ -68,9 +70,21 @@ export default function SwipeableDrawer(props: Props) {
     <span className="swipeable-drawer__puller" style={{ backgroundColor: theme === 'light' ? grey[300] : grey[800] }} />
   );
 
+  const HeaderContents = () => (
+    <div className="swipeable-drawer__header-content">
+      {title}
+
+      <div className="swipeable-drawer__header-actions">
+        {actions}
+
+        <Button icon={ICONS.REMOVE} iconSize={16} onClick={toggleDrawer} />
+      </div>
+    </div>
+  );
+
   return (
     <>
-      {drawerGlobalStyles}
+      <DrawerGlobalStyles />
 
       <MUIDrawer
         anchor="bottom"
@@ -88,8 +102,8 @@ export default function SwipeableDrawer(props: Props) {
             {open ? (
               <>
                 <Puller />
-                <Typography sx={{ p: 1.5, color: 'var(--color-text)', display: 'flex' }}>{title}</Typography>
-                <Button button="close" icon={ICONS.REMOVE} onClick={toggleDrawer} />
+
+                <HeaderContents />
               </>
             ) : (
               <Portal>
