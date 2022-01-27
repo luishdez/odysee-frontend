@@ -113,7 +113,8 @@ export default function FileActions(props: Props) {
   }
 
   const repostButton = () =>
-    isMobile ? (
+    !isLivestreamClaim &&
+    (isMobile ? (
       <MenuItem className="comment__menu-option" onSelect={handleRepostClick}>
         <div className="menu__link">
           <Icon aria-hidden icon={ICONS.REPOST} />
@@ -133,7 +134,7 @@ export default function FileActions(props: Props) {
           onClick={handleRepostClick}
         />
       </Tooltip>
-    );
+    ));
 
   const myClaimButtons = () =>
     isMobile ? (
