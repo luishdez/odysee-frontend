@@ -215,21 +215,23 @@ export default function FilePage(props: Props) {
 
               {RENDER_MODES.FLOATING_MODES.includes(renderMode) && <FileTitleSection uri={uri} />}
 
-              {isMobile ? (
-                <>
-                  <SwipeableDrawer
-                    open={Boolean(showComments)}
-                    toggleDrawer={() => setShowComments(!showComments)}
-                    title={commentsListTitle}
-                  >
-                    {commentsListElement}
-                  </SwipeableDrawer>
+              <React.Suspense fallback={null}>
+                {isMobile ? (
+                  <>
+                    <SwipeableDrawer
+                      open={Boolean(showComments)}
+                      toggleDrawer={() => setShowComments(!showComments)}
+                      title={commentsListTitle}
+                    >
+                      {commentsListElement}
+                    </SwipeableDrawer>
 
-                  <DrawerExpandButton label={commentsListTitle} toggleDrawer={() => setShowComments(!showComments)} />
-                </>
-              ) : (
-                commentsListElement
-              )}
+                    <DrawerExpandButton label={commentsListTitle} toggleDrawer={() => setShowComments(!showComments)} />
+                  </>
+                ) : (
+                  commentsListElement
+                )}
+              </React.Suspense>
             </section>
 
             {!isMarkdown && videoTheaterMode && rightSideContent()}
