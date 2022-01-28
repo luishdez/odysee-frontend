@@ -381,14 +381,8 @@ reducers[ACTIONS.ADD_ODYSEE_MEMBERSHIP_DATA] = (state, action) => {
 };
 
 reducers[ACTIONS.ADD_CLAIMIDS_MEMBERSHIP_DATA] = (state, action) => {
-  let latestData = {};
-
-  if (state.odyseeMembershipsPerClaimIds) {
-    latestData = Object.assign(state.odyseeMembershipsPerClaimIds, action.data.response);
-  }
-
   return Object.assign({}, state, {
-    odyseeMembershipsPerClaimIds: latestData,
+    odyseeMembershipsPerClaimIds: action.data.response,
   });
 };
 
