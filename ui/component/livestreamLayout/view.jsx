@@ -1,4 +1,6 @@
 // @flow
+import 'scss/component/_swipeable-drawer.scss';
+
 import { lazyImport } from 'util/lazyImport';
 import { useIsMobile } from 'effects/use-screensize';
 import { Menu, MenuList, MenuButton, MenuItem } from '@reach/menu-button';
@@ -8,9 +10,9 @@ import React from 'react';
 import { PRIMARY_PLAYER_WRAPPER_CLASS } from 'page/file/view';
 import FileRenderInitiator from 'component/fileRenderInitiator';
 import LivestreamIframeRender from './iframe-render';
-import Button from 'component/button';
 import * as ICONS from 'constants/icons';
 import SwipeableDrawer from 'component/swipeableDrawer';
+import { DrawerExpandButton } from 'component/swipeableDrawer/view';
 import LivestreamMenu from 'component/livestreamChatLayout/livestream-menu';
 import Icon from 'component/common/icon';
 import CreditAmount from 'component/common/credit-amount';
@@ -131,17 +133,9 @@ export default function LivestreamLayout(props: Props) {
                 customViewMode={chatViewMode}
               />
             </SwipeableDrawer>
-          </React.Suspense>
-        )}
 
-        {isMobile && (
-          <Button
-            className="swipeable-drawer__expand-button"
-            label="Open Live Chat"
-            button="primary"
-            icon={ICONS.CHAT}
-            onClick={() => setShowChat(!showChat)}
-          />
+            <DrawerExpandButton label={__('Open Live Chat')} toggleDrawer={() => setShowChat(!showChat)} />
+          </React.Suspense>
         )}
 
         <FileTitleSection uri={uri} livestream isLive={showLivestream} />
@@ -153,6 +147,10 @@ export default function LivestreamLayout(props: Props) {
 const ChatModeSelector = (chatSelectorProps: any) => {
   const { superChats, chatViewMode, setChatViewMode } = chatSelectorProps;
   const { superChatsFiatAmount, superChatsLBCAmount } = getTipValues(superChats);
+
+  if (!superChats) {
+    return __('Live Chat');
+  }
 
   return (
     <Menu>

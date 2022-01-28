@@ -1,4 +1,6 @@
 // @flow
+import 'scss/component/_swipeable-drawer.scss';
+
 // $FlowFixMe
 import { Global } from '@emotion/react';
 // $FlowFixMe
@@ -119,5 +121,24 @@ const HeaderContents = (headerProps: HeaderProps) => {
         <Button icon={ICONS.REMOVE} iconSize={16} onClick={toggleDrawer} />
       </div>
     </div>
+  );
+};
+
+type ExpandButtonProps = {
+  label: any,
+  toggleDrawer: () => void,
+};
+
+export const DrawerExpandButton = (expandButtonProps: ExpandButtonProps) => {
+  const { label, toggleDrawer } = expandButtonProps;
+
+  return (
+    <Button
+      className="swipeable-drawer__expand-button"
+      label={label}
+      button="primary"
+      icon={ICONS.CHAT}
+      onClick={toggleDrawer}
+    />
   );
 };

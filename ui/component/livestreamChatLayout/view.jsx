@@ -1,6 +1,11 @@
 // @flow
 import 'scss/component/_livestream-chat.scss';
 
+// $FlowFixMe
+import { Global } from '@emotion/react';
+// $FlowFixMe
+import { grey } from '@mui/material/colors';
+
 import { formatLbryUrlForWeb } from 'util/url';
 import { useIsMobile } from 'effects/use-screensize';
 import * as ICONS from 'constants/icons';
@@ -36,6 +41,7 @@ type Props = {
   hideHeader?: boolean,
   superchatsHidden?: boolean,
   customViewMode?: string,
+  theme: string,
   doCommentList: (string, string, number, number) => void,
   doResolveUris: (Array<string>, boolean) => void,
   doSuperChatList: (string) => void,
@@ -53,6 +59,7 @@ export default function LivestreamChatLayout(props: Props) {
     hideHeader,
     superchatsHidden,
     customViewMode,
+    theme,
     doCommentList,
     doResolveUris,
     doSuperChatList,
@@ -249,7 +256,10 @@ export default function LivestreamChatLayout(props: Props) {
 
       <div ref={commentsRef} className="livestreamComments__wrapper">
         <div className="livestream-comments__top-actions">
-          {isMobile && (showPinned || !superchatsHidden) && <div className="livestream__top-gradient" />}
+          {isMobile && ((pinnedComment && showPinned) || (superChatsByAmount && !superchatsHidden)) && (
+            <MobileDrawerTopGradient theme={theme} />
+          )}
+
           {viewMode === VIEW_MODES.CHAT && superChatsByAmount && (
             <LivestreamSuperchats
               superChats={superChatsByAmount}
@@ -328,3 +338,28 @@ export default function LivestreamChatLayout(props: Props) {
     </div>
   );
 }
+
+type GradientProps = {
+  theme: string,
+};
+
+const MobileDrawerTopGradient = (gradientProps: GradientProps) => {
+  const { theme } = gradientProps;
+
+  const DrawerGlobalStyles = () => (
+    <Global
+      styles={{
+        '.livestream__top-gradient::after': {
+          background: `linear-gradient(180deg, ${theme === 'light' ? grey[300] : grey[900]} 0, transparent 65%)`,
+        },
+      }}
+    />
+  );
+
+  return (
+    <>
+      <DrawerGlobalStyles />
+      <div className="livestream__top-gradient" />
+    </>
+  );
+};
