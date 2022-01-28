@@ -65,7 +65,7 @@ export default function LivestreamChatLayout(props: Props) {
     doSuperChatList,
   } = props;
 
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile() && !isPopoutWindow;
 
   const discussionElement = document.querySelector('.livestream__comments');
 
@@ -233,6 +233,7 @@ export default function LivestreamChatLayout(props: Props) {
               isPopoutWindow={isPopoutWindow}
               hideChat={() => setChatHidden(true)}
               setPopoutWindow={(v) => setPopoutWindow(v)}
+              isMobile={isMobile}
             />
           </div>
 
@@ -255,7 +256,11 @@ export default function LivestreamChatLayout(props: Props) {
       )}
 
       <div ref={commentsRef} className="livestreamComments__wrapper">
-        <div className="livestream-comments__top-actions">
+        <div
+          className={classnames('livestream-comments__top-actions', {
+            'livestream-comments__top-actions--mobile': isMobile,
+          })}
+        >
           {isMobile && ((pinnedComment && showPinned) || (superChatsByAmount && !superchatsHidden)) && (
             <MobileDrawerTopGradient theme={theme} />
           )}
@@ -265,6 +270,7 @@ export default function LivestreamChatLayout(props: Props) {
               superChats={superChatsByAmount}
               toggleSuperChat={toggleSuperChat}
               superchatsHidden={superchatsHidden}
+              isMobile={isMobile}
             />
           )}
 
@@ -272,13 +278,14 @@ export default function LivestreamChatLayout(props: Props) {
             viewMode === VIEW_MODES.CHAT &&
             (isMobile ? (
               <Slide direction="left" in={showPinned} mountOnEnter unmountOnExit>
-                <div className="livestream-pinned__wrapper">
+                <div className="livestream-pinned__wrapper--mobile">
                   <LivestreamComment
                     comment={pinnedComment}
                     key={pinnedComment.comment_id}
                     uri={uri}
                     pushMention={setMention}
                     handleDismissPin={() => setShowPinned(false)}
+                    isMobile
                   />
                 </div>
               </Slide>
@@ -310,7 +317,12 @@ export default function LivestreamChatLayout(props: Props) {
             <Spinner />
           </div>
         ) : (
-          <LivestreamComments uri={uri} commentsToDisplay={commentsToDisplay} pushMention={setMention} />
+          <LivestreamComments
+            uri={uri}
+            commentsToDisplay={commentsToDisplay}
+            pushMention={setMention}
+            isMobile={isMobile}
+          />
         )}
 
         {scrollPos < 0 && (

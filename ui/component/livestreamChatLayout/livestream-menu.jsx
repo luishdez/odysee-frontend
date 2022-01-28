@@ -4,7 +4,6 @@ import { Global } from '@emotion/react';
 
 import { Menu, MenuButton, MenuList, MenuItem } from '@reach/menu-button';
 import { useHistory } from 'react-router-dom';
-import { useIsMobile } from 'effects/use-screensize';
 import usePersistedState from 'effects/use-persisted-state';
 import * as ICONS from 'constants/icons';
 import Icon from 'component/common/icon';
@@ -14,19 +13,26 @@ type Props = {
   isPopoutWindow?: boolean,
   superchatsHidden?: boolean,
   noSuperchats?: boolean,
+  isMobile?: boolean,
   hideChat?: () => void,
   setPopoutWindow?: (any) => void,
   toggleSuperchats?: () => void,
 };
 
 export default function LivestreamMenu(props: Props) {
-  const { isPopoutWindow, superchatsHidden, noSuperchats, hideChat, setPopoutWindow, toggleSuperchats } = props;
+  const {
+    isPopoutWindow,
+    superchatsHidden,
+    noSuperchats,
+    isMobile,
+    hideChat,
+    setPopoutWindow,
+    toggleSuperchats,
+  } = props;
 
   const {
     location: { pathname },
   } = useHistory();
-
-  const isMobile = useIsMobile();
 
   const [showTimestamps, setShowTimestamps] = usePersistedState('live-timestamps', false);
 

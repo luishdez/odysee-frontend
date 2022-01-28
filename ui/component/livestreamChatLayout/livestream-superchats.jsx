@@ -2,7 +2,6 @@
 import 'scss/component/_livestream-chat.scss';
 
 import { parseSticker, getStickerUrl } from 'util/comments';
-import { useIsMobile } from 'effects/use-screensize';
 import * as ICONS from 'constants/icons';
 import Button from 'component/button';
 import ChannelThumbnail from 'component/channelThumbnail';
@@ -17,11 +16,12 @@ import Slide from '@mui/material/Slide';
 type Props = {
   superChats: Array<Comment>,
   superchatsHidden?: boolean,
+  isMobile?: boolean,
   toggleSuperChat: () => void,
 };
 
 export default function LivestreamSuperchats(props: Props) {
-  const { superChats: superChatsByAmount, superchatsHidden, toggleSuperChat } = props;
+  const { superChats: superChatsByAmount, superchatsHidden, isMobile, toggleSuperChat } = props;
 
   const superChatTopTen = React.useMemo(() => {
     return superChatsByAmount ? superChatsByAmount.slice(0, 10) : superChatsByAmount;
@@ -32,8 +32,12 @@ export default function LivestreamSuperchats(props: Props) {
   const showMore = superChatTopTen && superChatsByAmount && superChatTopTen.length < superChatsByAmount.length;
 
   return !superChatTopTen ? null : (
-    <Slider superchatsHidden={superchatsHidden}>
-      <div className="livestream-superchats__wrapper">
+    <Slider isMobile={isMobile} superchatsHidden={superchatsHidden}>
+      <div
+        className={classnames('livestream-superchats__wrapper', {
+          'livestream-superchats__wrapper--mobile': isMobile,
+        })}
+      >
         <div className="livestream-superchats">
           {superChatTopTen.map((superChat: Comment) => {
             const { comment, comment_id, channel_url, support_amount, is_fiat } = superChat;
@@ -42,7 +46,11 @@ export default function LivestreamSuperchats(props: Props) {
 
             return (
               <Tooltip title={isSticker ? stickerImg : comment} key={comment_id}>
-                <div className="livestream-superchat">
+                <div
+                  className={classnames('livestream-superchat', {
+                    'livestream-superchat--mobile': isMobile,
+                  })}
+                >
                   <ChannelThumbnail uri={channel_url} xsmall />
 
                   <div
@@ -88,13 +96,12 @@ export default function LivestreamSuperchats(props: Props) {
 
 type SliderProps = {
   superchatsHidden?: boolean,
+  isMobile?: boolean,
   children: any,
 };
 
 const Slider = (sliderProps: SliderProps) => {
-  const { superchatsHidden, children } = sliderProps;
-
-  const isMobile = useIsMobile();
+  const { superchatsHidden, isMobile, children } = sliderProps;
 
   return isMobile ? (
     <Slide direction="left" in={!superchatsHidden} mountOnEnter unmountOnExit>

@@ -123,6 +123,7 @@ export default function LivestreamLayout(props: Props) {
                   noSuperchats={!superChats || superChats.length === 0}
                   superchatsHidden={superchatsHidden}
                   toggleSuperchats={() => setSuperchatsHidden(!superchatsHidden)}
+                  isMobile
                 />
               }
             >
