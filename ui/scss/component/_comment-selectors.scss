@@ -43,20 +43,21 @@
   }
 }
 
-.stickerSelector__list {
+.sticker-selector__main {
   display: flex;
 
-  .stickerSelector__listBody {
+  .sticker-selector__body {
     overflow-y: scroll;
     overflow-x: hidden;
     max-height: 25vh;
-    padding: var(--spacing-s);
 
-    .stickerSelector__listBody-rowItems {
+    .sticker-selector__items {
       display: flex;
       flex-wrap: wrap;
-      overflow-y: scroll;
-      overflow-x: hidden;
+
+      button:not(:last-child) {
+        margin-right: 4px;
+      }
 
       .button--file-action {
         width: 5.5rem;
@@ -89,6 +90,60 @@
           width: 3.5rem;
           height: 4rem;
         }
+      }
+    }
+  }
+
+  .navigation__wrapper {
+    .button__label {
+      margin: 0px;
+      font-size: var(--font-small);
+    }
+  }
+}
+
+.sticker-selector__row-title {
+  font-size: var(--font-small);
+  padding-left: var(--spacing-xxs);
+}
+
+.selector-menu--stickers {
+  overflow: hidden;
+  max-height: 25vh;
+}
+
+.selector-menu {
+  @media (min-width: $breakpoint-small) {
+    animation: menu-animate-in var(--animation-duration) var(--animation-style);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-m);
+  }
+
+  @media (max-width: $breakpoint-small) {
+    padding-top: var(--spacing-s);
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 25vh;
+  }
+}
+
+.emote-selector__items {
+  display: flex;
+  flex-wrap: wrap;
+
+  button {
+    margin: 0px;
+    padding: var(--spacing-xxs);
+
+    &:not(:last-child) {
+      margin-right: 4px;
+    }
+  }
+
+  .button--file-action {
+    .button__content {
+      span {
       }
     }
   }

@@ -14,10 +14,20 @@ type Props = {
   handleEmojis: () => any,
   handleTip: (isLBC: boolean) => void,
   handleSubmit: () => any,
+  handlePreventClick?: () => void,
 };
 
 const TextareaSuggestionsInput = (props: Props) => {
-  const { params, messageValue, inputRef, inputDefaultProps, handleEmojis, handleTip, handleSubmit } = props;
+  const {
+    params,
+    messageValue,
+    inputRef,
+    inputDefaultProps,
+    handleEmojis,
+    handleTip,
+    handleSubmit,
+    handlePreventClick,
+  } = props;
 
   const isMobile = useIsMobile();
 
@@ -26,7 +36,15 @@ const TextareaSuggestionsInput = (props: Props) => {
   const autocompleteProps = { InputProps, disabled, fullWidth, id, inputProps };
 
   if (isMobile) {
-    InputProps.startAdornment = <Button icon={ICONS.STICKER} onClick={handleEmojis} />;
+    InputProps.startAdornment = (
+      <Button
+        icon={ICONS.STICKER}
+        onClick={() => {
+          if (handlePreventClick) handlePreventClick();
+          handleEmojis();
+        }}
+      />
+    );
     InputProps.endAdornment = (
       <>
         <Button icon={ICONS.LBC} onClick={() => handleTip(true)} />

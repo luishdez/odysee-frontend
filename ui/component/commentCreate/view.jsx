@@ -17,7 +17,7 @@ import Button from 'component/button';
 import ChannelThumbnail from 'component/channelThumbnail';
 import classnames from 'classnames';
 import CreditAmount from 'component/common/credit-amount';
-import EmoteSelector from './emote-selector';
+import CommentSelectors from './comment-selectors';
 import Empty from 'component/common/empty';
 import FilePrice from 'component/filePrice';
 import I18nMessage from 'component/i18nMessage';
@@ -25,7 +25,6 @@ import Icon from 'component/common/icon';
 import OptimizedImage from 'component/optimizedImage';
 import React from 'react';
 import SelectChannel from 'component/selectChannel';
-import StickerSelector from './sticker-selector';
 import type { ElementRef } from 'react';
 import UriIndicator from 'component/uriIndicator';
 import usePersistedState from 'effects/use-persisted-state';
@@ -127,7 +126,6 @@ export function CommentCreate(props: Props) {
   const [activeTab, setActiveTab] = React.useState();
   const [tipError, setTipError] = React.useState();
   const [deletedComment, setDeletedComment] = React.useState(false);
-  const [showEmotes, setShowEmotes] = React.useState(false);
   const [disableReviewButton, setDisableReviewButton] = React.useState();
   const [exchangeRate, setExchangeRate] = React.useState();
   const [canReceiveFiatTip, setCanReceiveFiatTip] = React.useState(undefined);
@@ -266,7 +264,6 @@ export function CommentCreate(props: Props) {
   function handleCreateComment(txid, payment_intent_id, environment) {
     if (isSubmitting || disableInput) return;
 
-    setShowEmotes(false);
     setSubmitting(true);
 
     const stickerValue = selectedSticker && buildValidSticker(selectedSticker.name);
@@ -422,6 +419,16 @@ export function CommentCreate(props: Props) {
     );
   }
 
+  const commentSelectorsProps = {
+    commentValue,
+    pushEmote: (emote) => {
+      setCommentValue(emote);
+      formFieldRef.current.input.current.focus();
+    },
+    onStickerSelect: (sticker) => handleSelectSticker(sticker),
+    claimIsMine,
+  };
+
   return (
     <Form
       onSubmit={() => {}}
@@ -432,9 +439,7 @@ export function CommentCreate(props: Props) {
       })}
     >
       {/* Input Box/Preview Box */}
-      {stickerSelector ? (
-        <StickerSelector onSelect={(sticker) => handleSelectSticker(sticker)} claimIsMine={claimIsMine} />
-      ) : isReviewingStickerComment && activeChannelClaim && selectedSticker ? (
+      {isReviewingStickerComment && activeChannelClaim && selectedSticker ? (
         <div className="commentCreate__stickerPreview">
           <div className="commentCreate__stickerPreviewInfo">
             <ChannelThumbnail xsmall uri={activeChannelClaim.canonical_url} />
@@ -469,13 +474,7 @@ export function CommentCreate(props: Props) {
         </div>
       ) : (
         <>
-          {showEmotes && (
-            <EmoteSelector
-              commentValue={commentValue}
-              setCommentValue={setCommentValue}
-              closeSelector={() => setShowEmotes(false)}
-            />
-          )}
+          {!isMobile && <CommentSelectors {...commentSelectorsProps} />}
 
           <FormField
             autoFocus={isReply}
@@ -493,7 +492,6 @@ export function CommentCreate(props: Props) {
             }
             name={isReply ? 'create__reply' : 'create__comment'}
             onChange={(e) => setCommentValue(SIMPLE_SITE || !advancedEditor || isReply ? e.target.value : e)}
-            openEmoteMenu={() => setShowEmotes(!showEmotes)}
             handleTip={(isLBC) =>
               doOpenModal(MODALS.SEND_TIP, {
                 uri,
@@ -507,6 +505,8 @@ export function CommentCreate(props: Props) {
             }
             handleSubmit={handleCreateComment}
             noEmojis={isMobile}
+            slimInput={isMobile}
+            commentSelectorsProps={commentSelectorsProps}
             placeholder={__('Say something about this...')}
             quickActionHandler={!SIMPLE_SITE ? () => setAdvancedEditor(!advancedEditor) : undefined}
             quickActionLabel={

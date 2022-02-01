@@ -3,13 +3,14 @@ import 'easymde/dist/easymde.min.css';
 import { FF_MAX_CHARS_DEFAULT } from 'constants/form-field';
 import { openEditorMenu, stopContextMenu } from 'util/context-menu';
 import { lazyImport } from 'util/lazyImport';
-import * as ICONS from 'constants/icons';
 import Button from 'component/button';
 import MarkdownPreview from 'component/common/markdown-preview';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import SimpleMDE from 'react-simplemde-editor';
 import type { ElementRef, Node } from 'react';
+import Drawer from '@mui/material/Drawer';
+import CommentSelectors from 'component/commentCreate/comment-selectors';
 
 // prettier-ignore
 const TextareaWithSuggestions = lazyImport(() => import('component/textareaWithSuggestions' /* webpackChunkName: "suggestions" */));
@@ -44,8 +45,10 @@ type Props = {
   textAreaMaxLength?: number,
   type?: string,
   value?: string | number,
+  slimInput?: boolean,
+  commentSelectorsProps?: any,
+  handleSelectSticker: (any) => any,
   onChange?: (any) => any,
-  openEmoteMenu?: () => void,
   quickActionHandler?: (any) => any,
   render?: () => React$Node,
   handleTip?: (isLBC: boolean) => any,
@@ -60,6 +63,11 @@ export class FormField extends React.PureComponent<Props> {
   constructor(props: Props) {
     super(props);
     this.input = React.createRef();
+
+    this.state = {
+      drawerOpen: false,
+      commentSelectorOpen: false,
+    };
   }
 
   componentDidMount() {
@@ -92,13 +100,47 @@ export class FormField extends React.PureComponent<Props> {
       stretch,
       textAreaMaxLength,
       type,
-      openEmoteMenu,
+      slimInput,
+      commentSelectorsProps,
+      handleSelectSticker,
       quickActionHandler,
       render,
       handleTip,
       handleSubmit,
       ...inputProps
     } = this.props;
+
+    const textareaWithSuggestionsProps = {
+      uri,
+      type,
+      id: name,
+      maxLength: textAreaMaxLength || FF_MAX_CHARS_DEFAULT,
+      inputRef: this.input,
+      isLivestream,
+      handleEmojis: () => this.setState({ commentSelectorOpen: !this.state.commentSelectorOpen }),
+      handleTip,
+      handleSubmit,
+      ...inputProps,
+    };
+
+    if (slimInput) {
+      return (
+        <SlimInputWrapper
+          isDrawerOpen={this.state.drawerOpen}
+          toggleDrawer={() => this.setState({ drawerOpen: !this.state.drawerOpen })}
+          closeSelector={() => this.setState({ commentSelectorOpen: !this.state.commentSelectorOpen })}
+          label={label}
+          commentSelectorsProps={commentSelectorsProps}
+          emojisOpen={this.state.commentSelectorOpen}
+        >
+          <TextareaWithSuggestions
+            {...textareaWithSuggestionsProps}
+            handlePreventClick={!this.state.drawerOpen ? () => this.setState({ drawerOpen: true }) : undefined}
+            autoFocus={this.state.drawerOpen}
+          />
+        </SlimInputWrapper>
+      );
+    }
 
     const errorMessage = typeof error === 'object' ? error.message : error;
 
@@ -257,32 +299,8 @@ export class FormField extends React.PureComponent<Props> {
                 />
               ) : (
                 <React.Suspense fallback={null}>
-                  <TextareaWithSuggestions
-                    uri={uri}
-                    type={type}
-                    id={name}
-                    maxLength={textAreaMaxLength || FF_MAX_CHARS_DEFAULT}
-                    inputRef={this.input}
-                    isLivestream={isLivestream}
-                    handleEmojis={openEmoteMenu}
-                    handleTip={handleTip}
-                    handleSubmit={handleSubmit}
-                    {...inputProps}
-                  />
+                  <TextareaWithSuggestions {...textareaWithSuggestionsProps} />
                 </React.Suspense>
-              )}
-
-              {!noEmojis && openEmoteMenu && (
-                <div className="form-field__textarea-info">
-                  <Button
-                    type="alt"
-                    className="button--file-action"
-                    title="Emotes"
-                    onClick={openEmoteMenu}
-                    icon={ICONS.EMOJI}
-                    iconSize={20}
-                  />
-                </div>
               )}
             </fieldset-section>
           );
@@ -321,3 +339,44 @@ export class FormField extends React.PureComponent<Props> {
 }
 
 export default FormField;
+
+type SlimInputProps = {
+  label?: any,
+  children: Node,
+  isDrawerOpen: boolean,
+  emojisOpen: boolean,
+  commentSelectorsProps?: any,
+  toggleDrawer: () => void,
+  closeSelector: () => void,
+};
+
+function SlimInputWrapper(slimInputProps: SlimInputProps) {
+  const {
+    children,
+    label,
+    isDrawerOpen,
+    commentSelectorsProps,
+    emojisOpen,
+    toggleDrawer,
+    closeSelector,
+  } = slimInputProps;
+
+  function handleCloseAll() {
+    toggleDrawer();
+    closeSelector();
+  }
+
+  return !isDrawerOpen ? (
+    <div role="button" onClick={toggleDrawer}>
+      {children}
+    </div>
+  ) : (
+    <Drawer anchor="bottom" open onClose={handleCloseAll}>
+      {label}
+
+      {children}
+
+      {emojisOpen && <CommentSelectors closeSelector={closeSelector} {...commentSelectorsProps} />}
+    </Drawer>
+  );
+}

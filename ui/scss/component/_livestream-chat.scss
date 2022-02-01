@@ -150,7 +150,7 @@ $recent-msg-button__height: 2rem;
   margin-top: auto;
 
   @media (max-width: $breakpoint-small) {
-    padding: var(--spacing-xxs);
+    padding: 0px;
 
     span,
     select,

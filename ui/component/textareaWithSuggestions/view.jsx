@@ -56,6 +56,7 @@ type Props = {
   type?: string,
   uri?: string,
   value: any,
+  autoFocus?: boolean,
   doResolveUris: (uris: Array<string>, cache: boolean) => void,
   doSetMentionSearchResults: (query: string, uris: Array<string>) => void,
   onBlur: (any) => any,
@@ -64,6 +65,7 @@ type Props = {
   handleEmojis: () => any,
   handleTip: (isLBC: boolean) => any,
   handleSubmit: () => any,
+  handlePreventClick?: () => void,
 };
 
 export default function TextareaWithSuggestions(props: Props) {
@@ -85,6 +87,7 @@ export default function TextareaWithSuggestions(props: Props) {
     searchQuery,
     type,
     value: messageValue,
+    autoFocus,
     doResolveUris,
     doSetMentionSearchResults,
     onBlur,
@@ -93,6 +96,7 @@ export default function TextareaWithSuggestions(props: Props) {
     handleEmojis,
     handleTip,
     handleSubmit,
+    handlePreventClick,
   } = props;
 
   const inputDefaultProps = { className, placeholder, maxLength, type, disabled };
@@ -291,6 +295,13 @@ export default function TextareaWithSuggestions(props: Props) {
   /** ------- **/
 
   React.useEffect(() => {
+    if (!autoFocus) return;
+
+    const inputElement = inputRef && inputRef.current;
+    if (inputElement) inputElement.focus();
+  }, [autoFocus, inputRef]);
+
+  React.useEffect(() => {
     if (!isMention) return;
 
     if (isTyping && suggestionTerm && !invalidTerm) {
@@ -403,6 +414,7 @@ export default function TextareaWithSuggestions(props: Props) {
           handleEmojis={handleEmojis}
           handleTip={handleTip}
           handleSubmit={handleSubmit}
+          handlePreventClick={handlePreventClick}
         />
       )}
       renderOption={(optionProps, option) => (
