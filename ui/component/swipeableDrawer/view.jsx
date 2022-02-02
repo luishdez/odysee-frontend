@@ -64,7 +64,6 @@ export default function SwipeableDrawer(props: Props) {
         disableEnforceFocus
         disablePortal
         disableSwipeToOpen
-        ModalProps={{ keepMounted: true }}
       >
         {open && (
           <div className="swipeable-drawer__header" style={{ top: -DRAWER_PULLER_HEIGHT }}>

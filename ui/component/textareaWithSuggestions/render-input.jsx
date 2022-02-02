@@ -11,13 +11,23 @@ type Props = {
   messageValue: string,
   inputDefaultProps: any,
   inputRef: any,
-  handleEmojis: () => any,
+  toggleSelectors: () => any,
   handleTip: (isLBC: boolean) => void,
   handleSubmit: () => any,
+  handlePreventClick?: () => void,
 };
 
 const TextareaSuggestionsInput = (props: Props) => {
-  const { params, messageValue, inputRef, inputDefaultProps, handleEmojis, handleTip, handleSubmit } = props;
+  const {
+    params,
+    messageValue,
+    inputRef,
+    inputDefaultProps,
+    toggleSelectors,
+    handleTip,
+    handleSubmit,
+    handlePreventClick,
+  } = props;
 
   const isMobile = useIsMobile();
 
@@ -26,11 +36,19 @@ const TextareaSuggestionsInput = (props: Props) => {
   const autocompleteProps = { InputProps, disabled, fullWidth, id, inputProps };
 
   if (isMobile) {
-    InputProps.startAdornment = <Button icon={ICONS.STICKER} onClick={handleEmojis} />;
+    InputProps.startAdornment = (
+      <Button
+        icon={ICONS.STICKER}
+        onClick={() => {
+          if (handlePreventClick) handlePreventClick();
+          toggleSelectors();
+        }}
+      />
+    );
     InputProps.endAdornment = (
       <>
-        <Button icon={ICONS.LBC} onClick={() => handleTip(true)} />
-        <Button icon={ICONS.FINANCE} onClick={() => handleTip(false)} />
+        <Button disabled={messageValue.length === 0} icon={ICONS.LBC} onClick={() => handleTip(true)} />
+        <Button disabled={messageValue.length === 0} icon={ICONS.FINANCE} onClick={() => handleTip(false)} />
 
         <Zoom in={messageValue && messageValue.length > 0} mountOnEnter unmountOnExit>
           <div>
