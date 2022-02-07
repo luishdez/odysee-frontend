@@ -19,6 +19,7 @@ import { formatLbryUrlForWeb } from 'util/url';
 import Yrbl from 'component/yrbl';
 import { SEARCH_OPTIONS } from 'constants/search';
 import Spinner from 'component/spinner';
+import { escapeHtmlProperty } from 'util/web';
 
 const LBRY_PROTOCOL = 'lbry://';
 const WEB_DEV_PREFIX = `${URL_DEV}/`;
@@ -75,7 +76,7 @@ export default function WunderBarSuggestions(props: Props) {
     location: { search },
   } = useHistory();
   const urlParams = new URLSearchParams(search);
-  const queryFromUrl = urlParams.get('q') || '';
+  const queryFromUrl = escapeHtmlProperty(urlParams.get('q')) || '';
   const [term, setTerm] = React.useState(queryFromUrl);
   const [debouncedTerm, setDebouncedTerm] = React.useState('');
   const searchSize = isMobile ? 20 : 5;

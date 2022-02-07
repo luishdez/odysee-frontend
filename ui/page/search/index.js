@@ -10,13 +10,14 @@ import {
 import { selectShowMatureContent } from 'redux/selectors/settings';
 import { selectUserVerifiedEmail } from 'redux/selectors/user';
 import { getSearchQueryString } from 'util/query-params';
+import { escapeHtmlProperty } from 'util/web';
 import SearchPage from './view';
 
 const select = (state, props) => {
   const showMature = selectShowMatureContent(state);
   const urlParams = new URLSearchParams(props.location.search);
 
-  let urlQuery = urlParams.get('q') || null;
+  let urlQuery = escapeHtmlProperty(urlParams.get('q')) || null;
   if (urlQuery) {
     urlQuery = urlQuery.replace(/^lbry:\/\//i, '').replace(/\//, ' ');
   }
