@@ -227,7 +227,7 @@ $control-bar-icon-size: 0.8rem;
 }
 
 // larger than default spinner for all but smallest devices
-@media (min-width:680px) {
+@media (min-width: 680px) {
   .vjs-loading-spinner {
     border-radius: 100px;
     height: 75px;
@@ -239,4 +239,14 @@ $control-bar-icon-size: 0.8rem;
 // TODO: make sure there's no bad side effects of this
 button.vjs-big-play-button {
   display: none !important;
+}
+.livestreamPlayer {
+  .vjs-current-time,
+  .vjs-duration,
+  .vjs-time-divider,
+  .vjs-button--theater-mode,
+  .vjs-quality-selector,
+  .vjs-button--autoplay-next {
+    display: none !important;
+  }
 }
