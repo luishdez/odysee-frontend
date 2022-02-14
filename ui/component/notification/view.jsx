@@ -21,6 +21,7 @@ import NotificationContentChannelMenu from 'component/notificationContentChannel
 import OptimizedImage from 'component/optimizedImage';
 import React from 'react';
 import UriIndicator from 'component/uriIndicator';
+import { generateNotificationTitle } from './helpers';
 
 const CommentCreate = lazyImport(() => import('component/commentCreate' /* webpackChunkName: "comments" */));
 const CommentReactions = lazyImport(() => import('component/commentReactions' /* webpackChunkName: "comments" */));
@@ -106,28 +107,6 @@ export default function Notification(props: Props) {
     } catch (e) {}
   }
 
-  const notificationTitle = notification_parameters.device.title;
-  const titleSplit = notificationTitle.split(' ');
-  let fullTitle = [' '];
-  let uriIndicator;
-  const title = titleSplit.map((message, index) => {
-    if (channelName === message) {
-      uriIndicator = <UriIndicator uri={channelUrl} link channelInfo={{ uri: channelUrl, name: channelName }} />;
-      fullTitle.push(' ');
-      const resultTitle = fullTitle;
-      fullTitle = [' '];
-
-      return [resultTitle.join(' '), uriIndicator];
-    } else {
-      fullTitle.push(message);
-
-      if (index === titleSplit.length - 1) {
-        const result = fullTitle.join(' ');
-        return <LbcMessage key={result}>{result}</LbcMessage>;
-      }
-    }
-  });
-
   try {
     const { isChannel } = parseURI(notificationTarget);
     if (isChannel) urlParams.append(PAGE_VIEW_QUERY, DISCUSSION_PAGE);
@@ -184,8 +163,9 @@ export default function Notification(props: Props) {
         <div className="notificationContent__wrapper">
           <div className="notification__content">
             <div className="notificationText__wrapper">
-              <div className="notification__title">{title}</div>
-
+              <div className="notification__title">
+                {generateNotificationTitle(notification_rule, notification_parameters, channelName)}
+              </div>
               {!commentText ? (
                 <div
                   title={notification_parameters.device.text.replace(/\sLBC/g, ' Credits')}
