@@ -17,7 +17,7 @@ import { makeSelectPublishFormValue, selectPublishFormValues, selectMyClaimForUr
 import { doError } from 'redux/actions/notifications';
 import { push } from 'connected-react-router';
 import analytics from 'analytics';
-import { doOpenModal } from 'redux/actions/app';
+import { doOpenModal, doSetIncognito, doSetActiveChannel } from 'redux/actions/app';
 import { CC_LICENSES, COPYRIGHT, OTHER, NONE, PUBLIC_DOMAIN } from 'constants/licenses';
 import { IMG_CDN_PUBLISH_URL, IMG_CDN_STATUS_URL } from 'constants/cdn_urls';
 import * as THUMBNAIL_STATUSES from 'constants/thumbnail_upload_statuses';
@@ -477,12 +477,6 @@ export const doUploadThumbnail = (
         }
 
         const userInput = [fileName, fileExt, fileType, thumbnail, size];
-        if (size >= THUMBNAIL_CDN_SIZE_LIMIT_BYTES) {
-          message = __('Thumbnail size over %max_size%MB, please edit and reupload.', {
-            max_size: THUMBNAIL_CDN_SIZE_LIMIT_BYTES / (1024 * 1024),
-          });
-        }
-
         uploadError({ message, cause: `${userInput.join(' | ')}` });
       });
   };
@@ -521,6 +515,12 @@ export const doUploadThumbnail = (
       return null;
     }
 
+    if (size && size >= THUMBNAIL_CDN_SIZE_LIMIT_BYTES) {
+      const maxSizeMB = THUMBNAIL_CDN_SIZE_LIMIT_BYTES / (1024 * 1024);
+      uploadError(__('Thumbnail size over %max_size%MB, please edit and reupload.', { max_size: maxSizeMB }));
+      return;
+    }
+
     const data = new FormData();
     const file = thumbnailBlob || (thumbnail && new File([thumbnail], fileName, { type: fileType }));
     // $FlowFixMe
@@ -528,6 +528,19 @@ export const doUploadThumbnail = (
     data.append('upload', 'Upload');
     return doUpload(data);
   }
+};
+
+export const doEditForChannel = (publishData: any, uri: string, fileInfo: FileListItem, fs: any) => (
+  dispatch: Dispatch
+) => {
+  if (publishData.signing_channel) {
+    dispatch(doSetIncognito(false));
+    dispatch(doSetActiveChannel(publishData.signing_channel.claim_id));
+  } else {
+    dispatch(doSetIncognito(true));
+  }
+
+  dispatch(doPrepareEdit(publishData, uri, fileInfo, fs));
 };
 
 export const doPrepareEdit = (claim: StreamClaim, uri: string, fileInfo: FileListItem, fs: any) => (

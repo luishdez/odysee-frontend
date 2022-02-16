@@ -1,130 +1,149 @@
 // @flow
 import 'scss/component/_livestream-chat.scss';
 
-import { formatLbryUrlForWeb } from 'util/url';
-import { Menu, MenuButton, MenuList, MenuItem } from '@reach/menu-button';
-import { useHistory } from 'react-router-dom';
+// $FlowFixMe
+import { grey } from '@mui/material/colors';
+
 import { useIsMobile } from 'effects/use-screensize';
 import * as ICONS from 'constants/icons';
 import Button from 'component/button';
 import classnames from 'classnames';
 import CommentCreate from 'component/commentCreate';
 import CreditAmount from 'component/common/credit-amount';
-import Icon from 'component/common/icon';
 import LivestreamComment from 'component/livestreamComment';
 import LivestreamComments from 'component/livestreamComments';
 import LivestreamSuperchats from './livestream-superchats';
+import LivestreamMenu from './livestream-menu';
 import React from 'react';
-import Spinner from 'component/spinner';
 import Yrbl from 'component/yrbl';
+import { getTipValues } from 'util/livestream';
+import Slide from '@mui/material/Slide';
 
-const IS_TIMESTAMP_VISIBLE = () =>
-  // $FlowFixMe
-  document.documentElement.style.getPropertyValue('--live-timestamp-opacity') === '0.5';
-
-const TOGGLE_TIMESTAMP_OPACITY = () =>
-  // $FlowFixMe
-  document.documentElement.style.setProperty('--live-timestamp-opacity', IS_TIMESTAMP_VISIBLE() ? '0' : '0.5');
-
-const VIEW_MODES = {
+export const VIEW_MODES = {
   CHAT: 'chat',
   SUPERCHAT: 'sc',
 };
 const COMMENT_SCROLL_TIMEOUT = 25;
-const LARGE_SUPER_CHAT_LIST_THRESHOLD = 20;
 
 type Props = {
-  claim: ?StreamClaim,
-  comments: Array<Comment>,
   embed?: boolean,
   isPopoutWindow?: boolean,
+  uri: string,
+  hideHeader?: boolean,
+  superchatsHidden?: boolean,
+  customViewMode?: string,
+  setCustomViewMode?: (any) => void,
+  // redux
+  claimId?: string,
+  comments: Array<Comment>,
   pinnedComments: Array<Comment>,
   superChats: Array<Comment>,
-  uri: string,
-  doCommentList: (string, string, number, number) => void,
-  doResolveUris: (Array<string>, boolean) => void,
-  doSuperChatList: (string) => void,
+  theme: string,
+  doCommentList: (uri: string, parentId: string, page: number, pageSize: number) => void,
+  doResolveUris: (uris: Array<string>, cache: boolean) => void,
+  doSuperChatList: (uri: string) => void,
 };
 
 export default function LivestreamChatLayout(props: Props) {
   const {
-    claim,
+    claimId,
     comments: commentsByChronologicalOrder,
     embed,
     isPopoutWindow,
     pinnedComments,
     superChats: superChatsByAmount,
     uri,
+    hideHeader,
+    superchatsHidden,
+    customViewMode,
+    theme,
+    setCustomViewMode,
     doCommentList,
     doResolveUris,
     doSuperChatList,
   } = props;
 
-  const {
-    location: { pathname },
-  } = useHistory();
+  const isMobile = useIsMobile() && !isPopoutWindow;
 
-  const isMobile = useIsMobile();
-
-  const discussionElement = document.querySelector('.livestream__comments');
-
-  const restoreScrollPos = React.useCallback(() => {
-    if (discussionElement) discussionElement.scrollTop = 0;
-  }, [discussionElement]);
-
-  const commentsRef = React.createRef();
+  const webElement = document.querySelector('.livestream__comments');
+  const mobileElement = document.querySelector('.livestream__comments--mobile');
+  const discussionElement = isMobile ? mobileElement : webElement;
+  const allCommentsElem = document.querySelectorAll('.livestream__comment');
+  const lastCommentElem = allCommentsElem && allCommentsElem[allCommentsElem.length - 1];
 
   const [viewMode, setViewMode] = React.useState(VIEW_MODES.CHAT);
   const [scrollPos, setScrollPos] = React.useState(0);
   const [showPinned, setShowPinned] = React.useState(true);
   const [resolvingSuperChats, setResolvingSuperChats] = React.useState(false);
-  const [mention, setMention] = React.useState();
   const [openedPopoutWindow, setPopoutWindow] = React.useState(undefined);
   const [chatHidden, setChatHidden] = React.useState(false);
+  const [didInitialScroll, setDidInitialScroll] = React.useState(false);
+  const [minScrollHeight, setMinScrollHeight] = React.useState(0);
+  const [keyboardOpened, setKeyboardOpened] = React.useState(false);
+  const [superchatsAmount, setSuperchatsAmount] = React.useState(false);
+  const [chatElement, setChatElement] = React.useState();
 
-  const quickMention =
-    mention && formatLbryUrlForWeb(mention).substring(1, formatLbryUrlForWeb(mention).indexOf(':') + 3);
-  const claimId = claim && claim.claim_id;
-  const commentsToDisplay = viewMode === VIEW_MODES.CHAT ? commentsByChronologicalOrder : superChatsByAmount;
+  let superChatsByChronologicalOrder = [];
+  if (superChatsByAmount) superChatsByAmount.forEach((chat) => superChatsByChronologicalOrder.push(chat));
+  if (superChatsByChronologicalOrder.length > 0) {
+    superChatsByChronologicalOrder.sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  const commentsToDisplay =
+    viewMode === VIEW_MODES.CHAT ? commentsByChronologicalOrder : superChatsByChronologicalOrder;
   const commentsLength = commentsToDisplay && commentsToDisplay.length;
   const pinnedComment = pinnedComments.length > 0 ? pinnedComments[0] : null;
+  const { superChatsChannelUrls, superChatsFiatAmount, superChatsLBCAmount } = getTipValues(
+    superChatsByChronologicalOrder
+  );
+  const scrolledPastRecent = Boolean(
+    (viewMode !== VIEW_MODES.SUPERCHAT || !resolvingSuperChats) &&
+      (!isMobile ? scrollPos < 0 : scrollPos < minScrollHeight)
+  );
 
-  let superChatsChannelUrls = [];
-  let superChatsFiatAmount = 0;
-  let superChatsLBCAmount = 0;
-  if (superChatsByAmount) {
-    superChatsByAmount.forEach((superChat) => {
-      const { is_fiat: isFiat, support_amount: tipAmount, channel_url: uri } = superChat;
+  const restoreScrollPos = React.useCallback(() => {
+    if (discussionElement) {
+      discussionElement.scrollTop = !isMobile ? 0 : discussionElement.scrollHeight;
 
-      if (isFiat) {
-        superChatsFiatAmount = superChatsFiatAmount + tipAmount;
-      } else {
-        superChatsLBCAmount = superChatsLBCAmount + tipAmount;
+      if (isMobile) {
+        const pos = lastCommentElem && discussionElement.scrollTop - lastCommentElem.getBoundingClientRect().height;
+
+        if (!minScrollHeight || minScrollHeight !== pos) {
+          setMinScrollHeight(pos);
+        }
       }
-      superChatsChannelUrls.push(uri || '0');
-    });
+    }
+  }, [discussionElement, isMobile, lastCommentElem, minScrollHeight]);
+
+  function toggleClick(toggleMode: string) {
+    if (toggleMode === VIEW_MODES.SUPERCHAT) {
+      toggleSuperChat();
+    } else {
+      setViewMode(VIEW_MODES.CHAT);
+    }
+
+    if (discussionElement) {
+      discussionElement.scrollTop = 0;
+    }
   }
 
   function toggleSuperChat() {
-    if (superChatsChannelUrls && superChatsChannelUrls.length > 0) {
-      doResolveUris(superChatsChannelUrls, true);
+    const hasNewSuperchats = !superchatsAmount || superChatsChannelUrls.length !== superchatsAmount;
 
-      if (superChatsByAmount.length > LARGE_SUPER_CHAT_LIST_THRESHOLD) {
-        setResolvingSuperChats(true);
-      }
+    if (superChatsChannelUrls && hasNewSuperchats) {
+      setSuperchatsAmount(superChatsChannelUrls.length);
+      doResolveUris(superChatsChannelUrls, false);
     }
+
     setViewMode(VIEW_MODES.SUPERCHAT);
+    if (setCustomViewMode) setCustomViewMode(VIEW_MODES.SUPERCHAT);
   }
 
-  function handlePopout() {
-    const newWindow = window.open('/$/popout' + pathname, 'Popout Chat', 'height=700,width=400');
-
-    // Add function to newWindow when closed (either manually or from button component)
-    newWindow.onbeforeunload = () => setPopoutWindow(undefined);
-
-    if (window.focus) newWindow.focus();
-    setPopoutWindow(newWindow);
-  }
+  React.useEffect(() => {
+    if (customViewMode && customViewMode !== viewMode) {
+      setViewMode(customViewMode);
+    }
+  }, [customViewMode, viewMode]);
 
   React.useEffect(() => {
     if (claimId) {
@@ -133,33 +152,51 @@ export default function LivestreamChatLayout(props: Props) {
     }
   }, [claimId, uri, doCommentList, doSuperChatList]);
 
+  React.useEffect(() => {
+    if (isMobile && !didInitialScroll) {
+      restoreScrollPos();
+      setDidInitialScroll(true);
+    }
+  }, [didInitialScroll, isMobile, restoreScrollPos, viewMode]);
+
+  React.useEffect(() => {
+    if (discussionElement && !openedPopoutWindow) setChatElement(discussionElement);
+  }, [discussionElement, openedPopoutWindow]);
+
   // Register scroll handler (TODO: Should throttle/debounce)
   React.useEffect(() => {
     function handleScroll() {
-      if (discussionElement) {
-        const scrollTop = discussionElement.scrollTop;
+      if (chatElement) {
+        const scrollTop = chatElement.scrollTop;
+
         if (scrollTop !== scrollPos) {
           setScrollPos(scrollTop);
         }
       }
     }
 
-    if (discussionElement) {
-      discussionElement.addEventListener('scroll', handleScroll);
-      return () => discussionElement.removeEventListener('scroll', handleScroll);
+    if (chatElement) {
+      chatElement.addEventListener('scroll', handleScroll);
+
+      return () => chatElement.removeEventListener('scroll', handleScroll);
     }
-  }, [discussionElement, scrollPos, viewMode]);
+  }, [chatElement, scrollPos]);
 
   // Retain scrollPos=0 when receiving new messages.
   React.useEffect(() => {
     if (discussionElement && commentsLength > 0) {
       // Only update comment scroll if the user hasn't scrolled up to view old comments
-      if (scrollPos >= 0) {
+      // $FlowFixMe
+      if (scrollPos && (!isMobile || minScrollHeight) && scrollPos >= minScrollHeight) {
         // +ve scrollPos: not scrolled (Usually, there'll be a few pixels beyond 0).
         // -ve scrollPos: user scrolled.
         const timer = setTimeout(() => {
           // Use a timer here to ensure we reset after the new comment has been rendered.
-          discussionElement.scrollTop = 0;
+          if (!isMobile) {
+            discussionElement.scrollTop = 0;
+          } else {
+            restoreScrollPos();
+          }
         }, COMMENT_SCROLL_TIMEOUT);
         return () => clearTimeout(timer);
       }
@@ -167,45 +204,19 @@ export default function LivestreamChatLayout(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commentsLength]); // (Just respond to 'commentsLength' updates and nothing else)
 
-  // Stop spinner for resolving superchats
+  // Restore Scroll Pos after mobile input opens keyboard and avoid scroll height conflicts
   React.useEffect(() => {
-    if (resolvingSuperChats) {
-      // The real solution to the sluggishness is to fix the claim store/selectors
-      // and to paginate the long superchat list. This serves as a band-aid,
-      // showing a spinner while we batch-resolve. The duration is just a rough
-      // estimate -- the lag will handle the remaining time.
+    if (keyboardOpened) {
       const timer = setTimeout(() => {
-        setResolvingSuperChats(false);
-        // Scroll to the top:
-        if (discussionElement) {
-          const divHeight = discussionElement.scrollHeight;
-          discussionElement.scrollTop = divHeight * -1;
-        }
-      }, 1000);
+        restoreScrollPos();
+        setKeyboardOpened(false);
+      }, 300);
+
       return () => clearTimeout(timer);
     }
-  }, [discussionElement, resolvingSuperChats]);
+  }, [keyboardOpened, restoreScrollPos]);
 
-  if (!claim) return null;
-
-  const chatContentToggle = (toggleMode: string, label: any) => (
-    <Button
-      className={classnames('button-toggle', { 'button-toggle--active': viewMode === toggleMode })}
-      label={label}
-      onClick={() => {
-        if (toggleMode === VIEW_MODES.SUPERCHAT) {
-          toggleSuperChat();
-        } else {
-          setViewMode(VIEW_MODES.CHAT);
-        }
-
-        if (discussionElement) {
-          const divHeight = discussionElement.scrollHeight;
-          discussionElement.scrollTop = toggleMode === VIEW_MODES.CHAT ? divHeight : divHeight * -1;
-        }
-      }}
-    />
-  );
+  if (!claimId) return null;
 
   if (openedPopoutWindow || chatHidden) {
     return (
@@ -232,7 +243,7 @@ export default function LivestreamChatLayout(props: Props) {
             />
           </div>
 
-          <div className="livestream__commentCreate">
+          <div className="livestream__comment-create">
             <CommentCreate isLivestream bottom uri={uri} disableInput />
           </div>
         </div>
@@ -240,117 +251,160 @@ export default function LivestreamChatLayout(props: Props) {
     );
   }
 
+  const toggleProps = { viewMode, onClick: (toggleMode) => toggleClick(toggleMode) };
+
   return (
     <div className={classnames('card livestream__chat', { 'livestream__chat--popout': isPopoutWindow })}>
-      <div className="card__header--between livestreamDiscussion__header">
-        <div className="card__title-section--small livestreamDiscussion__title">
-          {__('Live Chat')}
+      {!hideHeader && (
+        <div className="card__header--between livestreamDiscussion__header">
+          <div className="card__title-section--small livestreamDiscussion__title">
+            {__('Live Chat')}
 
-          <Menu>
-            <MenuButton className="menu__button">
-              <Icon size={18} icon={ICONS.SETTINGS} />
-            </MenuButton>
+            <LivestreamMenu
+              isPopoutWindow={isPopoutWindow}
+              hideChat={() => setChatHidden(true)}
+              setPopoutWindow={(v) => setPopoutWindow(v)}
+              isMobile={isMobile}
+            />
+          </div>
 
-            <MenuList className="menu__list">
-              <MenuItem className="comment__menu-option" onSelect={TOGGLE_TIMESTAMP_OPACITY}>
-                <span className="menu__link">
-                  <Icon aria-hidden icon={ICONS.TIME} />
-                  {__('Toggle Timestamps')}
-                </span>
-              </MenuItem>
+          {superChatsByChronologicalOrder && (
+            <div className="recommended-content__toggles">
+              {/* the superchats in chronological order button */}
+              <ChatContentToggle {...toggleProps} toggleMode={VIEW_MODES.CHAT} label={__('Chat')} />
 
-              <MenuItem className="comment__menu-option" onSelect={() => setChatHidden(true)}>
-                <span className="menu__link">
-                  <Icon aria-hidden icon={ICONS.EYE} />
-                  {__('Hide Chat')}
-                </span>
-              </MenuItem>
+              {/* the button to show superchats listed by most to least support amount */}
+              <ChatContentToggle
+                {...toggleProps}
+                toggleMode={VIEW_MODES.SUPERCHAT}
+                label={
+                  <>
+                    <CreditAmount amount={superChatsLBCAmount || 0} size={8} /> /&nbsp;
+                    <CreditAmount amount={superChatsFiatAmount || 0} size={8} isFiat /> {__('Tipped')}
+                  </>
+                }
+              />
+            </div>
+          )}
+        </div>
+      )}
 
-              {!isPopoutWindow && !isMobile && (
-                <>
-                  <MenuItem className="comment__menu-option" onSelect={handlePopout}>
-                    <span className="menu__link">
-                      <Icon aria-hidden icon={ICONS.EXTERNAL} />
-                      {__('Popout Chat')}
-                    </span>
-                  </MenuItem>
-                </>
-              )}
-            </MenuList>
-          </Menu>
+      <div className="livestreamComments__wrapper">
+        <div
+          className={classnames('livestream-comments__top-actions', {
+            'livestream-comments__top-actions--mobile': isMobile,
+          })}
+        >
+          {isMobile && ((pinnedComment && showPinned) || (superChatsByAmount && !superchatsHidden)) && (
+            <MobileDrawerTopGradient theme={theme} />
+          )}
+
+          {viewMode === VIEW_MODES.CHAT && superChatsByAmount && (
+            <LivestreamSuperchats
+              superChats={superChatsByAmount}
+              toggleSuperChat={toggleSuperChat}
+              superchatsHidden={superchatsHidden}
+              isMobile={isMobile}
+            />
+          )}
+
+          {pinnedComment &&
+            viewMode === VIEW_MODES.CHAT &&
+            (isMobile ? (
+              <Slide direction="left" in={showPinned} mountOnEnter unmountOnExit>
+                <div className="livestream-pinned__wrapper--mobile">
+                  <LivestreamComment
+                    comment={pinnedComment}
+                    key={pinnedComment.comment_id}
+                    uri={uri}
+                    handleDismissPin={() => setShowPinned(false)}
+                    isMobile
+                    setResolvingSuperChats={setResolvingSuperChats}
+                  />
+                </div>
+              </Slide>
+            ) : (
+              showPinned && (
+                <div className="livestream-pinned__wrapper">
+                  <LivestreamComment comment={pinnedComment} key={pinnedComment.comment_id} uri={uri} />
+
+                  <Button
+                    title={__('Dismiss pinned comment')}
+                    button="inverse"
+                    className="close-button"
+                    onClick={() => setShowPinned(false)}
+                    icon={ICONS.REMOVE}
+                  />
+                </div>
+              )
+            ))}
         </div>
 
-        {superChatsByAmount && (
-          <div className="recommended-content__toggles">
-            {/* the superchats in chronological order button */}
-            {chatContentToggle(VIEW_MODES.CHAT, __('Chat'))}
+        <LivestreamComments
+          uri={uri}
+          viewMode={viewMode}
+          comments={commentsToDisplay}
+          isMobile={isMobile}
+          restoreScrollPos={!scrolledPastRecent && isMobile && restoreScrollPos}
+        />
 
-            {/* the button to show superchats listed by most to least support amount */}
-            {chatContentToggle(
-              VIEW_MODES.SUPERCHAT,
-              <>
-                <CreditAmount amount={superChatsLBCAmount || 0} size={8} /> /
-                <CreditAmount amount={superChatsFiatAmount || 0} size={8} isFiat /> {__('Tipped')}
-              </>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div ref={commentsRef} className="livestreamComments__wrapper">
-        {viewMode === VIEW_MODES.CHAT && superChatsByAmount && (
-          <LivestreamSuperchats superChats={superChatsByAmount} toggleSuperChat={toggleSuperChat} />
-        )}
-
-        {pinnedComment && showPinned && viewMode === VIEW_MODES.CHAT && (
-          <div className="livestreamPinned__wrapper">
-            <LivestreamComment
-              comment={pinnedComment}
-              key={pinnedComment.comment_id}
-              uri={uri}
-              pushMention={setMention}
-            />
-
-            <Button
-              title={__('Dismiss pinned comment')}
-              button="inverse"
-              className="close-button"
-              onClick={() => setShowPinned(false)}
-              icon={ICONS.REMOVE}
-            />
-          </div>
-        )}
-
-        {viewMode === VIEW_MODES.SUPERCHAT && resolvingSuperChats ? (
-          <div className="main--empty">
-            <Spinner />
-          </div>
-        ) : (
-          <LivestreamComments uri={uri} commentsToDisplay={commentsToDisplay} pushMention={setMention} />
-        )}
-
-        {scrollPos < 0 && (
+        {scrolledPastRecent && (
           <Button
             button="secondary"
-            className="livestreamComments__scrollToRecent"
+            className="livestream-comments__scroll-to-recent"
             label={viewMode === VIEW_MODES.CHAT ? __('Recent Comments') : __('Recent Tips')}
             onClick={restoreScrollPos}
             iconRight={ICONS.DOWN}
           />
         )}
 
-        <div className="livestream__commentCreate">
+        <div className="livestream__comment-create">
           <CommentCreate
             isLivestream
             bottom
             embed={embed}
             uri={uri}
             onDoneReplying={restoreScrollPos}
-            pushedMention={quickMention}
-            setPushedMention={setMention}
+            onSlimInputClose={!scrolledPastRecent && isMobile ? () => setKeyboardOpened(true) : undefined}
           />
         </div>
       </div>
     </div>
   );
 }
+
+type ToggleProps = {
+  viewMode: string,
+  toggleMode: string,
+  label: string | any,
+  onClick: (string) => void,
+};
+
+const ChatContentToggle = (props: ToggleProps) => {
+  const { viewMode, toggleMode, label, onClick } = props;
+
+  return (
+    <Button
+      className={classnames('button-toggle', { 'button-toggle--active': viewMode === toggleMode })}
+      label={label}
+      onClick={() => onClick(toggleMode)}
+    />
+  );
+};
+
+type GradientProps = {
+  theme: string,
+};
+
+const MobileDrawerTopGradient = (gradientProps: GradientProps) => {
+  const { theme } = gradientProps;
+
+  return (
+    <div
+      style={{
+        background: `linear-gradient(180deg, ${theme === 'light' ? grey[300] : grey[900]} 0, transparent 65%)`,
+      }}
+      className="livestream__top-gradient"
+    />
+  );
+};

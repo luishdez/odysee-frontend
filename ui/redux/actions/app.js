@@ -466,7 +466,7 @@ export function doAnalyticsView(uri, timeToStart) {
     const state = getState();
     const claim = selectClaimForUri(state, uri);
     const { txid, nout, claim_id: claimId } = claim;
-    const claimIsMine = selectClaimIsMineForUri(state, claim);
+    const claimIsMine = selectClaimIsMineForUri(state, uri);
     const outpoint = `${txid}:${nout}`;
 
     if (claimIsMine) {
@@ -736,3 +736,8 @@ export function doSetIncognito(incognitoEnabled) {
     },
   };
 }
+
+export const doSetMobilePlayerDimensions = (height, width) => ({
+  type: ACTIONS.SET_MOBILE_PLAYER_DIMENSIONS,
+  data: { heightWidth: { height, width } },
+});

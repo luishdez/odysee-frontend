@@ -8,6 +8,7 @@ import classnames from 'classnames';
 import Button from 'component/button';
 import ChannelThumbnail from 'component/channelThumbnail';
 import { useHistory } from 'react-router';
+import { useIsMobile } from 'effects/use-screensize';
 
 type Props = {
   myReacts: Array<string>,
@@ -42,6 +43,8 @@ export default function CommentReactions(props: Props) {
     push,
     location: { pathname },
   } = useHistory();
+
+  const isMobile = useIsMobile();
 
   React.useEffect(() => {
     if (!claim) {
@@ -110,7 +113,8 @@ export default function CommentReactions(props: Props) {
         requiresAuth={IS_WEB}
         title={__('Upvote')}
         icon={likeIcon}
-        className={classnames('comment__action', {
+        iconSize={isMobile && 12}
+        className={classnames('comment__action button-like', {
           'comment__action--active': myReacts && myReacts.includes(REACTION_TYPES.LIKE),
         })}
         onClick={handleCommentLike}
@@ -120,7 +124,8 @@ export default function CommentReactions(props: Props) {
         requiresAuth={IS_WEB}
         title={__('Downvote')}
         icon={dislikeIcon}
-        className={classnames('comment__action', {
+        iconSize={isMobile && 12}
+        className={classnames('comment__action button-dislike', {
           'comment__action--active': myReacts && myReacts.includes(REACTION_TYPES.DISLIKE),
         })}
         onClick={handleCommentDislike}

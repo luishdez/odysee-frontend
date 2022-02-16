@@ -33,6 +33,7 @@ import ClaimPreviewHidden from './claim-preview-no-mature';
 import ClaimPreviewNoContent from './claim-preview-no-content';
 import { ENABLE_NO_SOURCE_CLAIMS } from 'config';
 import CollectionEditButtons from 'component/collectionEditButtons';
+import { useIsMobile } from 'effects/use-screensize';
 
 const AbandonedChannelPreview = lazyImport(() =>
   import('component/abandonedChannelPreview' /* webpackChunkName: "abandonedChannelPreview" */)
@@ -153,6 +154,8 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
     unavailableUris,
   } = props;
 
+  const isMobile = useIsMobile();
+
   const isCollection = claim && claim.value_type === 'collection';
   const collectionClaimId = isCollection && claim && claim.claim_id;
   const listId = collectionId || collectionClaimId;
@@ -172,11 +175,13 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
     const formattedSubCount = toCompactNotation(channelSubCount, lang, 10000);
     const formattedSubCountLocale = Number(channelSubCount).toLocaleString();
     return (
-      <Tooltip title={formattedSubCountLocale} followCursor placement="top">
-        <span className="claim-preview__channel-sub-count">
-          {channelSubCount === 1 ? __('1 Follower') : __('%formattedSubCount% Followers', { formattedSubCount })}
-        </span>
-      </Tooltip>
+      <div className="media__subtitle">
+        <Tooltip title={formattedSubCountLocale} followCursor placement="top">
+          <span className="claim-preview__channel-sub-count">
+            {channelSubCount === 1 ? __('1 Follower') : __('%formattedSubCount% Followers', { formattedSubCount })}
+          </span>
+        </Tooltip>
+      </div>
     );
   }, [channelSubCount]);
   const isValid = uri && isURIValid(uri, false);
@@ -402,9 +407,18 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
                   </NavLink>
                 )}
               </div>
-              <ClaimPreviewSubtitle uri={uri} type={type} />
-              {(pending || !!reflectingProgress) && <PublishPending uri={uri} />}
-              {channelSubscribers}
+              <div className="claim-tile__info" uri={uri}>
+                {!isChannelUri && signingChannel && (
+                  <div className="claim-preview__channel-staked">
+                    <UriIndicator focusable={false} uri={uri} link hideAnonymous>
+                      <ChannelThumbnail uri={signingChannel.permanent_url} xsmall />
+                    </UriIndicator>
+                  </div>
+                )}
+                <ClaimPreviewSubtitle uri={uri} type={type} />
+                {(pending || !!reflectingProgress) && <PublishPending uri={uri} />}
+                {channelSubscribers}
+              </div>
             </div>
             {type !== 'small' && (
               <div className="claim-preview__actions">
@@ -415,12 +429,6 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
                       actions
                     ) : (
                       <div className="claim-preview__primary-actions">
-                        {!isChannelUri && signingChannel && (
-                          <div className="claim-preview__channel-staked">
-                            <ChannelThumbnail uri={signingChannel.permanent_url} xsmall />
-                          </div>
-                        )}
-
                         {isChannelUri && !banState.muted && !claimIsMine && (
                           <SubscribeButton
                             uri={repostedChannelUri || (uri.startsWith('lbry://') ? uri : `lbry://${uri}`)}
@@ -434,13 +442,11 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
                 )}
                 {claim && (
                   <React.Fragment>
-                    {typeof properties === 'function' ? (
-                      properties(claim)
-                    ) : properties !== undefined ? (
-                      properties
-                    ) : (
-                      <ClaimTags uri={uri} type={type} />
-                    )}
+                    {typeof properties === 'function'
+                      ? properties(claim)
+                      : properties !== undefined
+                      ? properties
+                      : !isMobile && <ClaimTags uri={uri} type={type} />}
                   </React.Fragment>
                 )}
               </div>

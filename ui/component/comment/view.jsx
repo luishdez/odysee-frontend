@@ -29,21 +29,18 @@ import CreditAmount from 'component/common/credit-amount';
 import OptimizedImage from 'component/optimizedImage';
 import { getChannelFromClaim } from 'util/claim';
 import { parseSticker } from 'util/comments';
+import { useIsMobile } from 'effects/use-screensize';
 
 const AUTO_EXPAND_ALL_REPLIES = false;
 
 type Props = {
+  comment: Comment,
+  myChannelIds: ?Array<string>,
   clearPlayingUri: () => void,
   uri: string,
   claim: StreamClaim,
-  author: ?string, // LBRY Channel Name, e.g. @channel
-  authorUri: string, // full LBRY Channel URI: lbry://@channel#123...
-  commentId: string, // sha256 digest identifying the comment
-  message: string, // comment body
-  timePosted: number, // Comment timestamp
   channelIsBlocked: boolean, // if the channel is blacklisted in the app
   claimIsMine: boolean, // if you control the claim which this comment was posted on
-  commentIsMine: boolean, // if this comment was signed by an owned channel
   updateComment: (string, string) => void,
   fetchReplies: (string, string, number, number, number) => void,
   totalReplyPages: number,
@@ -56,7 +53,6 @@ type Props = {
   isTopLevel?: boolean,
   threadDepth: number,
   hideActions?: boolean,
-  isPinned: boolean,
   othersReacts: ?{
     like: number,
     dislike: number,
@@ -65,11 +61,6 @@ type Props = {
   activeChannelClaim: ?ChannelClaim,
   playingUri: ?PlayingUri,
   stakedLevel: number,
-  supportAmount: number,
-  numDirectReplies: number,
-  isModerator: boolean,
-  isGlobalMod: boolean,
-  isFiat: boolean,
   supportDisabled: boolean,
   setQuickReply: (any) => void,
   quickReply: any,
@@ -77,18 +68,14 @@ type Props = {
 
 const LENGTH_TO_COLLAPSE = 300;
 
-function Comment(props: Props) {
+function CommentView(props: Props) {
   const {
+    comment,
+    myChannelIds,
     clearPlayingUri,
     claim,
     uri,
-    author,
-    authorUri,
-    timePosted,
-    message,
     channelIsBlocked,
-    commentIsMine,
-    commentId,
     updateComment,
     fetchReplies,
     totalReplyPages,
@@ -100,19 +87,33 @@ function Comment(props: Props) {
     isTopLevel,
     threadDepth,
     hideActions,
-    isPinned,
     othersReacts,
     playingUri,
     stakedLevel,
-    supportAmount,
-    numDirectReplies,
-    isModerator,
-    isGlobalMod,
-    isFiat,
     supportDisabled,
     setQuickReply,
     quickReply,
   } = props;
+
+  const {
+    channel_url: authorUri,
+    channel_name: author,
+    channel_id: channelId,
+    comment_id: commentId,
+    comment: message,
+    is_fiat: isFiat,
+    is_global_mod: isGlobalMod,
+    is_moderator: isModerator,
+    is_pinned: isPinned,
+    support_amount: supportAmount,
+    replies: numDirectReplies,
+    timestamp,
+  } = comment;
+
+  const timePosted = timestamp * 1000;
+  const commentIsMine = channelId && myChannelIds && myChannelIds.includes(channelId);
+
+  const isMobile = useIsMobile();
 
   const {
     push,
@@ -210,17 +211,32 @@ function Comment(props: Props) {
     replace(`${pathname}?${urlParams.toString()}`);
   }
 
-  const linkedCommentRef = React.useCallback((node) => {
-    if (node !== null && window.pendingLinkedCommentScroll) {
-      const ROUGH_HEADER_HEIGHT = 125; // @see: --header-height
-      delete window.pendingLinkedCommentScroll;
-      window.scrollTo({
-        top: node.getBoundingClientRect().top + window.scrollY - ROUGH_HEADER_HEIGHT,
-        left: 0,
-        behavior: 'smooth',
-      });
-    }
-  }, []);
+  const linkedCommentRef = React.useCallback(
+    (node) => {
+      if (node !== null && window.pendingLinkedCommentScroll) {
+        const ROUGH_HEADER_HEIGHT = 125; // @see: --header-height
+        delete window.pendingLinkedCommentScroll;
+
+        const mobileChatElem = document.querySelector('.MuiPaper-root .card--enable-overflow');
+        const drawerElem = document.querySelector('.MuiDrawer-root');
+        const elem = (isMobile && mobileChatElem) || window;
+
+        if (elem) {
+          // $FlowFixMe
+          elem.scrollTo({
+            top:
+              node.getBoundingClientRect().top +
+              // $FlowFixMe
+              (mobileChatElem && drawerElem ? drawerElem.getBoundingClientRect().top * -1 : elem.scrollY) -
+              ROUGH_HEADER_HEIGHT,
+            left: 0,
+            behavior: 'smooth',
+          });
+        }
+      }
+    },
+    [isMobile]
+  );
 
   return (
     <li
@@ -310,6 +326,7 @@ function Comment(props: Props) {
                   charCount={charCount}
                   onChange={handleEditMessageChanged}
                   textAreaMaxLength={FF_MAX_CHARS_IN_COMMENT}
+                  handleSubmit={handleSubmit}
                 />
                 <div className="section__actions section__actions--no-margin">
                   <Button
@@ -361,6 +378,7 @@ function Comment(props: Props) {
                         className="comment__action"
                         onClick={handleCommentReply}
                         icon={ICONS.REPLY}
+                        iconSize={isMobile && 12}
                       />
                     )}
                     {ENABLE_COMMENT_REACTIONS && <CommentReactions uri={uri} commentId={commentId} />}
@@ -434,4 +452,4 @@ function Comment(props: Props) {
   );
 }
 
-export default Comment;
+export default CommentView;

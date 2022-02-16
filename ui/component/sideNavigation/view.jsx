@@ -11,11 +11,12 @@ import NotificationBubble from 'component/notificationBubble';
 import DebouncedInput from 'component/common/debounced-input';
 import I18nMessage from 'component/i18nMessage';
 import ChannelThumbnail from 'component/channelThumbnail';
-import { useIsMobile, useIsLargeScreen } from 'effects/use-screensize';
+import { useIsMobile, useIsLargeScreen, isTouch } from 'effects/use-screensize';
 import { GetLinksData } from 'util/buildHomepage';
 import { DOMAIN, ENABLE_UI_NOTIFICATIONS, ENABLE_NO_SOURCE_CLAIMS, CHANNEL_STAKED_LEVEL_LIVESTREAM } from 'config';
 
 const FOLLOWED_ITEM_INITIAL_LIMIT = 10;
+const touch = isTouch();
 
 type SideNavLink = {
   title: string,
@@ -111,6 +112,7 @@ type Props = {
   user: ?User,
   homepageData: any,
   activeChannelStakedLevel: number,
+  wildWestDisabled: boolean,
 };
 
 function SideNavigation(props: Props) {
@@ -129,6 +131,7 @@ function SideNavigation(props: Props) {
     user,
     followedTags,
     activeChannelStakedLevel,
+    wildWestDisabled,
   } = props;
 
   const isLargeScreen = useIsLargeScreen();
@@ -448,6 +451,7 @@ function SideNavigation(props: Props) {
           'navigation--micro': showMicroMenu,
           'navigation--push': showPushMenu,
           'navigation-file-page-and-mobile': hideMenuFromView,
+          'navigation-touch': touch,
         })}
       >
         {(!canDisposeMenu || sidebarOpen) && (
@@ -478,7 +482,7 @@ function SideNavigation(props: Props) {
                 <>
                   {/* $FlowFixMe -- GetLinksData should fix it's data type */}
                   {EXTRA_SIDEBAR_LINKS.map((linkProps) => getLink(linkProps))}
-                  {getLink(WILD_WEST)}
+                  {!wildWestDisabled && getLink(WILD_WEST)}
                 </>
               )}
             </ul>

@@ -26,10 +26,23 @@ type Props = {
   claim: StreamClaim,
   myChannelIds: ?Array<string>,
   stakedLevel: number,
+  isMobile?: boolean,
+  handleDismissPin?: () => void,
+  restoreScrollPos?: () => void,
 };
 
 export default function LivestreamComment(props: Props) {
-  const { comment, forceUpdate, uri, claim, myChannelIds, stakedLevel } = props;
+  const {
+    comment,
+    forceUpdate,
+    uri,
+    claim,
+    myChannelIds,
+    stakedLevel,
+    isMobile,
+    handleDismissPin,
+    restoreScrollPos,
+  } = props;
 
   const {
     channel_url: authorUri,
@@ -58,17 +71,25 @@ export default function LivestreamComment(props: Props) {
     return myChannelIds ? myChannelIds.includes(channelId) : false;
   }
 
+  // For every new <LivestreamComment /> component that is rendered on mobile view,
+  // keep the scroll at the bottom (newest)
+  React.useEffect(() => {
+    if (isMobile && restoreScrollPos) {
+      restoreScrollPos();
+    }
+  }, [isMobile, restoreScrollPos]);
+
   return (
     <li
       className={classnames('livestream__comment', {
         'livestream__comment--superchat': supportAmount > 0,
         'livestream__comment--sticker': isSticker,
         'livestream__comment--mentioned': hasUserMention,
+        'livestream__comment--mobile': isMobile,
       })}
     >
       {supportAmount > 0 && (
         <div className="livestreamComment__superchatBanner">
-          <div className="livestreamComment__superchatBanner--corner" />
           <CreditAmount isFiat={isFiat} amount={supportAmount} superChat />
         </div>
       )}
@@ -137,6 +158,7 @@ export default function LivestreamComment(props: Props) {
             disableEdit
             disableRemove={comment.removed}
             isLiveComment
+            handleDismissPin={handleDismissPin}
           />
         </Menu>
       </div>
