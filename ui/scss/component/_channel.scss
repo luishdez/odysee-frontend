@@ -344,6 +344,15 @@ $actions-z-index: 2;
   @media (max-width: $breakpoint-small) {
     padding-top: var(--spacing-xl);
   }
+
+  .comment__badge {
+    padding-right: 0px;
+
+    svg {
+      height: 2rem;
+      width: 2rem;
+    }
+  }
 }
 
 .channel__meta {
@@ -512,6 +521,15 @@ $actions-z-index: 2;
   background-color: var(--color-header-background);
   padding: var(--spacing-s);
   overflow: hidden;
+
+  .comment__badge {
+    padding-right: 0px;
+
+    svg {
+      height: 2rem;
+      width: 2rem;
+    }
+  }
 
   .channel-thumbnail {
     height: 2rem;
