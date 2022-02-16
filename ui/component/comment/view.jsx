@@ -64,6 +64,7 @@ type Props = {
   supportDisabled: boolean,
   setQuickReply: (any) => void,
   quickReply: any,
+  selectOdyseeMembershipByClaimId: string,
 };
 
 const LENGTH_TO_COLLAPSE = 300;
@@ -93,6 +94,7 @@ function CommentView(props: Props) {
     supportDisabled,
     setQuickReply,
     quickReply,
+    selectOdyseeMembershipByClaimId,
   } = props;
 
   const {
@@ -151,6 +153,13 @@ function CommentView(props: Props) {
       channelOwnerOfContent = channelName;
     }
   } catch (e) {}
+
+  let badgeToShow;
+  if (selectOdyseeMembershipByClaimId === 'Premium') {
+    badgeToShow = 'silver';
+  } else if (selectOdyseeMembershipByClaimId === 'Premium+') {
+    badgeToShow = 'gold';
+  }
 
   useEffect(() => {
     if (isEditing) {
@@ -265,9 +274,6 @@ function CommentView(props: Props) {
         <div className="comment__body-container">
           <div className="comment__meta">
             <div className="comment__meta-information">
-              {isGlobalMod && <CommentBadge label={__('Admin')} icon={ICONS.BADGE_MOD} />}
-              {isModerator && <CommentBadge label={__('Moderator')} icon={ICONS.BADGE_MOD} />}
-
               {!author ? (
                 <span className="comment__author">{__('Anonymous')}</span>
               ) : (
@@ -277,8 +283,13 @@ function CommentView(props: Props) {
                   })}
                   link
                   uri={authorUri}
+                  comment
                 />
               )}
+              {isGlobalMod && <CommentBadge label={__('Admin')} icon={ICONS.BADGE_MOD} />}
+              {isModerator && <CommentBadge label={__('Moderator')} icon={ICONS.BADGE_MOD} />}
+              {badgeToShow === 'silver' && <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />}
+              {badgeToShow === 'gold' && <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />}
               <Button
                 className="comment__time"
                 onClick={handleTimeClick}

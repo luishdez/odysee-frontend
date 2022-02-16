@@ -2537,21 +2537,23 @@ export const icons = {
       viewBox="0 0 24 24"
       xmlSpace="preserve"
     >
-      <style type="text/css">{'.st0{fill:FF3850}.st1{fill:#181021}.st2{fill:#FFFFFF}'}</style>
+      <style type="text/css">
+        {'.st0--badge-mod{fill:#ff3850}.st1--badge-mod{fill:#181021}.st2--badge-mod{fill:#FFFFFF}'}
+      </style>
       <g>
         <g>
           <path
-            className="st0"
+            className="st0--badge-mod"
             d="M11.69,6.77c4.86,0,7.55,0.9,8.52,1.31c1.29-1.46,3.28-4.14,3.28-6.76c0,0-4.17,4.86-6.92,5.12 c-1.25-0.87-2.77-1.38-4.41-1.38c0,0-3.21-0.06-4.63,1.31C4.81,6.44,0.51,1.32,0.51,1.32c0,2.61,1.97,5.27,3.25,6.74 C4.71,7.59,7.03,6.77,11.69,6.77z M19.87,19.38c0.02-0.13,0.04-0.27,0.04-0.4V12.8c0-1.03-0.21-2.02-0.58-2.92 c-0.83-0.33-3.25-1.11-7.64-1.11c-4.29,0-6.33,0.75-7,1.06c-0.38,0.91-0.6,1.91-0.6,2.97v6.18c0,0.13,0.02,0.26,0.04,0.39 C1.6,19.73,0,22.54,0,22.54L12,24l12-1.46C24,22.54,22.36,19.79,19.87,19.38z"
           />
         </g>
       </g>
       <path
-        className="st1"
+        className="st1--badge-mod"
         d="M13,18.57H11c-2.27,0-4.12-0.82-4.12-2.88v-2.46c0-2.77,2.17-3.94,5.11-3.94s5.11,1.17,5.11,3.94v2.46 C17.11,17.75,15.27,18.57,13,18.57z"
       />
       <path
-        className="st2"
+        className="st2--badge-mod"
         d="M15.06,15.25c-0.28,0-0.5-0.22-0.5-0.5v-1.42c0-0.32,0-1.31-1.63-1.31c-0.28,0-0.5-0.22-0.5-0.5 s0.22-0.5,0.5-0.5c1.65,0,2.63,0.86,2.63,2.31v1.42C15.56,15.02,15.33,15.25,15.06,15.25z"
       />
     </svg>
@@ -2570,26 +2572,30 @@ export const icons = {
       viewBox="-1182 401 24 24"
       xmlSpace="preserve"
     >
-      <style type="text/css">{'.st0{fill:#FF5490}.st1{fill:#81BBB9}.st2{fill:#2E2A2F}.st3{fill:#FFFFFF}'}</style>
+      <style type="text/css">
+        {
+          '.st0--badge-streamer{fill:#FF5490}.st1--badge-streamer{fill:#81BBB9}.st2--badge-streamer{fill:#2E2A2F}.st3--badge-streamer{fill:#FFFFFF}'
+        }
+      </style>
       <path
-        className="st0"
+        className="st0--badge-streamer"
         d="M-1169.8,406.4c-4.3,0-7.8,3.5-7.8,7.8c0,0.4,0,0.8,0.1,1.1h1c-0.1-0.4-0.1-0.7-0.1-1.1c0-3.7,3-6.8,6.8-6.8 s6.8,3,6.8,6.8c0,0.4,0,0.8-0.1,1.1h1c0.1-0.4,0.1-0.7,0.1-1.1C-1162.1,409.9-1165.5,406.4-1169.8,406.4z"
       />
       <path
-        className="st0"
+        className="st0--badge-streamer"
         d="M-1180,414.2c0-5.6,4.6-10.2,10.2-10.2c5.6,0,10.2,4.6,10.2,10.2c0,2.2-0.7,4.3-1.9,5.9l0.8,0.6 c1.3-1.8,2.1-4.1,2.1-6.5c0-6.2-5-11.2-11.2-11.2c-6.2,0-11.2,5-11.2,11.2c0,2.1,0.6,4.1,1.6,5.8l1-0.3 C-1179.4,418-1180,416.2-1180,414.2z"
       />
-      <path className="st1" d="M-1163.7,419.4" />
+      <path className="st1--badge-streamer" d="M-1163.7,419.4" />
       <path
-        className="st1"
+        className="st1--badge-streamer"
         d="M-1165.6,418.5c0-0.1,0-3.6,0-3.6c0-1.9-1-4.3-4.4-4.3s-4.4,2.4-4.4,4.3c0,0,0,3.6,0,3.6 c-1.4,0.2-1.8,0.7-1.8,0.7s2.2,2.7,6.2,2.7s6.2-2.7,6.2-2.7S-1164.2,418.7-1165.6,418.5z"
       />
       <path
-        className="st2"
+        className="st2--badge-streamer"
         d="M-1169.2,418.5h-1.5c-1.7,0-3.1-0.6-3.1-2.2v-1.9c0-2.1,1.6-3,3.9-3s3.9,0.9,3.9,3v1.9 C-1166.1,417.8-1167.5,418.5-1169.2,418.5z"
       />
       <path
-        className="st3"
+        className="st3--badge-streamer"
         d="M-1167.8,416.2c-0.2,0-0.4-0.2-0.4-0.4v-1.1c0-0.2,0-1-1.2-1c-0.2,0-0.4-0.2-0.4-0.4s0.2-0.4,0.4-0.4 c1.2,0,2,0.6,2,1.7v1.1C-1167.4,416.1-1167.6,416.2-1167.8,416.2z"
       />
     </svg>
@@ -2838,26 +2844,26 @@ export const icons = {
       strokeLinejoin="round"
     >
       <style type="text/css">
-        {'.st0{fill:none;stroke:#DCBDA2;stroke-width:1.4173;stroke-miterlimit:10;}.st1{fill:#DCBEA2;}'}
+        {'.st0--no-ads{fill:none;stroke:#DCBDA2;stroke-width:1.4173;stroke-miterlimit:10;}.st1--no-ads{fill:#DCBEA2;}'}
       </style>
-      <circle className="st0" cx="304.9" cy="297.6" r="13.7" />
+      <circle className="st0--no-ads" cx="304.9" cy="297.6" r="13.7" />
       <g>
-        <ellipse className="st0" cx="301.2" cy="297.5" rx="3.5" ry="3.8" />
-        <line className="st0" x1="304.7" y1="297.5" x2="312.5" y2="297.5" />
-        <line className="st0" x1="310.3" y1="297.6" x2="310.3" y2="300.3" />
+        <ellipse className="st0--no-ads" cx="301.2" cy="297.5" rx="3.5" ry="3.8" />
+        <line className="st0--no-ads" x1="304.7" y1="297.5" x2="312.5" y2="297.5" />
+        <line className="st0--no-ads" x1="310.3" y1="297.6" x2="310.3" y2="300.3" />
       </g>
-      <circle className="st0" cx="304.9" cy="341.6" r="13.7" />
+      <circle className="st0--no-ads" cx="304.9" cy="341.6" r="13.7" />
       <path
-        className="st0"
+        className="st0--no-ads"
         d="M316.2,247.7v6.4c0,0.9-0.5,1.8-1.3,2.3l-9,5.2c-0.8,0.5-1.8,0.5-2.6,0l-9-5.2c-0.8-0.5-1.3-1.3-1.3-2.3v-10.4
       c0-0.9,0.5-1.8,1.3-2.3l9-5.2c0.8-0.5,1.8-0.5,2.6,0l9,5.2"
       />
       <polyline
-        className="st0"
+        className="st0--no-ads"
         points="318.7,241.8 304.4,257.8 301.3,252.3 295.8,249.2 301.3,246 304.4,240.5 307.5,246 "
       />
-      <polyline className="st0" points="299,261.2 299,267.4 304.8,264.1 309.9,267.4 309.9,261.2 " />
-      <line className="st0" x1="314.7" y1="331.8" x2="295.1" y2="351.5" />
+      <polyline className="st0--no-ads" points="299,261.2 299,267.4 304.8,264.1 309.9,267.4 309.9,261.2 " />
+      <line className="st0--no-ads" x1="314.7" y1="331.8" x2="295.1" y2="351.5" />
       <text
         transform="matrix(1 0 0 1 294.7307 345.0567)"
         style={{ fill: '#DCBDA2', 'font-family': 'Roboto-Bold', 'font-size': '10.1968px' }}
@@ -2867,7 +2873,7 @@ export const icons = {
       <g id="XMLID_109_">
         <path
           id="XMLID_190_"
-          className="st1"
+          className="st1--no-ads"
           d="M16,1.6C8,1.6,1.6,8,1.6,16S8,30.4,16,30.4S30.4,24,30.4,16S24,1.6,16,1.6z M16,3.1
         c3.3,0,6.3,1.3,8.6,3.3L18,13c-0.2-0.1-0.3-0.3-0.5-0.4c-0.5-0.3-1.1-0.4-1.7-0.4h-2.2v5.3l-1.2,1.2l-2.4-6.4H8.5l-2.7,7.2h1.6
         l0.5-1.5h2.6l0.5,1.5h0.5l-5.2,5.2c-2-2.3-3.3-5.3-3.3-8.6C3.1,8.9,8.9,3.1,16,3.1z M17.6,15.6V16c0,0.7-0.2,1.3-0.5,1.6
@@ -2877,7 +2883,7 @@ export const icons = {
         />
         <path
           id="XMLID_195_"
-          className="st1"
+          className="st1--no-ads"
           d="M23.2,15.1c-0.5-0.1-0.8-0.3-1-0.4c-0.2-0.2-0.4-0.4-0.4-0.6c0-0.3,0.1-0.5,0.3-0.6
         c0.2-0.2,0.5-0.2,0.9-0.2c0.4,0,0.7,0.1,0.9,0.3c0.2,0.2,0.3,0.4,0.3,0.8h1.5c0-0.4-0.1-0.8-0.3-1.2s-0.5-0.6-0.9-0.8
         c-0.4-0.2-0.9-0.3-1.4-0.3c-0.5,0-1,0.1-1.4,0.3s-0.7,0.4-1,0.7c-0.2,0.3-0.3,0.7-0.3,1c0,0.8,0.4,1.4,1.2,1.8
@@ -2893,8 +2899,8 @@ export const icons = {
       {...props}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 35 30"
-      width={'40'}
-      height={'40'}
+      width={props.size || '40'}
+      height={props.size || '40'}
       fill="none"
       strokeWidth="1.5"
       strokeLinecap="round"

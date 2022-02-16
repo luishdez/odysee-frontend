@@ -4,7 +4,7 @@ import React from 'react';
 import classnames from 'classnames';
 import Button from 'component/button';
 import * as ICONS from 'constants/icons';
-import Icon from 'component/common/icon';
+import CommentBadge from 'component/common/comment-badge';
 
 type ChannelInfo = { uri: string, name: string };
 
@@ -22,6 +22,7 @@ type Props = {
   claim: ?Claim,
   isResolvingUri: boolean,
   selectOdyseeMembershipByClaimId: string,
+  comment?: boolean,
   resolveUri: (string) => void,
 };
 
@@ -84,6 +85,7 @@ class UriIndicator extends React.PureComponent<Props> {
       hideAnonymous = false,
       className,
       selectOdyseeMembershipByClaimId,
+      comment,
     } = this.props;
 
     let badgeToShow;
@@ -121,8 +123,12 @@ class UriIndicator extends React.PureComponent<Props> {
       const inner = (
         <span dir="auto" className={classnames('channel-name', { 'channel-name--inline': inline })}>
           {channelName}
-          {badgeToShow === 'silver' && <Icon size={25} icon={ICONS.PREMIUM} />}
-          {badgeToShow === 'gold' && <Icon size={25} icon={ICONS.PREMIUM_PLUS} />}
+          {!comment && (
+            <>
+              {badgeToShow === 'silver' && <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />}
+              {badgeToShow === 'gold' && <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />}
+            </>
+          )}
         </span>
       );
 

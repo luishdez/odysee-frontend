@@ -192,6 +192,25 @@ $actions-z-index: 2;
   width: 5rem;
   background-size: cover;
   margin-right: var(--spacing-m);
+
+  .comment__badge {
+    display: flex;
+    position: absolute;
+    text-align: center;
+
+    width: 80%;
+    bottom: -16%;
+    left: unset !important;
+    background-color: unset !important;
+    right: -1rem !important;
+
+    svg {
+      stroke: unset;
+      overflow: visible;
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 
 .channel-thumbnail--resolving {

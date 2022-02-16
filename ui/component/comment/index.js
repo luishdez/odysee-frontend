@@ -10,7 +10,7 @@ import { doCommentUpdate, doCommentList } from 'redux/actions/comments';
 import { makeSelectChannelIsMuted } from 'redux/selectors/blocked';
 import { doToast } from 'redux/actions/notifications';
 import { doClearPlayingUri } from 'redux/actions/content';
-import { selectUserVerifiedEmail } from 'redux/selectors/user';
+import { selectUserVerifiedEmail, selectOdyseeMembershipByClaimId } from 'redux/selectors/user';
 import {
   selectLinkedCommentAncestors,
   selectOthersReactsForComment,
@@ -41,6 +41,7 @@ const select = (state, props) => {
     stakedLevel: selectStakedLevelForChannelUri(state, channel_url),
     linkedCommentAncestors: selectLinkedCommentAncestors(state),
     totalReplyPages: makeSelectTotalReplyPagesForParentId(comment_id)(state),
+    selectOdyseeMembershipByClaimId: channel_url && selectOdyseeMembershipByClaimId(state, channel_url),
   };
 };
 

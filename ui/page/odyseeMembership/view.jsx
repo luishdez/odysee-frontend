@@ -11,6 +11,7 @@ import Card from 'component/common/card';
 import MembershipSplash from 'component/membershipSplash';
 import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
+import useGetUserMemberships from 'effects/use-get-user-memberships';
 let stripeEnvironment = getStripeEnvironment();
 
 // const isDev = process.env.NODE_ENV !== 'production';
@@ -26,10 +27,13 @@ type Props = {
   totalBalance: ?number,
   openModal: (string, {}) => void,
   activeChannelClaim: ?ChannelClaim,
+  channels: ?Array<ChannelClaim>,
+  claimsByUri: { [string]: any },
+  doFetchUserMemberships: (claimIdCsv: string) => void,
 };
 
 const OdyseeMembershipPage = (props: Props) => {
-  const { openModal, activeChannelClaim } = props;
+  const { openModal, activeChannelClaim, channels, claimsByUri, doFetchUserMemberships } = props;
 
   const userChannelName = activeChannelClaim && activeChannelClaim.name;
   const userChannelClaimId = activeChannelClaim && activeChannelClaim.claim_id;
@@ -41,8 +45,15 @@ const OdyseeMembershipPage = (props: Props) => {
   const [activeMemberships, setActiveMemberships] = React.useState();
   const [purchasedMemberships, setPurchasedMemberships] = React.useState([]);
   const [hasShownModal, setHasShownModal] = React.useState(false);
+  const [shouldFetchUserMemberships, setFetchUserMemberships] = React.useState(true);
 
   const hasMembership = activeMemberships && activeMemberships.length > 0;
+
+  const channelUrls = channels && channels.map((channel) => channel.permanent_url);
+  useGetUserMemberships(shouldFetchUserMemberships, channelUrls, claimsByUri, (value) => {
+    doFetchUserMemberships(value);
+    setFetchUserMemberships(false);
+  });
 
   async function populateMembershipData() {
     try {
@@ -86,7 +97,12 @@ const OdyseeMembershipPage = (props: Props) => {
     } catch (err) {
       console.log(err);
     }
+    setFetchUserMemberships(false);
   }
+
+  React.useEffect(() => {
+    if (!shouldFetchUserMemberships) setFetchUserMemberships(true);
+  }, [shouldFetchUserMemberships]);
 
   React.useEffect(function () {
     (async function () {
@@ -283,7 +299,10 @@ const OdyseeMembershipPage = (props: Props) => {
             <h1 style={{ fontSize: '23px' }}>Odysee Memberships</h1>
             {!stillWaitingFromBackend && cardSaved !== false && (
               <div style={{ marginTop: '10px' }}>
-                <ChannelSelector uri={activeChannelClaim && activeChannelClaim.permanent_url} />
+                <ChannelSelector
+                  uri={activeChannelClaim && activeChannelClaim.permanent_url}
+                  key={shouldFetchUserMemberships}
+                />
               </div>
             )}
 
