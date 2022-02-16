@@ -288,8 +288,16 @@ function CommentView(props: Props) {
               )}
               {isGlobalMod && <CommentBadge label={__('Admin')} icon={ICONS.BADGE_MOD} />}
               {isModerator && <CommentBadge label={__('Moderator')} icon={ICONS.BADGE_MOD} />}
-              {badgeToShow === 'silver' && <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />}
-              {badgeToShow === 'gold' && <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />}
+              {badgeToShow === 'silver' && (
+                <Button target="_blank" navigate="/$/membership">
+                  <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />
+                </Button>
+              )}
+              {badgeToShow === 'gold' && (
+                <Button target="_blank" navigate="/$/membership">
+                  <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />
+                </Button>
+              )}
               <Button
                 className="comment__time"
                 onClick={handleTimeClick}
