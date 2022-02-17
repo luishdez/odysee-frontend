@@ -336,7 +336,7 @@ const OdyseeMembershipPage = (props: Props) => {
                                         {price.unit_amount / 100}/{capitalizeWord(price.recurring.interval)}
                                       </h4>
                                       <Button
-                                        button="secondary"
+                                        button="primary"
                                         onClick={(e) => purchaseMembership(e, membershipOption, price)}
                                         membership-id={membershipOption.Membership.id}
                                         membership-subscription-period={membershipOption.Membership.type}
@@ -400,7 +400,7 @@ const OdyseeMembershipPage = (props: Props) => {
                             </>
                           )}
                           <Button
-                            button="secondary"
+                            button="alt"
                             membership-id={membership.Membership.membership_id}
                             onClick={(e) => cancelMembership(e, membership)}
                             className="cancel-membership-button"
@@ -449,7 +449,7 @@ const OdyseeMembershipPage = (props: Props) => {
                 </h2>
 
                 <Button
-                  button="secondary"
+                  button="primary"
                   label={__('Add A Card')}
                   icon={ICONS.SETTINGS}
                   navigate={`/$/${PAGES.SETTINGS_STRIPE_CARD}`}
@@ -467,7 +467,7 @@ const OdyseeMembershipPage = (props: Props) => {
                 <h1 style={{ marginTop: '30px', fontSize: '20px' }}>Clear Membership Data (Only Available On Dev)</h1>
                 <div>
                   <Button
-                    button="secondary"
+                    button="primary"
                     label={__('Clear Membership Data')}
                     icon={ICONS.SETTINGS}
                     className="membership_button"

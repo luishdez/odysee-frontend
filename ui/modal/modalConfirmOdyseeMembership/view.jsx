@@ -120,7 +120,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
               <>
                 <Button
                   className="stripe__confirm-remove-card"
-                  button="secondary"
+                  button="primary"
                   icon={ICONS.FINANCE}
                   label={hasMembership ? __('Confirm Cancellation') : __('Confirm Purchase')}
                   onClick={() => (hasMembership ? cancelMembership() : purchaseMembership())}
