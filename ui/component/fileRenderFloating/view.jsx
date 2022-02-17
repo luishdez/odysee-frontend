@@ -27,6 +27,12 @@ const IS_DESKTOP_MAC = typeof process === 'object' ? process.platform === 'darwi
 const DEBOUNCE_WINDOW_RESIZE_HANDLER_MS = 100;
 export const INLINE_PLAYER_WRAPPER_CLASS = 'inline-player__wrapper';
 
+const ORIENTATION = {
+  landscape: 'landscape',
+  portrait: 'portrait',
+  square: 'square',
+};
+
 function getScreenWidth() {
   if (document && document.documentElement) {
     return document.documentElement.clientWidth;
@@ -103,6 +109,7 @@ type Props = {
   claimWasPurchased: boolean,
   nextListUri: string,
   previousListUri: string,
+  mobilePlayerDimensions: any,
 };
 
 export default function FileRenderFloating(props: Props) {
@@ -127,6 +134,7 @@ export default function FileRenderFloating(props: Props) {
     claimWasPurchased,
     nextListUri,
     previousListUri,
+    mobilePlayerDimensions,
   } = props;
   const { location, push } = useHistory();
   const hideFloatingPlayer = location.state && location.state.hideFloatingPlayer;
@@ -251,6 +259,50 @@ export default function FileRenderFloating(props: Props) {
       doFetchRecommendedContent(uri, mature);
     }
   }, [doFetchRecommendedContent, isFloating, mature, uri]);
+
+  const getAspectRatio = React.useCallback((width, height) => {
+    const ratioFloatsArray = [1.77, 1.6, 1.5, 1.33, 1, 0.75, 0.66, 0.625, 0.56];
+
+    const currentRatioFloat = width / height;
+    const matchedRatioFloat = parseFloat(getClosest(currentRatioFloat, ratioFloatsArray));
+
+    if (matchedRatioFloat === 1) {
+      return ORIENTATION.square;
+    } else if (matchedRatioFloat < 1) {
+      return ORIENTATION.landscape;
+    } else {
+      return ORIENTATION.portrait;
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (mobilePlayerDimensions && mobilePlayerDimensions.height) {
+      const videoNode = document.querySelector('video');
+
+      if (videoNode) {
+        const height = videoNode.offsetHeight;
+        const width = videoNode.offsetWidth;
+        videoNode.style.height = '100%';
+        videoNode.style.position = 'absolute';
+        videoNode.style.top = '0px';
+
+        const parent = document.querySelector('.video-js');
+        const orientation = getAspectRatio(height, width);
+
+        if (orientation === ORIENTATION.landscape) {
+          parent.classList.add('vjs-16-9');
+        } else if (orientation === ORIENTATION.portrait) {
+          parent.classList.add('vjs-9-16');
+        } else if (orientation === ORIENTATION.square) {
+          parent.classList.add('vjs-1-1');
+        }
+
+        const elem = document.querySelector('.content__viewer');
+        elem.style.height = `${parent.style.paddingTop}`;
+        parent.style.paddingTop = `100%`;
+      }
+    }
+  }, [getAspectRatio, mobilePlayerDimensions]);
 
   const doPlay = React.useCallback(
     (playUri) => {
@@ -403,4 +455,17 @@ export default function FileRenderFloating(props: Props) {
       </div>
     </Draggable>
   );
+}
+
+function getClosest(num, arr) {
+  let curr = arr[0];
+  let diff = Math.abs(num - curr);
+  for (let val = 0; val < arr.length; val++) {
+    const newdiff = Math.abs(num - arr[val]);
+    if (newdiff < diff) {
+      diff = newdiff;
+      curr = arr[val];
+    }
+  }
+  return curr;
 }

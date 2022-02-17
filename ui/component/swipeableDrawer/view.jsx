@@ -33,16 +33,30 @@ export default function SwipeableDrawer(props: Props) {
 
   const videoHeight = coverHeight || (mobilePlayerDimensions ? mobilePlayerDimensions.height : 0);
 
-  React.useEffect(() => {
-    if (open && !mobilePlayerDimensions) {
-      const element = document.querySelector(`.file-page__video-container`);
+  const windowWidth = window.innerWidth;
+  const maxLandscapeHeight = (windowWidth * 9) / 16;
 
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        setCoverHeight(rect.height);
+  React.useEffect(() => {
+    if (open) {
+      if (!mobilePlayerDimensions) {
+        const element = document.querySelector(`.file-page__video-container`);
+
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          setCoverHeight(rect.height);
+        }
+      } else {
+        const element = document.querySelector('video');
+        const touchOverlay = document.querySelector('.vjs-touch-overlay');
+        const elem = document.querySelector('.content__viewer');
+
+        touchOverlay.style.height = `${maxLandscapeHeight}px`;
+        elem.style.paddingBottom = `${maxLandscapeHeight}px`;
+        element.style.top = `${-100}px`;
+        setCoverHeight(maxLandscapeHeight);
       }
     }
-  }, [coverHeight, mobilePlayerDimensions, open]);
+  }, [maxLandscapeHeight, mobilePlayerDimensions, open]);
 
   // Reset scroll position when opening: avoid broken position where
   // the drawer is lower than the video

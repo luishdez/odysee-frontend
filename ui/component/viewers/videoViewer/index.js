@@ -12,8 +12,9 @@ import {
   doAnalyticsBuffer,
   doAnaltyicsPurchaseEvent,
   doAnalyticsView,
+  doSetMobilePlayerDimensions,
 } from 'redux/actions/app';
-import { selectVolume, selectMute } from 'redux/selectors/app';
+import { selectVolume, selectMute, selectMobilePlayerDimensions } from 'redux/selectors/app';
 import { savePosition, clearPosition, doPlayUri, doSetPlayingUri } from 'redux/actions/content';
 import { makeSelectContentPositionForUri, makeSelectIsPlayerFloating, selectPlayingUri } from 'redux/selectors/content';
 import { selectRecommendedContentForUri } from 'redux/selectors/search';
@@ -68,6 +69,7 @@ const select = (state, props) => {
     shareTelemetry: IS_WEB || selectDaemonSettings(state).share_usage_data,
     isFloating: makeSelectIsPlayerFloating(props.location)(state),
     videoTheaterMode: selectClientSetting(state, SETTINGS.VIDEO_THEATER_MODE),
+    mobilePlayerDimensions: selectMobilePlayerDimensions(state),
   };
 };
 
@@ -95,6 +97,7 @@ const perform = (dispatch) => ({
     ),
   doAnalyticsView: (uri, timeToStart) => dispatch(doAnalyticsView(uri, timeToStart)),
   claimRewards: () => dispatch(doClaimEligiblePurchaseRewards()),
+  doSetMobilePlayerDimensions: (width, height) => dispatch(doSetMobilePlayerDimensions(width, height)),
 });
 
 export default withRouter(connect(select, perform)(VideoViewer));

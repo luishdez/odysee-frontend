@@ -63,8 +63,10 @@ type Props = {
   previousListUri: string,
   videoTheaterMode: boolean,
   isMarkdownOrComment: boolean,
+  mobilePlayerDimensions?: { height: number, orientation: string },
   doAnalyticsView: (string, number) => void,
   claimRewards: () => void,
+  doSetMobilePlayerDimensions: ({ height: number, width: number, orientation: string }) => void,
 };
 
 /*
@@ -107,6 +109,8 @@ function VideoViewer(props: Props) {
     previousListUri,
     videoTheaterMode,
     isMarkdownOrComment,
+    mobilePlayerDimensions,
+    doSetMobilePlayerDimensions,
   } = props;
   const permanentUrl = claim && claim.permanent_url;
   const adApprovedChannelIds = homepageData ? getAllIds(homepageData) : [];
@@ -499,6 +503,8 @@ function VideoViewer(props: Props) {
         uri={uri}
         clearPosition={clearPosition}
         centerPlayButton={centerPlayButton}
+        doSetMobilePlayerDimensions={doSetMobilePlayerDimensions}
+        mobilePlayerDimensions={mobilePlayerDimensions}
       />
     </div>
   );

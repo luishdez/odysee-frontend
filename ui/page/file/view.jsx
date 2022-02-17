@@ -48,6 +48,7 @@ type Props = {
   doSetPrimaryUri: (uri: ?string) => void,
   clearPosition: (uri: string) => void,
   doClearPlayingUri: () => void,
+  doSetMobilePlayerDimensions: (width?: number, height?: number) => void,
 };
 
 export default function FilePage(props: Props) {
@@ -76,6 +77,7 @@ export default function FilePage(props: Props) {
     doSetPrimaryUri,
     clearPosition,
     doClearPlayingUri,
+    doSetMobilePlayerDimensions,
   } = props;
 
   const isMobile = useIsMobile();
@@ -131,9 +133,13 @@ export default function FilePage(props: Props) {
     return () => {
       if (isMobile && isPlaying && RENDER_MODES.FLOATING_MODES.includes(renderMode)) {
         doClearPlayingUri();
+        const cover = document.querySelector(`.${PRIMARY_PLAYER_WRAPPER_CLASS}`);
+        cover.style.height = 'inherit';
+        cover.style.opacity = 'inherit';
+        doSetMobilePlayerDimensions(undefined, undefined);
       }
     };
-  }, [doClearPlayingUri, isMobile, isPlaying, renderMode]);
+  }, [doClearPlayingUri, doSetMobilePlayerDimensions, isMobile, isPlaying, renderMode]);
 
   function renderFilePageLayout() {
     if (RENDER_MODES.FLOATING_MODES.includes(renderMode)) {

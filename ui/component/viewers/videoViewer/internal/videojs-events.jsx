@@ -34,6 +34,7 @@ const VideoJsEvents = ({
   doAnalyticsView,
   claimRewards,
   playerServerRef,
+  doSetMobilePlayerDimensions,
 }: {
   tapToUnmuteRef: any, // DOM element
   tapToRetryRef: any, // DOM element
@@ -51,6 +52,7 @@ const VideoJsEvents = ({
   doAnalyticsView: (string, number) => any,
   claimRewards: () => void,
   playerServerRef: any,
+  doSetMobilePlayerDimensions: (height: number, width: number) => void,
 }) => {
   /**
    * Analytics functionality that is run on first video start
@@ -288,17 +290,36 @@ const VideoJsEvents = ({
     // custom tracking plugin, event used for watchman data, and marking view/getting rewards
     player.on('tracking:firstplay', doTrackingFirstPlay);
     // hide forcing control bar show
-    player.on('canplaythrough', function () {
-      setTimeout(function () {
+    player.on('canplaythrough', () => {
+      setTimeout(() => {
         // $FlowFixMe
         const vjsControlBar = document.querySelector('.vjs-control-bar');
         if (vjsControlBar) vjsControlBar.style.removeProperty('opacity');
       }, 1000 * 3); // wait 3 seconds to hit control bar
     });
-    player.on('playing', function () {
+    player.on('playing', () => {
       // $FlowFixMe
       document.querySelector('.vjs-big-play-button').style.setProperty('display', 'none', 'important');
     });
+
+    player.on('durationchange', () => {
+      const cover = document.querySelector(`.file-page__video-container`);
+      const alreadySetRatio = cover.style.opacity === 0;
+
+      if (!alreadySetRatio) {
+        const element = document.querySelector('video');
+        element.style.height = 'unset';
+        element.style.position = 'fixed';
+        element.style.top = '56px'; // --header-height-mobile
+
+        const heightValue = window.getComputedStyle(element, null).getPropertyValue('height');
+        const height = Number(heightValue.substring(0, heightValue.indexOf('px')));
+        const width = element.offsetWidth;
+
+        doSetMobilePlayerDimensions(height, width);
+      }
+    });
+
     // player.on('ended', onEnded);
   }
 

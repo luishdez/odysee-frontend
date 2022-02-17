@@ -19,6 +19,7 @@ import { doFetchRecommendedContent } from 'redux/actions/search';
 import { doAnaltyicsPurchaseEvent } from 'redux/actions/app';
 import { withRouter } from 'react-router';
 import FileRenderFloating from './view';
+import { selectMobilePlayerDimensions } from 'redux/selectors/app';
 
 const select = (state, props) => {
   const playingUri = selectPlayingUri(state);
@@ -43,6 +44,7 @@ const select = (state, props) => {
     nextListUri: collectionId && makeSelectNextUrlForCollectionAndUrl(collectionId, uri)(state),
     previousListUri: collectionId && makeSelectPreviousUrlForCollectionAndUrl(collectionId, uri)(state),
     collectionId,
+    mobilePlayerDimensions: selectMobilePlayerDimensions(state),
   };
 };
 

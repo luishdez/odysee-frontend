@@ -80,6 +80,7 @@ type Props = {
   claimValues: any,
   clearPosition: (string) => void,
   centerPlayButton: () => void,
+  doSetMobilePlayerDimensions: (height: number, width: number) => void,
 };
 
 const videoPlaybackRates = [0.25, 0.5, 0.75, 1, 1.1, 1.25, 1.5, 1.75, 2];
@@ -143,6 +144,7 @@ export default React.memo<Props>(function VideoJs(props: Props) {
     uri,
     clearPosition,
     centerPlayButton,
+    doSetMobilePlayerDimensions,
   } = props;
 
   // will later store the videojs player
@@ -178,6 +180,7 @@ export default React.memo<Props>(function VideoJs(props: Props) {
     uri,
     playerServerRef,
     clearPosition,
+    doSetMobilePlayerDimensions,
   });
 
   const videoJsOptions = {
@@ -228,6 +231,10 @@ export default React.memo<Props>(function VideoJs(props: Props) {
 
       // Initialize mobile UI.
       player.mobileUi();
+
+      // Enable fluid mode
+      player.addClass('vjs-fluid');
+      // Set standard aspect ratio
 
       if (!embedded) {
         window.player.bigPlayButton && window.player.bigPlayButton.hide();
