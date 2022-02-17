@@ -57,10 +57,15 @@
   display: flex;
   flex-flow: column wrap;
   justify-content: space-around;
+  transition: padding 0.6s;
 
   ::selection {
     background-color: black;
     color: white;
+  }
+  @media (max-width: $breakpoint-medium) {
+    padding-left: 4rem;
+    padding-right: 4rem;
   }
 
   @media (max-width: $breakpoint-small) {
@@ -140,9 +145,12 @@
     }
 
     .membership-splash__info:nth-child(1) {
-      padding: var(--spacing-l);
-      font-size: 1rem;
+      // padding: var(--spacing-l);
+      padding: 3%;
       font-size: 1vw;
+      @media (max-width: $breakpoint-medium) {
+        font-size: 1.3vw;
+      }
       @media (max-width: $breakpoint-small) {
         font-size: 0.9rem;
       }
@@ -178,8 +186,10 @@
       img {
         display: inline-block;
         width: 40%;
-        margin-left: 1rem;
-        margin-right: 1.4rem;
+        //margin-left: 1rem;
+        margin-left: 7%;
+        //margin-right: 1.4rem;
+        margin-right: 7%;
       }
       section {
         display: inline-block;
@@ -188,10 +198,17 @@
         font-size: 1rem;
         margin-top: -14px;
       }
+      @media (max-width: $breakpoint-medium) {
+        img {
+          //margin-left: 2%;
+          width: 30%;
+        }
+      }
       @media (max-width: $breakpoint-small) {
         font-size: 2.2rem;
         img {
           margin-left: 1.4rem;
+          margin-right: 1.4rem;
           width: 5rem;
         }
       }
@@ -201,13 +218,15 @@
   .membership-splash__info-content {
     display: flex;
     align-items: center;
-    font-size: 1rem;
     font-size: 1vw;
     font-weight: 900;
     margin-top: 8px;
     .icon {
       width: 2rem;
       margin-right: var(--spacing-xs);
+    }
+    @media (max-width: $breakpoint-medium) {
+      font-size: 1.3vw;
     }
     @media (max-width: $breakpoint-small) {
       font-size: 0.9rem;
@@ -227,7 +246,7 @@
       border: 2px solid #debca0;
       border-radius: 20px;
       padding: 8px 20px 8px 20px;
-      background-color: unset;
+      background-color: unset !important;
       text-align: center;
       .button__label {
         align-self: center;
