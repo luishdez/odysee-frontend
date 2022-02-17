@@ -10,6 +10,7 @@ import OptimizedImage from 'component/optimizedImage';
 import { AVATAR_DEFAULT } from 'config';
 import useGetUserMemberships from 'effects/use-get-user-memberships';
 import CommentBadge from 'component/common/comment-badge';
+import Button from 'component/button';
 
 type Props = {
   thumbnail: ?string,
@@ -33,6 +34,7 @@ type Props = {
   selectOdyseeMembershipByClaimId: string,
   doFetchUserMemberships: (claimIdCsv: string) => void,
   showMemberBadge?: boolean,
+  isChannel?: boolean,
 };
 
 function ChannelThumbnail(props: Props) {
@@ -57,6 +59,7 @@ function ChannelThumbnail(props: Props) {
     selectOdyseeMembershipByClaimId,
     doFetchUserMemberships,
     showMemberBadge,
+    isChannel,
   } = props;
   const [thumbLoadError, setThumbLoadError] = React.useState(ThumbUploadError);
   const shouldResolve = !isResolving && claim === undefined;
@@ -100,8 +103,16 @@ function ChannelThumbnail(props: Props) {
     return (
       <FreezeframeWrapper src={channelThumbnail} className={classnames('channel-thumbnail', className)}>
         {!hideStakedIndicator && <ChannelStakedIndicator uri={uri} claim={claim} hideTooltip={hideTooltip} />}
-        {badgeToShow === 'silver' && <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />}
-        {badgeToShow === 'gold' && <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />}
+        {badgeToShow === 'silver' && (
+          <Button target="_blank" navigate="/$/membership" className={isChannel ? 'link--small' : ''}>
+            <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />
+          </Button>
+        )}
+        {badgeToShow === 'gold' && (
+          <Button target="_blank" navigate="/$/membership" className={isChannel ? 'link--small' : ''}>
+            <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />
+          </Button>
+        )}
       </FreezeframeWrapper>
     );
   }
@@ -129,8 +140,16 @@ function ChannelThumbnail(props: Props) {
         }}
       />
       {!hideStakedIndicator && <ChannelStakedIndicator uri={uri} claim={claim} hideTooltip={hideTooltip} />}
-      {badgeToShow === 'silver' && <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />}
-      {badgeToShow === 'gold' && <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />}
+      {badgeToShow === 'silver' && (
+        <Button target="_blank" navigate="/$/membership" className={isChannel ? 'link--small' : ''}>
+          <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />
+        </Button>
+      )}
+      {badgeToShow === 'gold' && (
+        <Button target="_blank" navigate="/$/membership" className={isChannel ? 'link--small' : ''}>
+          <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />
+        </Button>
+      )}
     </div>
   );
 }
