@@ -210,7 +210,12 @@ $actions-z-index: 2;
   }
 
   .comment__badge {
-
+    position: absolute;
+    text-align: center;
+    width: 80%;
+    left: 22%;
+    bottom: -30%;
+    
     svg {
       stroke: unset;
       overflow: visible;
@@ -258,11 +263,16 @@ $actions-z-index: 2;
   }
 
   .comment__badge {
-    padding-right: 0px;
-
+    position: absolute;
+    text-align: center;
+    width: 60%;
+    left: 0;
+    
     svg {
-      height: 5rem;
-      width: 5rem;
+      stroke: unset;
+      overflow: visible;
+      width: 100%;
+      height: 100%;
     }
   }
 }
