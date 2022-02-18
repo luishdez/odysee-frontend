@@ -177,9 +177,9 @@ const OdyseeMembershipPage = (props: Props) => {
     let featureString = '';
     if (plan === 'Premium') {
       featureString =
-        'Your badges will be shown on up to three channels and you will have early access to new features. ';
+        'Your badge will be shown for your ' + userChannelName + ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
     } else if (plan === 'Premium+') {
-      featureString = 'Your feature of no ads applies site-wide and badges are shown for up to three channels. ';
+      featureString = 'Your feature of no ads applies site-wide for all channels and your badge will be shown for your ' + userChannelName + ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
     }
 
     let purchaseString =
