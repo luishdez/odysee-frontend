@@ -10,13 +10,14 @@ type Props = {
   badgeToShow: string,
   linkPage?: boolean,
   placement?: string,
+  className?: string,
   hideTooltip?: boolean,
 };
 
 export default function PremiumBadge(props: Props) {
-  const { badgeToShow, linkPage, placement, hideTooltip } = props;
+  const { badgeToShow, linkPage, placement, className, hideTooltip } = props;
 
-  const badgeProps = { size: 40, placement, hideTooltip };
+  const badgeProps = { size: 40, placement, hideTooltip, className };
 
   return (
     <BadgeWrapper linkPage={linkPage}>

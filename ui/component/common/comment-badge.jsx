@@ -11,13 +11,14 @@ type Props = {
   size?: number,
   placement?: string,
   hideTooltip?: boolean,
+  className?: string,
 };
 
 export default function CommentBadge(props: Props) {
-  const { icon, label, size = 20, placement = 'top', hideTooltip } = props;
+  const { icon, label, size = 20, placement = 'top', hideTooltip, className } = props;
 
   return (
-    <BadgeWrapper title={label} placement={placement} hideTooltip={hideTooltip}>
+    <BadgeWrapper title={label} placement={placement} hideTooltip={hideTooltip} className={className}>
       <span className="comment__badge">
         <Icon icon={icon} size={size} />
       </span>

@@ -68,7 +68,13 @@ function ChannelThumbnail(props: Props) {
   const showThumb = (!obscure && !!thumbnail) || thumbnailPreview;
 
   const badgeToShow = showMemberBadge && getBadgeToShow(selectOdyseeMembershipByClaimId);
-  const badgeProps = { badgeToShow, linkPage: isChannel, placement: isChannel && 'bottom', hideTooltip };
+  const badgeProps = {
+    badgeToShow,
+    linkPage: isChannel,
+    placement: isChannel && 'bottom',
+    hideTooltip,
+    className: isChannel && 'profile-badge__tooltip',
+  };
 
   const shouldFetchUserMemberships = true;
   useGetUserMemberships(shouldFetchUserMemberships, [uri], claimsByUri, doFetchUserMemberships);
