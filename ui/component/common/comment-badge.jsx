@@ -10,16 +10,28 @@ type Props = {
   label: string,
   size?: number,
   placement?: string,
+  hideTooltip?: boolean,
 };
 
 export default function CommentBadge(props: Props) {
-  const { icon, label, size = 20, placement = 'top' } = props;
+  const { icon, label, size = 20, placement = 'top', hideTooltip } = props;
 
   return (
-    <Tooltip title={label} placement={placement}>
+    <BadgeWrapper title={label} placement={placement} hideTooltip={hideTooltip}>
       <span className="comment__badge">
         <Icon icon={icon} size={size} />
       </span>
-    </Tooltip>
+    </BadgeWrapper>
   );
 }
+
+type WrapperProps = {
+  hideTooltip?: boolean,
+  children: any,
+};
+
+const BadgeWrapper = (props: WrapperProps) => {
+  const { hideTooltip, children, ...tooltipProps } = props;
+
+  return !hideTooltip ? <Tooltip {...tooltipProps}>{children}</Tooltip> : children;
+};

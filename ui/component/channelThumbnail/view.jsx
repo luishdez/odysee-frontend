@@ -4,7 +4,6 @@ import { parseURI } from 'util/lbryURI';
 import classnames from 'classnames';
 import Gerbil from './gerbil.png';
 import FreezeframeWrapper from 'component/fileThumbnail/FreezeframeWrapper';
-import ChannelStakedIndicator from 'component/channelStakedIndicator';
 import OptimizedImage from 'component/optimizedImage';
 import { AVATAR_DEFAULT } from 'config';
 import useGetUserMemberships from 'effects/use-get-user-memberships';
@@ -50,7 +49,6 @@ function ChannelThumbnail(props: Props) {
     doResolveUri,
     isResolving,
     noLazyLoad,
-    hideStakedIndicator = false,
     hideTooltip,
     setThumbUploadError,
     ThumbUploadError,
@@ -70,7 +68,7 @@ function ChannelThumbnail(props: Props) {
   const showThumb = (!obscure && !!thumbnail) || thumbnailPreview;
 
   const badgeToShow = showMemberBadge && getBadgeToShow(selectOdyseeMembershipByClaimId);
-  const badgeProps = { badgeToShow, linkPage: isChannel, placement: isChannel && 'bottom' };
+  const badgeProps = { badgeToShow, linkPage: isChannel, placement: isChannel && 'bottom', hideTooltip };
 
   const shouldFetchUserMemberships = true;
   useGetUserMemberships(shouldFetchUserMemberships, [uri], claimsByUri, doFetchUserMemberships);
