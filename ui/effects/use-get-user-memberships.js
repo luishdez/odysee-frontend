@@ -23,7 +23,7 @@ export default function useGetUserMemberships(
           const claimUrlsToId = convertClaimUrlsToIds[uri];
           if (claimUrlsToId) {
             // TODO: flow error
-            return getChannelFromClaim(claimUrlsToId).claim_id;
+            return getChannelFromClaim(claimUrlsToId) && getChannelFromClaim(claimUrlsToId).claim_id;
           }
         });
 
