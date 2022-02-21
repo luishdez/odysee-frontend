@@ -151,6 +151,11 @@
         flex-basis: 100%;
         margin-bottom: var(--spacing-xxs);
       }
+
+      // "creating a revolutionary platform.." copy
+      .membership-splash__info:nth-of-type(1) {
+        line-height: 1.5rem;
+      }
     }
 
     .membership-splash__info:nth-child(1) {
