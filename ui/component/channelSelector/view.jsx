@@ -9,7 +9,8 @@ import ChannelTitle from 'component/channelTitle';
 import Icon from 'component/common/icon';
 import { useHistory } from 'react-router';
 import useGetUserMemberships from 'effects/use-get-user-memberships';
-import CommentBadge from 'component/common/comment-badge';
+import PremiumBadge from 'component/common/premium-badge';
+import { getBadgeToShow } from 'util/premium';
 
 type Props = {
   selectedChannelUrl: string, // currently selected channel
@@ -37,13 +38,7 @@ function ChannelListItem(props: ListItemProps) {
   const { uri, isSelected = false, claimsByUri, doFetchUserMemberships, selectOdyseeMembershipByClaimId } = props;
 
   const membership = selectOdyseeMembershipByClaimId(uri);
-
-  let badgeToShow;
-  if (membership === 'Premium') {
-    badgeToShow = 'silver';
-  } else if (membership === 'Premium+') {
-    badgeToShow = 'gold';
-  }
+  const badgeToShow = getBadgeToShow(membership);
 
   const shouldFetchUserMemberships = true;
   useGetUserMemberships(shouldFetchUserMemberships, [uri], claimsByUri, doFetchUserMemberships);
@@ -52,8 +47,7 @@ function ChannelListItem(props: ListItemProps) {
     <div className={classnames('channel__list-item', { 'channel__list-item--selected': isSelected })}>
       <ChannelThumbnail uri={uri} hideStakedIndicator xsmall noLazyLoad />
       <ChannelTitle uri={uri} />
-      {badgeToShow === 'silver' && <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={40} />}
-      {badgeToShow === 'gold' && <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={40} />}
+      {badgeToShow && <PremiumBadge badgeToShow={badgeToShow} />}
       {isSelected && <Icon icon={ICONS.DOWN} />}
     </div>
   );

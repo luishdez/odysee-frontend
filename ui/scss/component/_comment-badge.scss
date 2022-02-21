@@ -7,3 +7,8 @@
     width: 1rem;
   }
 }
+
+// fix contrast on hover of channel selector, couldn't come up with a better way
+div[role=menuitem] .channel__list-item .comment__badge svg {
+  stroke: unset !important;
+}

@@ -200,7 +200,7 @@ $actions-z-index: 2;
   background-size: cover;
   margin-right: var(--spacing-m);
 
-  .comment__badge {
+  .button {
     display: flex;
     position: absolute;
     text-align: center;
@@ -209,8 +209,20 @@ $actions-z-index: 2;
     bottom: -16%;
     left: unset !important;
     background-color: unset !important;
-    right: -1rem !important;
+    right: -1rem;
+  }
 
+  .link--small {
+    right: -3rem !important;
+  }
+
+  .comment__badge {
+    position: absolute;
+    text-align: center;
+    width: 80%;
+    left: 22%;
+    bottom: -30%;
+    
     svg {
       stroke: unset;
       overflow: visible;
@@ -255,6 +267,20 @@ $actions-z-index: 2;
   @media (max-width: $breakpoint-small) {
     top: 0;
     margin-top: var(--spacing-xl);
+  }
+
+  .comment__badge {
+    position: absolute;
+    text-align: center;
+    width: 60%;
+    left: 0;
+    
+    svg {
+      stroke: unset;
+      overflow: visible;
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 

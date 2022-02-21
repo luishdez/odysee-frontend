@@ -30,6 +30,8 @@ import OptimizedImage from 'component/optimizedImage';
 import { getChannelFromClaim } from 'util/claim';
 import { parseSticker } from 'util/comments';
 import { useIsMobile } from 'effects/use-screensize';
+import PremiumBadge from 'component/common/premium-badge';
+import { getBadgeToShow } from 'util/premium';
 
 const AUTO_EXPAND_ALL_REPLIES = false;
 
@@ -154,12 +156,7 @@ function CommentView(props: Props) {
     }
   } catch (e) {}
 
-  let badgeToShow;
-  if (selectOdyseeMembershipByClaimId === 'Premium') {
-    badgeToShow = 'silver';
-  } else if (selectOdyseeMembershipByClaimId === 'Premium+') {
-    badgeToShow = 'gold';
-  }
+  const badgeToShow = getBadgeToShow(selectOdyseeMembershipByClaimId);
 
   useEffect(() => {
     if (isEditing) {
@@ -288,16 +285,7 @@ function CommentView(props: Props) {
               )}
               {isGlobalMod && <CommentBadge label={__('Admin')} icon={ICONS.BADGE_MOD} />}
               {isModerator && <CommentBadge label={__('Moderator')} icon={ICONS.BADGE_MOD} />}
-              {badgeToShow === 'silver' && (
-                <Button target="_blank" navigate="/$/membership">
-                  <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />
-                </Button>
-              )}
-              {badgeToShow === 'gold' && (
-                <Button target="_blank" navigate="/$/membership">
-                  <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />
-                </Button>
-              )}
+              {badgeToShow && <PremiumBadge badgeToShow={badgeToShow} linkPage />}
               <Button
                 className="comment__time"
                 onClick={handleTimeClick}

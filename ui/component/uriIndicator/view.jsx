@@ -3,8 +3,8 @@ import type { Node } from 'react';
 import React from 'react';
 import classnames from 'classnames';
 import Button from 'component/button';
-import * as ICONS from 'constants/icons';
-import CommentBadge from 'component/common/comment-badge';
+import PremiumBadge from 'component/common/premium-badge';
+import { getBadgeToShow } from 'util/premium';
 
 type ChannelInfo = { uri: string, name: string };
 
@@ -88,12 +88,7 @@ class UriIndicator extends React.PureComponent<Props> {
       comment,
     } = this.props;
 
-    let badgeToShow;
-    if (selectOdyseeMembershipByClaimId === 'Premium') {
-      badgeToShow = 'silver';
-    } else if (selectOdyseeMembershipByClaimId === 'Premium+') {
-      badgeToShow = 'gold';
-    }
+    const badgeToShow = getBadgeToShow(selectOdyseeMembershipByClaimId);
 
     if (!channelInfo && !claim) {
       return (
@@ -123,12 +118,7 @@ class UriIndicator extends React.PureComponent<Props> {
       const inner = (
         <span dir="auto" className={classnames('channel-name', { 'channel-name--inline': inline })}>
           {channelName}
-          {!comment && (
-            <>
-              {badgeToShow === 'silver' && <CommentBadge label={__('Premium')} icon={ICONS.PREMIUM} size={25} />}
-              {badgeToShow === 'gold' && <CommentBadge label={__('Premium +')} icon={ICONS.PREMIUM_PLUS} size={25} />}
-            </>
-          )}
+          {!comment && badgeToShow && <PremiumBadge badgeToShow={badgeToShow} />}
         </span>
       );
 
