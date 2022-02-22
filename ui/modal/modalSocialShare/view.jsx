@@ -14,7 +14,7 @@ type Props = {
 
 class ModalSocialShare extends React.PureComponent<Props> {
   render() {
-    const { closeModal, uri, webShareable, collectionId, showEmbedButton = true } = this.props;
+    const { closeModal, uri, webShareable, collectionId, showEmbedButton } = this.props;
 
     console.log('show embed button2');
     console.log(showEmbedButton);

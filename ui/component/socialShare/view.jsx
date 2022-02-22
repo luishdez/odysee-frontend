@@ -43,7 +43,7 @@ function SocialShare(props: Props) {
     position,
     collectionId,
     doFetchInviteStatus,
-    showEmbedButton = true,
+    showEmbedButton,
   } = props;
   const [showEmbed, setShowEmbed] = React.useState(false);
   const [includeCollectionId, setIncludeCollectionId] = React.useState(Boolean(collectionId)); // unless it *is* a collection?
@@ -53,7 +53,7 @@ function SocialShare(props: Props) {
   const startTimeSeconds: number = hmsToSeconds(startTime);
   const isMobile = useIsMobile();
 
-  console.log('show embed button');
+  console.log('show embed button3');
   console.log(showEmbedButton);
 
   React.useEffect(() => {

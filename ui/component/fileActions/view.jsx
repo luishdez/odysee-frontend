@@ -56,7 +56,7 @@ export default function FileActions(props: Props) {
     doDownloadUri,
   } = props;
 
-  let showEmbedButton = true;
+  let showEmbedButton = false;
   if (isLivestreamClaim) {
     showEmbedButton = false;
   }
