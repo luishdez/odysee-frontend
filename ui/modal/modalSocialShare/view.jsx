@@ -22,7 +22,7 @@ class ModalSocialShare extends React.PureComponent<Props> {
       <Modal isOpen onAborted={closeModal} type="card">
         <Card
           title={__('Share')}
-          actions={<SocialShare uri={uri} webShareable={webShareable} collectionId={collectionId} showEmbedButton />}
+          actions={<SocialShare uri={uri} webShareable={webShareable} collectionId={collectionId} showEmbedButton={showEmbedButton} />}
         />
       </Modal>
     );
