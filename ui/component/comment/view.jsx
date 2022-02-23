@@ -66,7 +66,7 @@ type Props = {
   supportDisabled: boolean,
   setQuickReply: (any) => void,
   quickReply: any,
-  selectOdyseeMembershipByClaimId: string,
+  selectOdyseeMembershipByUri: string,
 };
 
 const LENGTH_TO_COLLAPSE = 300;
@@ -96,7 +96,7 @@ function CommentView(props: Props) {
     supportDisabled,
     setQuickReply,
     quickReply,
-    selectOdyseeMembershipByClaimId,
+    selectOdyseeMembershipByUri,
   } = props;
 
   const {
@@ -156,7 +156,7 @@ function CommentView(props: Props) {
     }
   } catch (e) {}
 
-  const badgeToShow = getBadgeToShow(selectOdyseeMembershipByClaimId);
+  const badgeToShow = getBadgeToShow(selectOdyseeMembershipByUri);
 
   useEffect(() => {
     if (isEditing) {

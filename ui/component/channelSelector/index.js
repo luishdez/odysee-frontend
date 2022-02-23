@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { selectMyChannelClaims, selectClaimsByUri } from 'redux/selectors/claims';
 import { selectActiveChannelClaim, selectIncognito } from 'redux/selectors/app';
 import { doSetActiveChannel, doSetIncognito } from 'redux/actions/app';
-import { selectOdyseeMembershipByClaimId } from 'redux/selectors/user';
+import { selectOdyseeMembershipByUri } from 'redux/selectors/user';
 import { doFetchUserMemberships } from 'redux/actions/user';
 import ChannelSelector from './view';
 
@@ -13,7 +13,7 @@ const select = (state, props) => {
     channels: selectMyChannelClaims(state),
     activeChannelClaim,
     incognito: selectIncognito(state),
-    selectOdyseeMembershipByClaimId: (uri) => selectOdyseeMembershipByClaimId(state, uri),
+    selectOdyseeMembershipByUri: (uri) => selectOdyseeMembershipByUri(state, uri),
     claimsByUri: selectClaimsByUri(state),
   };
 };

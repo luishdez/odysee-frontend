@@ -116,7 +116,7 @@ export const selectYouTubeImportVideosComplete = createSelector(selectState, (st
   }
 });
 
-export const selectOdyseeMembershipByClaimId = function (state, uri) {
+export const selectOdyseeMembershipByUri = function (state, uri) {
   const claim = selectClaimForUri(state, uri);
 
   let uploaderChannelClaimId;

@@ -23,7 +23,7 @@ type Props = {
   doSetIncognito: (boolean) => void,
   claimsByUri: { [string]: any },
   doFetchUserMemberships: (claimIdCsv: string) => void,
-  selectOdyseeMembershipByClaimId: (uri: string) => string,
+  selectOdyseeMembershipByUri: (uri: string) => string,
 };
 
 type ListItemProps = {
@@ -31,13 +31,13 @@ type ListItemProps = {
   isSelected?: boolean,
   claimsByUri: { [string]: any },
   doFetchUserMemberships: (claimIdCsv: string) => void,
-  selectOdyseeMembershipByClaimId: (uri: string) => string,
+  selectOdyseeMembershipByUri: (uri: string) => string,
 };
 
 function ChannelListItem(props: ListItemProps) {
-  const { uri, isSelected = false, claimsByUri, doFetchUserMemberships, selectOdyseeMembershipByClaimId } = props;
+  const { uri, isSelected = false, claimsByUri, doFetchUserMemberships, selectOdyseeMembershipByUri } = props;
 
-  const membership = selectOdyseeMembershipByClaimId(uri);
+  const membership = selectOdyseeMembershipByUri(uri);
   const badgeToShow = getBadgeToShow(membership);
 
   const shouldFetchUserMemberships = true;
@@ -75,7 +75,7 @@ function ChannelSelector(props: Props) {
     hideAnon = false,
     incognito,
     doSetIncognito,
-    selectOdyseeMembershipByClaimId,
+    selectOdyseeMembershipByUri,
     claimsByUri,
     doFetchUserMemberships,
   } = props;
@@ -101,7 +101,7 @@ function ChannelSelector(props: Props) {
           ) : (
             <>
               <ChannelListItem
-                selectOdyseeMembershipByClaimId={selectOdyseeMembershipByClaimId}
+                selectOdyseeMembershipByUri={selectOdyseeMembershipByUri}
                 uri={activeChannelUrl}
                 isSelected
                 claimsByUri={claimsByUri}
@@ -116,7 +116,7 @@ function ChannelSelector(props: Props) {
             channels.map((channel) => (
               <MenuItem key={channel.permanent_url} onSelect={() => handleChannelSelect(channel)}>
                 <ChannelListItem
-                  selectOdyseeMembershipByClaimId={selectOdyseeMembershipByClaimId}
+                  selectOdyseeMembershipByUri={selectOdyseeMembershipByUri}
                   uri={channel.permanent_url}
                   claimsByUri={claimsByUri}
                   doFetchUserMemberships={doFetchUserMemberships}

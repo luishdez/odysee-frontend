@@ -30,7 +30,7 @@ type Props = {
   myChannelIds: ?Array<string>,
   stakedLevel: number,
   isMobile?: boolean,
-  selectOdyseeMembershipByClaimId: string,
+  selectOdyseeMembershipByUri: string,
   handleDismissPin?: () => void,
   restoreScrollPos?: () => void,
   claimsByUri: { [string]: any },
@@ -50,7 +50,7 @@ export default function LivestreamComment(props: Props) {
     restoreScrollPos,
     claimsByUri,
     doFetchUserMemberships,
-    selectOdyseeMembershipByClaimId,
+    selectOdyseeMembershipByUri,
   } = props;
 
   const {
@@ -71,7 +71,7 @@ export default function LivestreamComment(props: Props) {
   const shouldFetchUserMemberships = true;
   useGetUserMemberships(shouldFetchUserMemberships, [authorUri], claimsByUri, doFetchUserMemberships);
 
-  const badgeToShow = getBadgeToShow(selectOdyseeMembershipByClaimId);
+  const badgeToShow = getBadgeToShow(selectOdyseeMembershipByUri);
 
   const isStreamer = claim && claim.signing_channel && claim.signing_channel.permanent_url === authorUri;
   const { claimName } = parseURI(authorUri || '');

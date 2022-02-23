@@ -60,7 +60,7 @@ type Props = {
   mutedChannels: Array<string>,
   unpublishedCollections: CollectionGroup,
   lang: string,
-  selectOdyseeMembershipByClaimId: string,
+  selectOdyseeMembershipByUri: string,
 };
 
 function ChannelPage(props: Props) {
