@@ -12,3 +12,8 @@
 div[role=menuitem] .channel__list-item .comment__badge svg {
   stroke: unset !important;
 }
+
+// icon is a bit bright and loud
+.icon--PremiumPlus {
+  filter: brightness(0.92);
+}
