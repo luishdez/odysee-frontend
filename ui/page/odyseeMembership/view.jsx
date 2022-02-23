@@ -121,7 +121,12 @@ const OdyseeMembershipPage = (props: Props) => {
 
         setCardSaved(hasAPaymentCard);
       } catch (err) {
-        console.log(err);
+        const customerDoesntExistError = 'user as customer is not setup yet';
+        if (err.message === customerDoesntExistError) {
+          setCardSaved(false);
+        } else {
+          console.log(err);
+        }
       }
 
       try {
@@ -289,7 +294,7 @@ const OdyseeMembershipPage = (props: Props) => {
   return (
     <>
       <Page>
-        {!stillWaitingFromBackend && purchasedMemberships.length === 0 && !planValue && !hasShownModal ? (
+        {!stillWaitingFromBackend && purchasedMemberships.length === 0 && !planValue && !hasShownModal && cardSaved ? (
           // {!stillWaitingFromBackend && purchasedMemberships.length === 0 ? (
           // {!changeFrontend ? (
           <MembershipSplash pageLocation={'confirmPage'} />
@@ -445,7 +450,7 @@ const OdyseeMembershipPage = (props: Props) => {
               <div>
                 <br />
                 <h2 className={'getPaymentCard'}>
-                  Please save a card as a payment method so you can join a membership
+                  Please save a card as a payment method so you can join Odysee Premium
                 </h2>
 
                 <Button
