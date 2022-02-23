@@ -63,7 +63,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
       console.log(response);
 
       // $FlowFixMe
-      var newURL = location.href.split('?')[0];
+      let newURL = location.href.split('?')[0];
       window.history.pushState('object', document.title, newURL);
 
       setStatusText('Membership purchase was successful');
@@ -109,7 +109,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
   }
 
   return (
-    <Modal ariaHideApp={false} isOpen contentLabel={'hello'} type="card" onAborted={closeModal}>
+    <Modal ariaHideApp={false} isOpen contentLabel={'Confirm Membership Purchase'} type="card" onAborted={closeModal}>
       <Card
         className="stripe__confirm-remove-membership"
         title={hasMembership ? __('Confirm Membership Cancellation') : __(`Confirm ${plan} Membership`)}

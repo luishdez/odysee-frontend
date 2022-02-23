@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
 import { doHideModal } from 'redux/actions/app';
-import ModalSendTip from './view';
+import ModalMembershipSplash from './view';
 
 const perform = dispatch => ({
   closeModal: () => dispatch(doHideModal()),
 });
 
-export default connect(null, perform)(ModalSendTip);
+export default connect(null, perform)(ModalMembershipSplash);

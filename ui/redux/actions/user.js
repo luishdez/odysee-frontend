@@ -832,29 +832,39 @@ export function doCheckYoutubeTransfer() {
   };
 }
 
+/***
+ * Receives a csv of channel claim ids, hits the backend and returns nicely formatted object with relevant info
+ * @param claimIdCsv
+ * @returns {(function(*): Promise<void>)|*}
+ */
 export function doFetchUserMemberships(claimIdCsv: string) {
-  return (dispatch) => {
-    (async function () {
-      const response = await Lbryio.call('membership', 'check', {
-        channel_id: '80d2590ad04e36fb1d077a9b9e3a8bba76defdf8',
-        claim_ids: claimIdCsv,
-      });
+  return async (dispatch) => {
+    // check if users have odysee memberships (premium/premium+)
+    const response = await Lbryio.call('membership', 'check', {
+      channel_id: '80d2590ad04e36fb1d077a9b9e3a8bba76defdf8',
+      claim_ids: claimIdCsv,
+    });
 
-      let updatedResponse = {};
+    let updatedResponse = {};
 
-      for (const user in response) {
-        if (response[user] && response[user].length) {
-          for (const membership of response[user]) {
-            if (membership.channel_name) {
-              updatedResponse[user] = membership.name;
-            }
+    // loop through returned users
+    for (const user in response) {
+      // if array was returned for a user (indicating a membership exists), otherwise is null
+      if (response[user] && response[user].length) {
+        // get membership for user
+        // note: a for loop is kind of odd, indicates there may be multiple memberships?
+        // probably not needed depending on what we do with the frontend, should revisit
+        for (const membership of response[user]) {
+          if (membership.channel_name) {
+            updatedResponse[user] = membership.name;
           }
-        } else {
-          updatedResponse[user] = null;
         }
+      } else {
+        // note the user has been fetched but is null
+        updatedResponse[user] = null;
       }
+    }
 
-      dispatch({ type: ACTIONS.ADD_CLAIMIDS_MEMBERSHIP_DATA, data: { response: updatedResponse } });
-    })();
+    dispatch({ type: ACTIONS.ADD_CLAIMIDS_MEMBERSHIP_DATA, data: { response: updatedResponse } });
   };
 }
