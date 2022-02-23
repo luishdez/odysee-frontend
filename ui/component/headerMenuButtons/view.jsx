@@ -35,7 +35,7 @@ export default function HeaderMenuButtons(props: HeaderMenuButtonProps) {
     odyseeMembership,
   } = props;
 
-  const isOnMembershipPage = window.location.pathname === '/$/membership';
+  const isOnMembershipPage = window.location.pathname === `/$/${PAGES.ODYSEE_MEMBERSHIP}`;
 
   const notificationsEnabled = ENABLE_UI_NOTIFICATIONS || (user && user.experimental_ui);
   const livestreamEnabled = Boolean(
