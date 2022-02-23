@@ -224,7 +224,7 @@ const OdyseeMembershipPage = (props: Props) => {
     console.log(membership);
 
     const cancellationString =
-      'You are cancelling your Odysee Membership. You will still have access to all the paid ' +
+      'You are cancelling your Odysee Premium Membership. You will still have access to all the paid ' +
       'features until the point of the expiration of your current membership, at which point you will not be charged ' +
       'again and your membership will no longer be active.';
 
@@ -301,7 +301,7 @@ const OdyseeMembershipPage = (props: Props) => {
         ) : (
           <div className={'card-stack'}>
             {/* list available memberships offered by odysee */}
-            <h1 style={{ fontSize: '23px' }}>Odysee Memberships</h1>
+            <h1 style={{ fontSize: '23px' }}>Odysee Premium</h1>
             {!stillWaitingFromBackend && cardSaved !== false && (
               <div style={{ marginTop: '10px' }}>
                 <ChannelSelector
