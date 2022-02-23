@@ -17,6 +17,7 @@ type Props = {
   hideAnonymous?: boolean,
   inline?: boolean,
   className?: string,
+  showMemberBadge?: boolean,
   children: ?Node, // to allow for other elements to be nested within the UriIndicator (commit: 1e82586f).
   // --- redux ---
   claim: ?Claim,
@@ -86,9 +87,10 @@ class UriIndicator extends React.PureComponent<Props> {
       className,
       selectOdyseeMembershipByClaimId,
       comment,
+      showMemberBadge = true,
     } = this.props;
 
-    const badgeToShow = getBadgeToShow(selectOdyseeMembershipByClaimId);
+    const badgeToShow = showMemberBadge && getBadgeToShow(selectOdyseeMembershipByClaimId);
 
     if (!channelInfo && !claim) {
       return (

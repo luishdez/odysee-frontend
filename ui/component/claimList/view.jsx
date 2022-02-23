@@ -56,6 +56,7 @@ type Props = {
   showEdit?: boolean,
   droppableProvided?: any,
   unavailableUris?: Array<string>,
+  showMemberBadge?: boolean,
 };
 
 export default function ClaimList(props: Props) {
@@ -93,6 +94,7 @@ export default function ClaimList(props: Props) {
     showEdit,
     droppableProvided,
     unavailableUris,
+    showMemberBadge,
   } = props;
 
   const [currentSort, setCurrentSort] = usePersistedState(persistedStorageKey, SORT_NEW);
@@ -183,6 +185,7 @@ export default function ClaimList(props: Props) {
       showEdit={showEdit}
       dragHandleProps={draggableProvided && draggableProvided.dragHandleProps}
       unavailableUris={unavailableUris}
+      showMemberBadge={showMemberBadge}
     />
   );
 

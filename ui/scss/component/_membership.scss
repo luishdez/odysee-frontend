@@ -2,6 +2,15 @@
   margin-top: var(--spacing-l);
   font-size: var(--font-large);
   font-weight: var(--font-weight-bold);
+
+  .comment__badge {
+    margin-left: var(--spacing-s);
+
+    svg {
+      height: 2rem;
+      width: 2rem;
+    }
+  }
 }
 
 .membership_title:first-of-type {

@@ -59,6 +59,7 @@ export default function ChannelsPage(props: Props) {
 
         {channelUrls && Boolean(channelUrls.length) && (
           <ClaimList
+            showMemberBadge
             header={<h1 className="section__title">{__('Your channels')}</h1>}
             headerAltControls={
               <Button

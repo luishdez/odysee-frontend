@@ -11,6 +11,8 @@ import Card from 'component/common/card';
 import MembershipSplash from 'component/membershipSplash';
 import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
+import PremiumBadge from 'component/common/premium-badge';
+import { getBadgeToShow } from 'util/premium';
 import useGetUserMemberships from 'effects/use-get-user-memberships';
 let stripeEnvironment = getStripeEnvironment();
 
@@ -182,9 +184,14 @@ const OdyseeMembershipPage = (props: Props) => {
     let featureString = '';
     if (plan === 'Premium') {
       featureString =
-        'Your badge will be shown for your ' + userChannelName + ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
+        'Your badge will be shown for your ' +
+        userChannelName +
+        ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
     } else if (plan === 'Premium+') {
-      featureString = 'Your feature of no ads applies site-wide for all channels and your badge will be shown for your ' + userChannelName + ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
+      featureString =
+        'Your feature of no ads applies site-wide for all channels and your badge will be shown for your ' +
+        userChannelName +
+        ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
     }
 
     let purchaseString =
@@ -322,7 +329,13 @@ const OdyseeMembershipPage = (props: Props) => {
                     <>
                       {purchasedMemberships && !purchasedMemberships.includes(membershipOption.Membership.id) && (
                         <>
-                          <h4 className="membership_title">{membershipOption.Membership.name}</h4>
+                          <h4 className="membership_title">
+                            {membershipOption.Membership.name}
+                            <PremiumBadge
+                              badgeToShow={membershipOption.Membership.name === 'Premium' ? 'silver' : 'gold'}
+                            />
+                          </h4>
+
                           <h4 className="membership_subtitle">{membershipOption.Membership.description}</h4>
                           {membershipOption.Prices.map((price) => (
                             <>
@@ -384,7 +397,10 @@ const OdyseeMembershipPage = (props: Props) => {
                       activeMemberships &&
                       activeMemberships.map((membership) => (
                         <>
-                          <h4 className="membership_title">{membership.MembershipDetails.name}</h4>
+                          <h4 className="membership_title">
+                            {membership.MembershipDetails.name}
+                            <PremiumBadge badgeToShow={membership.MembershipDetails.name === 'Premium' ? 'silver' : 'gold'} />
+                          </h4>
                           {/* TODO: the description from the backend isn't great here, should be clearer */}
                           <h4 className="membership_subtitle">{membership.MembershipDetails.description}</h4>
                           <h4 className="membership_info">
@@ -430,7 +446,10 @@ const OdyseeMembershipPage = (props: Props) => {
                     {canceledMemberships &&
                       canceledMemberships.map((membership) => (
                         <>
-                          <h4 className="membership_title">{membership.MembershipDetails.name}</h4>
+                          <h4 className="membership_title">
+                            {membership.MembershipDetails.name}
+                            <PremiumBadge badgeToShow={membership.MembershipDetails.name === 'Premium' ? 'silver' : 'gold'} />
+                          </h4>
                           <h4 className="membership_info">
                             <b>Registered On:</b> {formatDate(membership.Membership.created_at)}
                           </h4>
