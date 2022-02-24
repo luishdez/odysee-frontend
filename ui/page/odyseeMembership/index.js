@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { doOpenModal } from 'redux/actions/app';
 import OdyseeMembership from './view';
-import { selectActiveChannelClaim } from 'redux/selectors/app';
+import { selectActiveChannelClaim, selectIncognito } from 'redux/selectors/app';
 import { selectMyChannelClaims, selectClaimsByUri } from 'redux/selectors/claims';
 import { doFetchUserMemberships } from 'redux/actions/user';
 import { selectOdyseeMembershipByUri } from 'redux/selectors/user';
@@ -15,6 +15,7 @@ const select = (state) => {
     channels: selectMyChannelClaims(state),
     claimsByUri: selectClaimsByUri(state),
     selectOdyseeMembershipByUri: selectOdyseeMembershipByUri(state, uri),
+    incognito: selectIncognito(state),
   };
 };
 

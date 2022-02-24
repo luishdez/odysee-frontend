@@ -32,10 +32,24 @@ type Props = {
   channels: ?Array<ChannelClaim>,
   claimsByUri: { [string]: any },
   doFetchUserMemberships: (claimIdCsv: string) => void,
+  incognito: boolean,
 };
 
 const OdyseeMembershipPage = (props: Props) => {
-  const { openModal, activeChannelClaim, channels, claimsByUri, doFetchUserMemberships } = props;
+  const {
+    openModal,
+    activeChannelClaim,
+    channels,
+    claimsByUri,
+    doFetchUserMemberships,
+    incognito,
+  } = props;
+
+  console.log('is incognito!');
+  console.log(incognito);
+
+  console.log('my channels!');
+  console.log(channels);
 
   const userChannelName = activeChannelClaim && activeChannelClaim.name;
   const userChannelClaimId = activeChannelClaim && activeChannelClaim.claim_id;
@@ -167,11 +181,11 @@ const OdyseeMembershipPage = (props: Props) => {
     membershipOptions === undefined ||
     userMemberships === undefined;
 
-  const formatDate = function (date) {
+  const formatDate = function(date) {
     return moment(new Date(date)).format('MMMM DD YYYY');
   };
 
-  const deleteData = async function () {
+  const deleteData = async function() {
     const response = await Lbryio.call('membership', 'clear', {}, 'post');
 
     console.log(response);
@@ -203,7 +217,7 @@ const OdyseeMembershipPage = (props: Props) => {
     return purchaseString;
   }
 
-  const purchaseMembership = function (e, membershipOption, price) {
+  const purchaseMembership = function(e, membershipOption, price) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -215,8 +229,8 @@ const OdyseeMembershipPage = (props: Props) => {
 
     openModal(MODALS.CONFIRM_ODYSEE_MEMBERSHIP, {
       membershipId,
-      userChannelClaimId,
-      userChannelName,
+      userChannelClaimId: incognito ? undefined : userChannelClaimId,
+      userChannelName: incognito ? undefined : userChannelName,
       priceId,
       purchaseString,
       plan: planName,
@@ -225,7 +239,7 @@ const OdyseeMembershipPage = (props: Props) => {
     });
   };
 
-  const cancelMembership = async function (e, membership) {
+  const cancelMembership = async function(e, membership) {
     const membershipId = e.currentTarget.getAttribute('membership-id');
 
     console.log(membership);
