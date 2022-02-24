@@ -776,7 +776,7 @@ export const selectUpdateCollectionError = (state: State) => selectState(state).
 export const selectCreatingCollection = (state: State) => selectState(state).creatingCollection;
 export const selectCreateCollectionError = (state: State) => selectState(state).createCollectionError;
 
-export const selectIsMyChannelCountOverLimit = createSelector(
+export const selectIsMyChannelCountOverLimit = () => createSelector(
   selectMyChannelClaimIds,
   selectYoutubeChannels,
   (myClaimIds, ytChannels: ?Array<{ channel_claim_id: string }>) => {
