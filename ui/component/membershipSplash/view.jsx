@@ -49,7 +49,7 @@ export default function MembershipSplash(props: Props) {
             <img src={OdyseePremium} />
           </section>
           <section>
-            <I18nMessage tokens={{ early_access: <b>{__('early access')}</b>, price: <b>{__('99¢')}</b> }}>
+            <I18nMessage tokens={{ early_access: <b>{__('early access')}</b>, price: <b>99¢</b> }}>
               Get %early_access% features and remove ads for %price%
             </I18nMessage>
           </section>
@@ -99,7 +99,7 @@ export default function MembershipSplash(props: Props) {
             <div className="membership-splash__info-price">
               <img src={BadgePremiumPlus} />
               <section>
-                {__('$2.99')}
+                $2.99
                 <div className="membership-splash__info-range">{__('A MONTH')}</div>
               </section>
             </div>
