@@ -4,7 +4,7 @@ import OdyseeMembership from './view';
 import { selectActiveChannelClaim } from 'redux/selectors/app';
 import { selectMyChannelClaims, selectClaimsByUri } from 'redux/selectors/claims';
 import { doFetchUserMemberships } from 'redux/actions/user';
-import { selectOdyseeMembershipByClaimId } from 'redux/selectors/user';
+import { selectOdyseeMembershipByUri } from 'redux/selectors/user';
 
 const select = (state) => {
   const activeChannelClaim = selectActiveChannelClaim(state);
@@ -14,7 +14,7 @@ const select = (state) => {
     activeChannelClaim,
     channels: selectMyChannelClaims(state),
     claimsByUri: selectClaimsByUri(state),
-    selectOdyseeMembershipByClaimId: selectOdyseeMembershipByClaimId(state, uri),
+    selectOdyseeMembershipByUri: selectOdyseeMembershipByUri(state, uri),
   };
 };
 
