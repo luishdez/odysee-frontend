@@ -194,18 +194,36 @@ const OdyseeMembershipPage = (props: Props) => {
     location.reload();
   };
 
+  // dont pass channel name and id when calling purchase
+  const noChannelsOrIncognitoMode = incognito || !channels;
+
   function buildPurchaseString(price, interval, plan) {
     let featureString = '';
-    if (plan === 'Premium') {
+    // generate different strings depending on other conditions
+    if (plan === 'Premium' && !noChannelsOrIncognitoMode) {
       featureString =
-        'Your badge will be shown for your ' +
-        userChannelName +
+        'Your badge will be shown for your ' + userChannelName +
         ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
-    } else if (plan === 'Premium+') {
+    } else if (plan === 'Premium+' && !noChannelsOrIncognitoMode) {
       featureString =
-        'Your feature of no ads applies site-wide for all channels and your badge will be shown for your ' +
-        userChannelName +
+        'Your feature of no ads applies site-wide for all channels and your badge will be shown for your ' + userChannelName +
         ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
+    } else if (plan === 'Premium' && !channels) {
+      featureString =
+        'You currently have no channels. To show your badge on a channel, please create a channel first.' +
+        'If you register a channel later you will be able to show a badge for up to three channels.';
+    } else if (plan === 'Premium+' && !channels) {
+      featureString =
+        'Your feature of no ads applies site-wide. You currently have no channels. To show your badge on a channel, please create a channel first.' +
+        'If you register a channel later you will be able to show a badge for up to three channels.';
+    } else if (plan === 'Premium' && incognito) {
+      featureString =
+        'You currently have no channel selected and will not have a badge be visible, if you want to show a badge you can select a channel now,' +
+        'or you can show a badge for up to three channels in the future for free.';
+    } else if (plan === 'Premium+' && incognito) {
+      featureString =
+        'Your feature of no ads applies site-wide. You currently have no channel selected and will not have a badge be visible, ' +
+        'if you want to show a badge you can select a channel now, or you can show a badge for up to three channels in the future for free.';
     }
 
     let purchaseString =
@@ -229,8 +247,8 @@ const OdyseeMembershipPage = (props: Props) => {
 
     openModal(MODALS.CONFIRM_ODYSEE_MEMBERSHIP, {
       membershipId,
-      userChannelClaimId: incognito ? undefined : userChannelClaimId,
-      userChannelName: incognito ? undefined : userChannelName,
+      userChannelClaimId: noChannelsOrIncognitoMode ? undefined : userChannelClaimId,
+      userChannelName: noChannelsOrIncognitoMode ? undefined : userChannelName,
       priceId,
       purchaseString,
       plan: planName,
