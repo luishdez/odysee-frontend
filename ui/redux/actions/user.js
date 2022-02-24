@@ -103,9 +103,15 @@ function checkAuthBusy() {
   });
 }
 
+/***
+ * Given a user, return their highest ranking Odysee membership (Premium or Premium Plus)
+ * @param dispatch
+ * @param user
+ * @returns {Promise<void>}
+ */
 async function doCheckUserOdyseeMemberships(dispatch, user) {
-  console.log('here1');
-  console.log(user);
+  // get memberships for a given user
+  // TODO: in the future, can we specify this just to @odysee?
   const response = await Lbryio.call(
     'membership',
     'mine',
@@ -115,18 +121,22 @@ async function doCheckUserOdyseeMemberships(dispatch, user) {
     'post'
   );
 
-  console.log(response);
-
   let savedMemberships = [];
   let highestMembershipRanking;
 
+  // loop through all memberships and save the @odysee ones
+  // maybe in the future we can only hit @odysee in the API call
   for (const membership of response) {
     if (membership.MembershipDetails.channel_name === '@odysee') {
       savedMemberships.push(membership.MembershipDetails.name);
     }
   }
 
+  // determine highest ranking membership based on returned data
+  // note: this is from an odd state in the API where a user can be both premium/Premium + at the same time
+  // I expect this can change once upgrade/downgrade is implemented
   if (savedMemberships.length > 0) {
+    // if premium plus is a membership, return that, otherwise it's only premium
     const premiumPlusExists = savedMemberships.includes('Premium+');
     if (premiumPlusExists) {
       highestMembershipRanking = 'Premium+';
@@ -134,8 +144,6 @@ async function doCheckUserOdyseeMemberships(dispatch, user) {
       highestMembershipRanking = 'Premium';
     }
   }
-
-  console.log(`Highest ranking membership: ${highestMembershipRanking}`);
 
   dispatch({
     type: ACTIONS.ADD_ODYSEE_MEMBERSHIP_DATA,
