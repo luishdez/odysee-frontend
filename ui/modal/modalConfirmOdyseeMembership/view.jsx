@@ -60,17 +60,29 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
         },
         'post'
       ).catch((error) => {
+        const errorMessage = error.message;
+
+        const subscriptionFailedBackendError = 'failed to create subscription with default card';
+
+        // wait a bit to show the message so it's not jarring for the user
+        let errorMessageTimeout = 1150;
+
+        // don't do an error delay if there's already a network error
+        if (errorMessage === subscriptionFailedBackendError) {
+          errorMessageTimeout = 0;
+        }
+
         setTimeout(function() {
-          const failedErrorMessage =
+          const genericErrorMessage =
             __("Sorry, your purchase wasn't able to completed. Please contact support for possible next steps");
 
           doToast({
-            message: failedErrorMessage,
+            message: genericErrorMessage,
             isError: true,
           });
 
           closeModal();
-        }, 1150); // wait a bit to show the message so it doesn't give the user whiplash
+        }, errorMessageTimeout);
 
         throw new Error(error);
       });
