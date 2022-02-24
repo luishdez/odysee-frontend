@@ -10,6 +10,7 @@ import AstronautAndFriends from './astronaut_n_friends.png';
 import BadgePremium from './badge_premium.png';
 import BadgePremiumPlus from './badge_premium-plus.png';
 import OdyseePremium from './odysee_premium.png';
+import I18nMessage from 'component/i18nMessage';
 
 type Props = {
   pageLocation: string,
@@ -48,19 +49,21 @@ export default function MembershipSplash(props: Props) {
             <img src={OdyseePremium} />
           </section>
           <section>
-            {__('Get ')}
-            <b>{__('early access')}</b>
-            {__(' features and remove ads for ')}
-            <b>{__('99¢')}</b>
+            <I18nMessage tokens={{ early_access: <b>{__('early access')}</b>, price: <b>{__('99¢')}</b> }}>
+              Get %early_access% features and remove ads for %price%
+            </I18nMessage>
           </section>
         </section>
       </div>
 
       <div className="membership-splash__info-wrapper">
         <div className="membership-splash__info">
-          {__(
-            "Creating a revolutionary video platform for everyone is something we're proud to be doing, but it isn't something that can happen without support. If you believe in Odysee's mission, please consider becoming a Premium member. As a Premium member, you'll be helping us build the best platform in the universe and we'll give you some cool perks."
-          )}
+          <I18nMessage>
+            Creating a revolutionary video platform for everyone is something we're proud to be doing, but it isn't
+            something that can happen without support. If you believe in Odysee's mission, please consider becoming a
+            Premium member. As a Premium member, you'll be helping us build the best platform in the universe and we'll
+            give you some cool perks.
+          </I18nMessage>
         </div>
 
         <div className="membership-splash__info">
@@ -69,8 +72,11 @@ export default function MembershipSplash(props: Props) {
               <img src={BadgePremium} />
 
               <section>
-                {__('99¢')}
-                <div className="membership-splash__info-range">{__('A MONTH')}</div>
+                <I18nMessage
+                  tokens={{ date_range: <div className="membership-splash__info-range">{__('A MONTH')}</div> }}
+                >
+                  99¢ %date_range%
+                </I18nMessage>
               </section>
             </div>
           </section>

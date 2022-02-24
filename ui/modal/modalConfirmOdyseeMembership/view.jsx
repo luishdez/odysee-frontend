@@ -43,7 +43,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
   async function purchaseMembership() {
     try {
       setWaitingForBackend(true);
-      setStatusText('Facilitating your purchase...');
+      setStatusText(__('Facilitating your purchase...)'));
 
       // show the memberships the user is subscribed to
       const response = await Lbryio.call(
@@ -66,7 +66,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
       let newURL = location.href.split('?')[0];
       window.history.pushState('object', document.title, newURL);
 
-      setStatusText('Membership purchase was successful');
+      setStatusText(__('Membership purchase was successful'));
 
       await populateMembershipData();
       // clear the other membership options after making a purchase
@@ -82,7 +82,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
   async function cancelMembership() {
     try {
       setWaitingForBackend(true);
-      setStatusText('Canceling your membership...');
+      setStatusText(__('Canceling your membership...'));
 
       // show the memberships the user is subscribed to
       const response = await Lbryio.call(
@@ -98,7 +98,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
       console.log('cancel, cancel membership response');
       console.log(response);
 
-      setStatusText('Membership successfully canceled');
+      setStatusText(__('Membership successfully canceled'));
 
       await populateMembershipData();
 
@@ -112,11 +112,11 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
     <Modal ariaHideApp={false} isOpen contentLabel={'Confirm Membership Purchase'} type="card" onAborted={closeModal}>
       <Card
         className="stripe__confirm-remove-membership"
-        title={hasMembership ? __('Confirm Membership Cancellation') : __(`Confirm ${plan} Membership`)}
+        title={hasMembership ? __('Confirm Membership Cancellation') : __(`Confirm %plan% Membership`, { plan })}
         subtitle={purchaseString}
         actions={
           <div className="section__actions">
-            {!waitingForBackend && (
+            {!waitingForBackend ? (
               <>
                 <Button
                   className="stripe__confirm-remove-card"
@@ -127,11 +127,8 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
                 />
                 <Button button="link" label={__('Cancel')} onClick={closeModal} />
               </>
-            )}
-            {waitingForBackend && (
-              <>
-                <h1 style={{ fontSize: '18px' }}>{statusText}</h1>
-              </>
+            ) : (
+              <h1 style={{ fontSize: '18px' }}>{statusText}</h1>
             )}
           </div>
         }
