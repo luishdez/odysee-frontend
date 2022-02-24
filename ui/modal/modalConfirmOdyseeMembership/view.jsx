@@ -60,24 +60,34 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
         },
         'post'
       ).catch((error) => {
-        doToast({
-          message: __("Sorry, your purchase wasn't able to completed. Please contact support for possible next steps"),
-          isError: true,
-        });
-        closeModal();
+        setTimeout(function() {
+          const failedErrorMessage =
+            __("Sorry, your purchase wasn't able to completed. Please contact support for possible next steps");
+
+          doToast({
+            message: failedErrorMessage,
+            isError: true,
+          });
+
+          closeModal();
+        }, 1150); // wait a bit to show the message so it doesn't give the user whiplash
+
         throw new Error(error);
       });
 
       console.log('purchase, purchase membership response');
       console.log(response);
 
+      // cleary query params
       // $FlowFixMe
       let newURL = location.href.split('?')[0];
       window.history.pushState('object', document.title, newURL);
 
       setStatusText(__('Membership purchase was successful'));
 
+      // populate the new data and update frontend
       await populateMembershipData();
+
       // clear the other membership options after making a purchase
       setMembershipOptions(false);
 
@@ -109,6 +119,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
 
       setStatusText(__('Membership successfully canceled'));
 
+      // populate the new data and update frontend
       await populateMembershipData();
 
       closeModal();

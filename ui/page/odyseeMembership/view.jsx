@@ -486,7 +486,7 @@ const OdyseeMembershipPage = (props: Props) => {
                 <h2 style={{ fontSize: '20px', marginTop: '10px' }}>Loading...</h2>
               </div>
             )}
-            {isDev && cardSaved && (
+            {isDev && cardSaved && purchasedMemberships.length > 0 && (
               <>
                 <h1 style={{ marginTop: '30px', fontSize: '20px' }}>Clear Membership Data (Only Available On Dev)</h1>
                 <div>
