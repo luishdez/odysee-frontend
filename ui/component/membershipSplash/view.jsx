@@ -49,8 +49,8 @@ export default function MembershipSplash(props: Props) {
             <img src={OdyseePremium} />
           </section>
           <section>
-            <I18nMessage tokens={{ early_access: <b>{__('early access')}</b>, price: <b>{__('99¢')}</b> }}>
-              Get %early_access% features and remove ads for %price%
+            <I18nMessage tokens={{ early_access: <b>{__('early access')}</b>, site_wide_badge: <b>{__('site-wide badge')}</b> }}>
+              Get %early_access% features and a %site_wide_badge%
             </I18nMessage>
           </section>
         </section>
