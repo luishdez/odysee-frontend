@@ -21,6 +21,7 @@ type Props = {
   purchaseString: string,
   plan: string,
   setMembershipOptions: (any) => void,
+  doToast: ({ message: string }) => void,
 };
 
 export default function ConfirmOdyseeMembershipPurchase(props: Props) {
@@ -35,6 +36,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
     purchaseString,
     plan,
     setMembershipOptions,
+    doToast,
   } = props;
 
   const [waitingForBackend, setWaitingForBackend] = React.useState();
@@ -43,7 +45,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
   async function purchaseMembership() {
     try {
       setWaitingForBackend(true);
-      setStatusText(__('Facilitating your purchase...)'));
+      setStatusText(__('Facilitating your purchase...'));
 
       // show the memberships the user is subscribed to
       const response = await Lbryio.call(
@@ -57,7 +59,14 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
           price_id: priceId,
         },
         'post'
-      );
+      ).catch((error) => {
+        doToast({
+          message: __("Sorry, your purchase wasn't able to completed. Please contact support for possible next steps"),
+          isError: true,
+        });
+        closeModal();
+        throw new Error(error);
+      });
 
       console.log('purchase, purchase membership response');
       console.log(response);
