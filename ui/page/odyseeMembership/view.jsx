@@ -215,8 +215,8 @@ const OdyseeMembershipPage = (props: Props) => {
 
     openModal(MODALS.CONFIRM_ODYSEE_MEMBERSHIP, {
       membershipId,
-      odyseeChannelId: userChannelClaimId, // TODO: this needs to be renamed
-      odyseeChannelName: userChannelName,
+      userChannelClaimId,
+      userChannelName,
       priceId,
       purchaseString,
       plan: planName,
@@ -347,6 +347,7 @@ const OdyseeMembershipPage = (props: Props) => {
                             />
                           </h4>
 
+                          {/* plan description */}
                           <h4 className="membership_subtitle">{getPlanDescription(membershipOption.Membership.name)}</h4>
                           {membershipOption.Prices.map((price) => (
                             <>
@@ -396,7 +397,7 @@ const OdyseeMembershipPage = (props: Props) => {
                 </div>
 
                 <Card>
-                  {/* list of active memberships from user */}
+                  {/** * list of active memberships from user ***/}
                   <div>
                     {/* <h1 style={{ fontSize: '19px' }}>Active Memberships</h1> */}
                     {!stillWaitingFromBackend && activeMemberships && activeMemberships.length === 0 && (
@@ -408,12 +409,15 @@ const OdyseeMembershipPage = (props: Props) => {
                       activeMemberships &&
                       activeMemberships.map((membership) => (
                         <>
+                          {/* membership name */}
                           <h4 className="membership_title">
                             {membership.MembershipDetails.name}
                             <PremiumBadge badgeToShow={membership.MembershipDetails.name === 'Premium' ? 'silver' : 'gold'} />
                           </h4>
-                          {/* TODO: the description from the backend isn't great here, should be clearer */}
-                          <h4 className="membership_subtitle">{membership.MembershipDetails.description}</h4>
+
+                          {/* description section */}
+                          <h4 className="membership_subtitle">{getPlanDescription(membership.MembershipDetails.name)}</h4>
+
                           <h4 className="membership_info">
                             <b>Registered On:</b> {formatDate(membership.Membership.created_at)}
                           </h4>

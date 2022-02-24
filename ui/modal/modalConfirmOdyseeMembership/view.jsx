@@ -15,8 +15,8 @@ type Props = {
   hasMembership: boolean, // user already has purchased --> invoke Cancel then
   membershipId: string,
   populateMembershipData: () => void,
-  odyseeChannelId: string,
-  odyseeChannelName: string,
+  userChannelClaimId: string,
+  userChannelName: string,
   priceId: string,
   purchaseString: string,
   plan: string,
@@ -29,8 +29,8 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
     closeModal,
     membershipId,
     populateMembershipData,
-    odyseeChannelId,
-    odyseeChannelName,
+    userChannelClaimId,
+    userChannelName,
     hasMembership,
     priceId,
     purchaseString,
@@ -54,8 +54,8 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
         {
           environment: stripeEnvironment,
           membership_id: membershipId,
-          channel_id: odyseeChannelId,
-          channel_name: odyseeChannelName,
+          channel_id: userChannelClaimId,
+          channel_name: userChannelName,
           price_id: priceId,
         },
         'post'
