@@ -1,7 +1,10 @@
 // @flow
 import * as ICONS from 'constants/icons';
+import * as PAGES from 'constants/pages';
+
 import Icon from 'component/common/icon';
 import Button from 'component/button';
+
 import React from 'react';
 import AstronautAndFriends from './astronaut_n_friends.png';
 import BadgePremium from './badge_premium.png';
@@ -80,7 +83,7 @@ export default function MembershipSplash(props: Props) {
             <Button
               button="primary"
               label={__('Apply for Membership')}
-              navigate={`/$/membership?interval=year&plan=Premium&pageLocation=${pageLocation}`}
+              navigate={`/$/${PAGES.ODYSEE_MEMBERSHIP}?interval=year&plan=Premium&pageLocation=${pageLocation}`}
             />
           </div>
         </div>
@@ -105,7 +108,7 @@ export default function MembershipSplash(props: Props) {
             <Button
               button="primary"
               label={__('Apply for Membership')}
-              navigate={`/$/membership?interval=year&plan=Premium%2b&pageLocation=${pageLocation}&`}
+              navigate={`/$/${PAGES.ODYSEE_MEMBERSHIP}?interval=year&plan=Premium%2b&pageLocation=${pageLocation}&`}
             />
           </div>
         </div>
