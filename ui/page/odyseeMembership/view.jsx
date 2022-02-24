@@ -285,6 +285,17 @@ const OdyseeMembershipPage = (props: Props) => {
     timeoutValue = 300;
   }
 
+  // description to be shown under plan name
+  function getPlanDescription(plan) {
+    if (plan === 'Premium') {
+      return 'Badge on profile, Early Access to new features';
+
+    // if there's more plans added this needs to be expanded
+    } else {
+      return 'All Premium features, and No Ads';
+    }
+  }
+
   if (!stillWaitingFromBackend && planValue) {
     setTimeout(function () {
       // clear query params
@@ -336,7 +347,7 @@ const OdyseeMembershipPage = (props: Props) => {
                             />
                           </h4>
 
-                          <h4 className="membership_subtitle">{membershipOption.Membership.description}</h4>
+                          <h4 className="membership_subtitle">{getPlanDescription(membershipOption.Membership.name)}</h4>
                           {membershipOption.Prices.map((price) => (
                             <>
                               {/* dont show a monthly Premium membership option */}
