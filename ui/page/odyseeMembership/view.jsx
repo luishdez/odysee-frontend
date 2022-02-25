@@ -313,7 +313,7 @@ const OdyseeMembershipPage = (props: Props) => {
     }
   }
 
-  if (!stillWaitingFromBackend && planValue) {
+  if (!stillWaitingFromBackend && planValue && cardSaved) {
     setTimeout(function() {
       // clear query params
       window.history.replaceState(null, null, window.location.pathname);
@@ -346,7 +346,7 @@ const OdyseeMembershipPage = (props: Props) => {
     <>
       <Page>
         {/** splash frontend **/}
-        {!stillWaitingFromBackend && purchasedMemberships.length === 0 && !planValue && !hasShownModal && cardSaved ? (
+        {!stillWaitingFromBackend && purchasedMemberships.length === 0 && !planValue && !hasShownModal ? (
           <MembershipSplash pageLocation={'confirmPage'} />
         ) : (
           /** odysee membership page **/
