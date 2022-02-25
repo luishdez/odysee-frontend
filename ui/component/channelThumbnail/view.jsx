@@ -29,7 +29,7 @@ type Props = {
   setThumbUploadError: (boolean) => void,
   ThumbUploadError: boolean,
   claimsByUri: { [string]: any },
-  selectOdyseeMembershipByUri: string,
+  odyseeMembership: string,
   doFetchUserMemberships: (claimIdCsv: string) => void,
   showMemberBadge?: boolean,
   isChannel?: boolean,
@@ -53,7 +53,7 @@ function ChannelThumbnail(props: Props) {
     setThumbUploadError,
     ThumbUploadError,
     claimsByUri,
-    selectOdyseeMembershipByUri,
+    odyseeMembership,
     doFetchUserMemberships,
     showMemberBadge,
     isChannel,
@@ -67,7 +67,7 @@ function ChannelThumbnail(props: Props) {
   const isGif = channelThumbnail && channelThumbnail.endsWith('gif');
   const showThumb = (!obscure && !!thumbnail) || thumbnailPreview;
 
-  const badgeToShow = showMemberBadge && getBadgeToShow(selectOdyseeMembershipByUri);
+  const badgeToShow = showMemberBadge && getBadgeToShow(odyseeMembership);
   const badgeProps = {
     badgeToShow,
     linkPage: isChannel,

@@ -18,7 +18,7 @@ const select = (state, props) => {
     stakedLevel: selectStakedLevelForChannelUri(state, authorUri),
     myChannelIds: selectMyClaimIdsRaw(state),
     claimsByUri: selectClaimsByUri(state),
-    selectOdyseeMembershipByUri: selectOdyseeMembershipByUri(state, authorUri),
+    odyseeMembership: selectOdyseeMembershipByUri(state, authorUri),
   };
 };
 

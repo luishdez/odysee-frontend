@@ -9,7 +9,7 @@ const select = (state, props) => ({
   claim: makeSelectClaimForUri(props.uri)(state),
   isResolvingUri: selectIsUriResolving(state, props.uri),
   uri: normalizeURI(props.uri),
-  selectOdyseeMembershipByUri: selectOdyseeMembershipByUri(state, props.uri),
+  odyseeMembership: selectOdyseeMembershipByUri(state, props.uri),
 });
 
 const perform = (dispatch) => ({

@@ -14,7 +14,7 @@ const select = (state, props) => ({
   thumbnail: selectThumbnailForUri(state, props.uri),
   claim: selectClaimForUri(state, props.uri),
   isResolving: selectIsUriResolving(state, props.uri),
-  selectOdyseeMembershipByUri: selectOdyseeMembershipByUri(state, props.uri),
+  odyseeMembership: selectOdyseeMembershipByUri(state, props.uri),
   claimsByUri: selectClaimsByUri(state),
 });
 

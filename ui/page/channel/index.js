@@ -37,7 +37,6 @@ const select = (state, props) => {
     mutedChannels: selectMutedChannels(state),
     unpublishedCollections: selectMyUnpublishedCollections(state),
     lang: selectLanguage(state),
-    selectOdyseeMembershipByUri: selectOdyseeMembershipByUri(state, props.uri),
   };
 };
 

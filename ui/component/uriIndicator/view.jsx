@@ -22,7 +22,7 @@ type Props = {
   // --- redux ---
   claim: ?Claim,
   isResolvingUri: boolean,
-  selectOdyseeMembershipByUri: string,
+  odyseeMembership: string,
   comment?: boolean,
   resolveUri: (string) => void,
 };
@@ -85,12 +85,12 @@ class UriIndicator extends React.PureComponent<Props> {
       external = false,
       hideAnonymous = false,
       className,
-      selectOdyseeMembershipByUri,
+      odyseeMembership,
       comment,
       showMemberBadge = true,
     } = this.props;
 
-    const badgeToShow = showMemberBadge && getBadgeToShow(selectOdyseeMembershipByUri);
+    const badgeToShow = showMemberBadge && getBadgeToShow(odyseeMembership);
 
     if (!channelInfo && !claim) {
       return (
