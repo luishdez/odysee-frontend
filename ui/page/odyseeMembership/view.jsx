@@ -76,9 +76,6 @@ const OdyseeMembershipPage = (props: Props) => {
         'post'
       );
 
-      console.log('mine, my subscriptions');
-      console.log(response);
-
       let activeMemberships = [];
       let canceledMemberships = [];
       let purchasedMemberships = [];
@@ -113,8 +110,8 @@ const OdyseeMembershipPage = (props: Props) => {
     if (!shouldFetchUserMemberships) setFetchUserMemberships(true);
   }, [shouldFetchUserMemberships]);
 
-  React.useEffect(function () {
-    (async function () {
+  React.useEffect(function() {
+    (async function() {
       try {
         // check if there is a payment method
         const response = await Lbryio.call(
@@ -151,13 +148,10 @@ const OdyseeMembershipPage = (props: Props) => {
           'post'
         );
 
-        console.log('list, see all the available odysee memberships');
-        console.log(response);
         // hide other options if there's already a membership
         if (activeMemberships && activeMemberships.length > 0) {
           setMembershipOptions(false);
         } else {
-          console.log('setting memberships');
           setMembershipOptions(response);
         }
       } catch (err) {
@@ -179,10 +173,7 @@ const OdyseeMembershipPage = (props: Props) => {
   };
 
   const deleteData = async function() {
-    const response = await Lbryio.call('membership', 'clear', {}, 'post');
-
-    console.log(response);
-    console.log('delete data');
+    await Lbryio.call('membership', 'clear', {}, 'post');
     // $FlowFixMe
     location.reload();
   };
@@ -254,8 +245,6 @@ const OdyseeMembershipPage = (props: Props) => {
   const cancelMembership = async function(e, membership) {
     const membershipId = e.currentTarget.getAttribute('membership-id');
 
-    console.log(membership);
-
     const cancellationString =
       'You are cancelling your Odysee Premium Membership. You will still have access to all the paid ' +
       'features until the point of the expiration of your current membership, at which point you will not be charged ' +
@@ -301,9 +290,7 @@ const OdyseeMembershipPage = (props: Props) => {
 
   const { interval, plan, pageLocation } = params;
 
-  // console.log(params);
   const planValue = params.plan;
-  // const pageLocation = params.pageLocation;
 
   // add a bit of a delay otherwise it's a bit jarring
   let timeoutValue = 300;
@@ -323,7 +310,7 @@ const OdyseeMembershipPage = (props: Props) => {
   }
 
   if (!stillWaitingFromBackend && planValue) {
-    setTimeout(function () {
+    setTimeout(function() {
       // clear query params
       window.history.replaceState(null, null, window.location.pathname);
 
