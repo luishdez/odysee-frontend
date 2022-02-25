@@ -19,6 +19,8 @@ const CHECK_INTERVAL = 200;
 const AUTH_WAIT_TIMEOUT = 10000;
 const stripeEnvironment = getStripeEnvironment();
 
+const ODYSEE_CHANNEL_ID = '80d2590ad04e36fb1d077a9b9e3a8bba76defdf8';
+
 export function doFetchInviteStatus(shouldCallRewardList = true) {
   return (dispatch) => {
     dispatch({
@@ -845,11 +847,11 @@ export function doCheckYoutubeTransfer() {
  * @param claimIdCsv
  * @returns {(function(*): Promise<void>)|*}
  */
-export function doFetchUserMemberships(claimIdCsv: string) {
+export function doFetchUserMemberships(claimIdCsv) {
   return async (dispatch) => {
     // check if users have odysee memberships (premium/premium+)
     const response = await Lbryio.call('membership', 'check', {
-      channel_id: '80d2590ad04e36fb1d077a9b9e3a8bba76defdf8',
+      channel_id: ODYSEE_CHANNEL_ID,
       claim_ids: claimIdCsv,
     });
 

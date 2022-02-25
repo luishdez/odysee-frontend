@@ -104,12 +104,11 @@ export default function MembershipSplash(props: Props) {
               </section>
             </div>
           </section>
-
-          {noAdsInfo}
-
           {badgeInfo}
 
           {earlyAcessInfo}
+
+          {noAdsInfo}
           <div className="membership-splash__info-button">
             <Button
               button="primary"

@@ -12,7 +12,6 @@ import MembershipSplash from 'component/membershipSplash';
 import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
 import PremiumBadge from 'component/common/premium-badge';
-import { getBadgeToShow } from 'util/premium';
 import useGetUserMemberships from 'effects/use-get-user-memberships';
 let stripeEnvironment = getStripeEnvironment();
 
@@ -44,12 +43,6 @@ const OdyseeMembershipPage = (props: Props) => {
     doFetchUserMemberships,
     incognito,
   } = props;
-
-  console.log('is incognito!');
-  console.log(incognito);
-
-  console.log('my channels!');
-  console.log(channels);
 
   const userChannelName = activeChannelClaim && activeChannelClaim.name;
   const userChannelClaimId = activeChannelClaim && activeChannelClaim.claim_id;
@@ -197,6 +190,7 @@ const OdyseeMembershipPage = (props: Props) => {
   // dont pass channel name and id when calling purchase
   const noChannelsOrIncognitoMode = incognito || !channels;
 
+  // TODO: can clean this up, some repeating text
   function buildPurchaseString(price, interval, plan) {
     let featureString = '';
     // generate different strings depending on other conditions
@@ -210,15 +204,15 @@ const OdyseeMembershipPage = (props: Props) => {
         ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
     } else if (plan === 'Premium' && !channels) {
       featureString =
-        'You currently have no channels. To show your badge on a channel, please create a channel first.' +
+        'You currently have no channels. To show your badge on a channel, please create a channel first. ' +
         'If you register a channel later you will be able to show a badge for up to three channels.';
     } else if (plan === 'Premium+' && !channels) {
       featureString =
-        'Your feature of no ads applies site-wide. You currently have no channels. To show your badge on a channel, please create a channel first.' +
+        'Your feature of no ads applies site-wide. You currently have no channels. To show your badge on a channel, please create a channel first. ' +
         'If you register a channel later you will be able to show a badge for up to three channels.';
     } else if (plan === 'Premium' && incognito) {
       featureString =
-        'You currently have no channel selected and will not have a badge be visible, if you want to show a badge you can select a channel now,' +
+        'You currently have no channel selected and will not have a badge be visible, if you want to show a badge you can select a channel now, ' +
         'or you can show a badge for up to three channels in the future for free.';
     } else if (plan === 'Premium+' && incognito) {
       featureString =
