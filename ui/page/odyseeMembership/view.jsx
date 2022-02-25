@@ -13,6 +13,8 @@ import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
 import PremiumBadge from 'component/common/premium-badge';
 import useGetUserMemberships from 'effects/use-get-user-memberships';
+import usePersistedState from 'effects/use-persisted-state';
+
 let stripeEnvironment = getStripeEnvironment();
 
 // const isDev = process.env.NODE_ENV !== 'production';
@@ -55,6 +57,8 @@ const OdyseeMembershipPage = (props: Props) => {
   const [purchasedMemberships, setPurchasedMemberships] = React.useState([]);
   const [hasShownModal, setHasShownModal] = React.useState(false);
   const [shouldFetchUserMemberships, setFetchUserMemberships] = React.useState(true);
+
+  const [showHelp, setShowHelp] = usePersistedState('livestream-help-seen', true);
 
   const hasMembership = activeMemberships && activeMemberships.length > 0;
 
@@ -322,6 +326,22 @@ const OdyseeMembershipPage = (props: Props) => {
     }, timeoutValue);
   }
 
+  const helpText = (
+    <div className="section__subtitle">
+      <p>
+        {__(
+          `Create a Livestream by first submitting your livestream details and waiting for approval confirmation. This can be done well in advance and will take a few minutes.`
+        )}{' '}
+        {__(
+          `Scheduled livestreams will appear at the top of your channel page and for your followers. Regular livestreams will only appear once you are actually live.`
+        )}{' '}
+        {__(
+          `Once the your livestream is confirmed, configure your streaming software (OBS, Restream, etc) and input the server URL along with the stream key in it.`
+        )}
+      </p>
+    </div>
+  );
+
   return (
     <>
       <Page>
@@ -339,6 +359,17 @@ const OdyseeMembershipPage = (props: Props) => {
                   uri={activeChannelClaim && activeChannelClaim.permanent_url}
                   key={shouldFetchUserMemberships}
                 />
+
+                {/* explainer help text */}
+                <Card
+                  titleActions={
+                    <Button button="close" icon={showHelp ? ICONS.UP : ICONS.DOWN} onClick={() => setShowHelp(!showHelp)} />
+                  }
+                  title={__('Get More Information')}
+                  subtitle={<>{__(`Learn more about how Odysee Premium will work`)} </>}
+                  actions={showHelp && helpText}
+                  className={'explanation-text'}
+                />
               </div>
             )}
 
@@ -349,6 +380,7 @@ const OdyseeMembershipPage = (props: Props) => {
                 <div className="card__title-section">
                   <h2 className="card__title">Available Memberships</h2>
                 </div>
+
                 <Card>
                   {membershipOptions.map((membershipOption) => (
                     <>
