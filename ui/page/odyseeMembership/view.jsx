@@ -325,15 +325,15 @@ const OdyseeMembershipPage = (props: Props) => {
   return (
     <>
       <Page>
+        {/** splash frontend **/}
         {!stillWaitingFromBackend && purchasedMemberships.length === 0 && !planValue && !hasShownModal && cardSaved ? (
-          // {!stillWaitingFromBackend && purchasedMemberships.length === 0 ? (
-          // {!changeFrontend ? (
           <MembershipSplash pageLocation={'confirmPage'} />
         ) : (
+          /** odysee membership page **/
           <div className={'card-stack'}>
-            {/* list available memberships offered by odysee */}
             <h1 style={{ fontSize: '23px' }}>Odysee Premium</h1>
             {!stillWaitingFromBackend && cardSaved !== false && (
+              // let user switch channel
               <div style={{ marginTop: '10px' }}>
                 <ChannelSelector
                   uri={activeChannelClaim && activeChannelClaim.permanent_url}
@@ -342,8 +342,9 @@ const OdyseeMembershipPage = (props: Props) => {
               </div>
             )}
 
-            {/* received list of memberships from backend */}
-            {!stillWaitingFromBackend && membershipOptions && purchasedMemberships.length < 2 && cardSaved !== false && (
+            {/** available memberships **/}
+            {/* if they have a card and don't have a membership yet */}
+            {!stillWaitingFromBackend && membershipOptions && purchasedMemberships.length < 1 && cardSaved !== false && (
               <>
                 <div className="card__title-section">
                   <h2 className="card__title">Available Memberships</h2>
@@ -418,6 +419,7 @@ const OdyseeMembershipPage = (props: Props) => {
                         <h4>You currently have no active memberships</h4>
                       </>
                     )}
+                    {/** active memberships **/}
                     {!stillWaitingFromBackend &&
                       activeMemberships &&
                       activeMemberships.map((membership) => (
@@ -461,7 +463,7 @@ const OdyseeMembershipPage = (props: Props) => {
                   </div>
                 </Card>
                 <>
-                  {/* list canceled memberships of user */}
+                  {/** canceled memberships **/}
                   <div className="card__title-section">
                     <h2 className="card__title">Canceled Memberships</h2>
                   </div>
@@ -493,6 +495,8 @@ const OdyseeMembershipPage = (props: Props) => {
                 </>
               </>
             )}
+
+            {/** send user to add card if they don't have one yet */}
             {!stillWaitingFromBackend && cardSaved === false && (
               <div>
                 <br />
@@ -509,11 +513,15 @@ const OdyseeMembershipPage = (props: Props) => {
                 />
               </div>
             )}
+
+            {/** loading section **/}
             {stillWaitingFromBackend && (
               <div>
                 <h2 style={{ fontSize: '20px', marginTop: '10px' }}>Loading...</h2>
               </div>
             )}
+
+            {/** clear membership data (only available on dev) **/}
             {isDev && cardSaved && purchasedMemberships.length > 0 && (
               <>
                 <h1 style={{ marginTop: '30px', fontSize: '20px' }}>Clear Membership Data (Only Available On Dev)</h1>

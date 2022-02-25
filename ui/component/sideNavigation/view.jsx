@@ -70,6 +70,13 @@ const PLAYLISTS = {
   hideForUnauth: true,
 };
 
+const PREMIUM = {
+  title: 'Premium',
+  link: `/$/${PAGES.ODYSEE_MEMBERSHIP}`,
+  icon: ICONS.UPGRADE,
+  hideForUnauth: true,
+};
+
 const UNAUTH_LINKS: Array<SideNavLink> = [
   {
     title: 'Log In',
@@ -494,6 +501,7 @@ function SideNavigation(props: Props) {
               {getLink(getHomeButton(doClearClaimSearch))}
               {getLink(RECENT_FROM_FOLLOWING)}
               {getLink(PLAYLISTS)}
+              {getLink(PREMIUM)}
             </ul>
 
             <ul
