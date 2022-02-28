@@ -2,6 +2,7 @@
 import React from 'react';
 import moment from 'moment';
 import Page from 'component/page';
+import Spinner from 'component/spinner';
 import { Lbryio } from 'lbryinc';
 import { getStripeEnvironment } from 'util/stripe';
 import * as ICONS from 'constants/icons';
@@ -37,14 +38,7 @@ type Props = {
 };
 
 const OdyseeMembershipPage = (props: Props) => {
-  const {
-    openModal,
-    activeChannelClaim,
-    channels,
-    claimsByUri,
-    doFetchUserMemberships,
-    incognito,
-  } = props;
+  const { openModal, activeChannelClaim, channels, claimsByUri, doFetchUserMemberships, incognito } = props;
 
   const userChannelName = activeChannelClaim && activeChannelClaim.name;
   const userChannelClaimId = activeChannelClaim && activeChannelClaim.claim_id;
@@ -114,8 +108,8 @@ const OdyseeMembershipPage = (props: Props) => {
     if (!shouldFetchUserMemberships) setFetchUserMemberships(true);
   }, [shouldFetchUserMemberships]);
 
-  React.useEffect(function() {
-    (async function() {
+  React.useEffect(function () {
+    (async function () {
       try {
         // check if there is a payment method
         const response = await Lbryio.call(
@@ -172,11 +166,11 @@ const OdyseeMembershipPage = (props: Props) => {
     membershipOptions === undefined ||
     userMemberships === undefined;
 
-  const formatDate = function(date) {
+  const formatDate = function (date) {
     return moment(new Date(date)).format('MMMM DD YYYY');
   };
 
-  const deleteData = async function() {
+  const deleteData = async function () {
     await Lbryio.call('membership', 'clear', {}, 'post');
     // $FlowFixMe
     location.reload();
@@ -191,11 +185,13 @@ const OdyseeMembershipPage = (props: Props) => {
     // generate different strings depending on other conditions
     if (plan === 'Premium' && !noChannelsOrIncognitoMode) {
       featureString =
-        'Your badge will be shown for your ' + userChannelName +
+        'Your badge will be shown for your ' +
+        userChannelName +
         ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
     } else if (plan === 'Premium+' && !noChannelsOrIncognitoMode) {
       featureString =
-        'Your feature of no ads applies site-wide for all channels and your badge will be shown for your ' + userChannelName +
+        'Your feature of no ads applies site-wide for all channels and your badge will be shown for your ' +
+        userChannelName +
         ' channel in all areas of the app, and can be added to two additional channels in the future for free. ';
     } else if (plan === 'Premium' && !channels) {
       featureString =
@@ -224,7 +220,7 @@ const OdyseeMembershipPage = (props: Props) => {
     return purchaseString;
   }
 
-  const purchaseMembership = function(e, membershipOption, price) {
+  const purchaseMembership = function (e, membershipOption, price) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -246,7 +242,7 @@ const OdyseeMembershipPage = (props: Props) => {
     });
   };
 
-  const cancelMembership = async function(e, membership) {
+  const cancelMembership = async function (e, membership) {
     const membershipId = e.currentTarget.getAttribute('membership-id');
 
     const cancellationString =
@@ -307,14 +303,14 @@ const OdyseeMembershipPage = (props: Props) => {
     if (plan === 'Premium') {
       return 'Badge on profile, Early Access to new features';
 
-    // if there's more plans added this needs to be expanded
+      // if there's more plans added this needs to be expanded
     } else {
       return 'All Premium features, and No Ads';
     }
   }
 
   if (!stillWaitingFromBackend && planValue && cardSaved) {
-    setTimeout(function() {
+    setTimeout(function () {
       // clear query params
       window.history.replaceState(null, null, window.location.pathname);
 
@@ -351,26 +347,32 @@ const OdyseeMembershipPage = (props: Props) => {
         ) : (
           /** odysee membership page **/
           <div className={'card-stack'}>
-            <h1 style={{ fontSize: '23px' }}>Odysee Premium</h1>
             {!stillWaitingFromBackend && cardSaved !== false && (
-              // let user switch channel
-              <div style={{ marginTop: '10px' }}>
-                <ChannelSelector
-                  uri={activeChannelClaim && activeChannelClaim.permanent_url}
-                  key={shouldFetchUserMemberships}
-                />
+              <>
+                <h1 style={{ fontSize: '23px' }}>Odysee Premium</h1>
+                // let user switch channel
+                <div style={{ marginTop: '10px' }}>
+                  <ChannelSelector
+                    uri={activeChannelClaim && activeChannelClaim.permanent_url}
+                    key={shouldFetchUserMemberships}
+                  />
 
-                {/* explainer help text */}
-                <Card
-                  titleActions={
-                    <Button button="close" icon={showHelp ? ICONS.UP : ICONS.DOWN} onClick={() => setShowHelp(!showHelp)} />
-                  }
-                  title={__('Get More Information')}
-                  subtitle={<>{__(`Learn more about how Odysee Premium will work`)} </>}
-                  actions={showHelp && helpText}
-                  className={'explanation-text'}
-                />
-              </div>
+                  {/* explainer help text */}
+                  <Card
+                    titleActions={
+                      <Button
+                        button="close"
+                        icon={showHelp ? ICONS.UP : ICONS.DOWN}
+                        onClick={() => setShowHelp(!showHelp)}
+                      />
+                    }
+                    title={__('Get More Information')}
+                    subtitle={<>{__(`Learn more about how Odysee Premium will work`)} </>}
+                    actions={showHelp && helpText}
+                    className={'explanation-text'}
+                  />
+                </div>
+              </>
             )}
 
             {/** available memberships **/}
@@ -394,7 +396,9 @@ const OdyseeMembershipPage = (props: Props) => {
                           </h4>
 
                           {/* plan description */}
-                          <h4 className="membership_subtitle">{getPlanDescription(membershipOption.Membership.name)}</h4>
+                          <h4 className="membership_subtitle">
+                            {getPlanDescription(membershipOption.Membership.name)}
+                          </h4>
                           {membershipOption.Prices.map((price) => (
                             <>
                               {/* dont show a monthly Premium membership option */}
@@ -459,11 +463,15 @@ const OdyseeMembershipPage = (props: Props) => {
                           {/* membership name */}
                           <h4 className="membership_title">
                             {membership.MembershipDetails.name}
-                            <PremiumBadge badgeToShow={membership.MembershipDetails.name === 'Premium' ? 'silver' : 'gold'} />
+                            <PremiumBadge
+                              badgeToShow={membership.MembershipDetails.name === 'Premium' ? 'silver' : 'gold'}
+                            />
                           </h4>
 
                           {/* description section */}
-                          <h4 className="membership_subtitle">{getPlanDescription(membership.MembershipDetails.name)}</h4>
+                          <h4 className="membership_subtitle">
+                            {getPlanDescription(membership.MembershipDetails.name)}
+                          </h4>
 
                           <h4 className="membership_info">
                             <b>Registered On:</b> {formatDate(membership.Membership.created_at)}
@@ -510,7 +518,9 @@ const OdyseeMembershipPage = (props: Props) => {
                         <>
                           <h4 className="membership_title">
                             {membership.MembershipDetails.name}
-                            <PremiumBadge badgeToShow={membership.MembershipDetails.name === 'Premium' ? 'silver' : 'gold'} />
+                            <PremiumBadge
+                              badgeToShow={membership.MembershipDetails.name === 'Premium' ? 'silver' : 'gold'}
+                            />
                           </h4>
                           <h4 className="membership_info">
                             <b>Registered On:</b> {formatDate(membership.Membership.created_at)}
@@ -548,8 +558,8 @@ const OdyseeMembershipPage = (props: Props) => {
 
             {/** loading section **/}
             {stillWaitingFromBackend && (
-              <div>
-                <h2 style={{ fontSize: '20px', marginTop: '10px' }}>Loading...</h2>
+              <div className="main--empty">
+                <Spinner />
               </div>
             )}
 
