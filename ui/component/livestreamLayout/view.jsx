@@ -67,8 +67,6 @@ export default function LivestreamLayout(props: Props) {
 
   return (
     <>
-      {!isMobile && <GlobalStyles />}
-
       <div className="section card-stack">
         <React.Suspense fallback={null}>
           {isMobile && isCurrentClaimLive ? (
@@ -204,18 +202,3 @@ const ChatDrawerTitle = (titleProps: any) => {
     </div>
   );
 };
-
-const GlobalStyles = () => (
-  <Global
-    styles={{
-      body: {
-        'scrollbar-width': '0px',
-
-        '&::-webkit-scrollbar': {
-          width: '0px',
-          height: '0px',
-        },
-      },
-    }}
-  />
-);
