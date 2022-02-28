@@ -28,7 +28,6 @@ export default function HeaderMenuButtons(props: HeaderMenuButtonProps) {
     authenticated,
     automaticDarkModeEnabled,
     currentTheme,
-    activeChannelStakedLevel,
     user,
     handleThemeToggle,
     doOpenModal,
@@ -41,8 +40,7 @@ export default function HeaderMenuButtons(props: HeaderMenuButtonProps) {
   const livestreamEnabled = Boolean(
     ENABLE_NO_SOURCE_CLAIMS &&
       user &&
-      !user.odysee_live_disabled &&
-      (activeChannelStakedLevel >= CHANNEL_STAKED_LEVEL_LIVESTREAM || user.odysee_live_enabled)
+      !user.odysee_live_disabled
   );
 
   return (

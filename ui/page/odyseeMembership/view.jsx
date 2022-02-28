@@ -350,7 +350,7 @@ const OdyseeMembershipPage = (props: Props) => {
             {!stillWaitingFromBackend && cardSaved !== false && (
               <>
                 <h1 style={{ fontSize: '23px' }}>Odysee Premium</h1>
-                // let user switch channel
+                {/* let user switch channel */}
                 <div style={{ marginTop: '10px' }}>
                   <ChannelSelector
                     uri={activeChannelClaim && activeChannelClaim.permanent_url}

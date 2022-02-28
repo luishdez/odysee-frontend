@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import { doSetClientSetting } from 'redux/actions/settings';
-import { selectActiveChannelStakedLevel } from 'redux/selectors/app';
 import { selectClientSetting } from 'redux/selectors/settings';
 import * as SETTINGS from 'constants/settings';
 import HeaderMenuButtons from './view';
@@ -8,7 +7,6 @@ import { selectUserVerifiedEmail, selectUser, selectOdyseeMembershipName } from 
 import { doOpenModal } from 'redux/actions/app';
 
 const select = (state) => ({
-  activeChannelStakedLevel: selectActiveChannelStakedLevel(state),
   authenticated: selectUserVerifiedEmail(state),
   automaticDarkModeEnabled: selectClientSetting(state, SETTINGS.AUTOMATIC_DARK_MODE_ENABLED),
   currentTheme: selectClientSetting(state, SETTINGS.THEME),
