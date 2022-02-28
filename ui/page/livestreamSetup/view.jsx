@@ -180,52 +180,46 @@ export default function LivestreamSetupPage(props: Props) {
 
   return (
     <Page>
-      {/* getting channel data */}
-      {fetchingChannels && (
-        <div className="main--empty">
-          <Spinner delayed />
-        </div>
-      )}
-
-      {/* no channels yet */}
-      {!fetchingChannels && !hasChannels && (
-        <Yrbl
-          type="happy"
-          title={__("You haven't created a channel yet, let's fix that!")}
-          actions={
-            <div className="section__actions">
-              <Button button="primary" navigate={`/$/${PAGES.CHANNEL_NEW}`} label={__('Create A Channel')} />
-            </div>
-          }
-        />
-      )}
-
-      {/* channel selector */}
-      {!fetchingChannels && (
-        <>
-          <div className="section__actions--between">
-            <ChannelSelector hideAnon />
-          </div>
-        </>
-      )}
-
-      {/* getting livestreams */}
-      {fetchingLivestreams && !fetchingChannels && !hasLivestreamClaims && (
-        <div className="main--empty">
-          <Spinner delayed />
-        </div>
-      )}
-
-      {/* show livestreaming frontend */}
-      { !livestreamEnabled && (
+      {/* no livestreaming privs because no premium membership */}
+      { !livestreamEnabled && !odyseeMembership && (
         <div>
-          <h2>Sorry,  you don't have livestreaming privileges yet, please purchase it first</h2>
+          <h2 className={''}>
+            Please purchase an Odysee Premium membership to be able to live-stream
+          </h2>
+
+          <Button
+            button="primary"
+            label={__('Purchase Odysee Premium')}
+            icon={ICONS.FINANCE}
+            navigate={`/$/${PAGES.ODYSEE_MEMBERSHIP}`}
+            className="membership_button"
+          />
         </div>
       )}
 
       {/* show livestreaming frontend */}
       { livestreamEnabled && (
         <div className="card-stack">
+          {/* getting channel data */}
+          {fetchingChannels && (
+            <div className="main--empty">
+              <Spinner delayed />
+            </div>
+          )}
+
+          {/* no channels yet */}
+          {!fetchingChannels && !hasChannels && (
+            <Yrbl
+              type="happy"
+              title={__("You haven't created a channel yet, let's fix that!")}
+              actions={
+                <div className="section__actions">
+                  <Button button="primary" navigate={`/$/${PAGES.CHANNEL_NEW}`} label={__('Create A Channel')} />
+                </div>
+              }
+            />
+          )}
+
           {!fetchingChannels && channelId && (
             <>
               <Card
