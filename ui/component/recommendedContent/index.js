@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { makeSelectClaimForUri, makeSelectMetadataForUri } from 'redux/selectors/claims';
 import { doFetchRecommendedContent } from 'redux/actions/search';
 import { selectRecommendedContentForUri, selectIsSearching } from 'redux/selectors/search';
-import { selectUserVerifiedEmail } from 'redux/selectors/user';
+import { selectOdyseeMembershipIsPremiumPlus } from 'redux/selectors/user';
 import RecommendedContent from './view';
 
 const select = (state, props) => {
@@ -18,8 +18,8 @@ const select = (state, props) => {
     recommendedContentUris,
     nextRecommendedUri,
     isSearching: selectIsSearching(state),
-    isAuthenticated: selectUserVerifiedEmail(state),
     metadata,
+    userHasPremiumPlus: selectOdyseeMembershipIsPremiumPlus(state),
   };
 };
 

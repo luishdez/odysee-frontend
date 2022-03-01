@@ -90,6 +90,7 @@ const OdyseeMembershipPage = (props: Props) => {
       let purchasedMemberships = [];
 
       for (const membership of response) {
+        // if it's autorenewing it's considered 'active'
         const isActive = membership.Membership.auto_renew;
         if (isActive) {
           activeMemberships.push(membership);

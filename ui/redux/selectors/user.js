@@ -108,6 +108,8 @@ export const selectSetReferrerError = (state) => selectState(state).referrerSetE
 
 export const selectOdyseeMembershipName = (state) => selectState(state).odyseeMembershipName;
 
+export const selectOdyseeMembershipIsPremiumPlus = (state) => selectState(state).odyseeMembershipName === 'Premium+';
+
 export const selectYouTubeImportVideosComplete = createSelector(selectState, (state) => {
   const total = state.youtubeChannelImportTotal;
   const complete = state.youtubeChannelImportComplete || 0;

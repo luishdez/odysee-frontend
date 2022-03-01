@@ -126,6 +126,8 @@ export async function doCheckUserOdyseeMemberships(dispatch, user) {
   let savedMemberships = [];
   let highestMembershipRanking;
 
+  // TODO: this will work for now, but it should be adjusted
+  // TODO: to check if it's active, or if it's cancelled if it's still valid past current date
   // loop through all memberships and save the @odysee ones
   // maybe in the future we can only hit @odysee in the API call
   for (const membership of response) {

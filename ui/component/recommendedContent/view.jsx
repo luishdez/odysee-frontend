@@ -19,10 +19,10 @@ type Props = {
   nextRecommendedUri: string,
   isSearching: boolean,
   doFetchRecommendedContent: (string) => void,
-  isAuthenticated: boolean,
   claim: ?StreamClaim,
   claimId: string,
   metadata: any,
+  userHasPremiumPlus: boolean,
 };
 
 export default React.memo<Props>(function RecommendedContent(props: Props) {
@@ -32,10 +32,10 @@ export default React.memo<Props>(function RecommendedContent(props: Props) {
     recommendedContentUris,
     nextRecommendedUri,
     isSearching,
-    isAuthenticated,
     claim,
     claimId,
     metadata,
+    userHasPremiumPlus,
   } = props;
 
   let { description, title } = metadata;
@@ -142,7 +142,7 @@ export default React.memo<Props>(function RecommendedContent(props: Props) {
               injectedItem={
                 SHOW_ADS &&
                 IS_WEB &&
-                !isAuthenticated && <Ads small type={'video'} triggerBlacklist={triggerBlacklist} />
+                !userHasPremiumPlus && <Ads small type={'video'} triggerBlacklist={triggerBlacklist} />
               }
               empty={__('No related content found')}
               onClick={handleRecommendationClicked}
@@ -162,7 +162,7 @@ export default React.memo<Props>(function RecommendedContent(props: Props) {
               channelIds={[signingChannel.claim_id]}
               loading={isSearching}
               hideMenu={isMobile}
-              injectedItem={SHOW_ADS && IS_WEB && !isAuthenticated && <Ads small type={'video'} />}
+              injectedItem={SHOW_ADS && IS_WEB && !userHasPremiumPlus && <Ads small type={'video'} />} // TODO: add here
               empty={__('No related content found')}
             />
           )}

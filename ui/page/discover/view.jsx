@@ -31,10 +31,10 @@ type Props = {
   repostedClaim: ?GenericClaim,
   doToggleTagFollowDesktop: (string) => void,
   doResolveUri: (string) => void,
-  isAuthenticated: boolean,
   tileLayout: boolean,
   activeLivestreams: ?LivestreamInfo,
   doFetchActiveLivestreams: (orderBy?: Array<string>) => void,
+  userHasPremiumPlus: boolean,
 };
 
 function DiscoverPage(props: Props) {
@@ -45,11 +45,11 @@ function DiscoverPage(props: Props) {
     repostedUri,
     doToggleTagFollowDesktop,
     doResolveUri,
-    isAuthenticated,
     tileLayout,
     activeLivestreams,
     doFetchActiveLivestreams,
     dynamicRouteProps,
+    userHasPremiumPlus,
   } = props;
 
   const [liveSectionStore, setLiveSectionStore] = usePersistedState('discover:liveSection', SECTION.LESS);
@@ -184,13 +184,13 @@ function DiscoverPage(props: Props) {
   }
 
   React.useEffect(() => {
-    if (isAuthenticated || !SHOW_ADS || window.location.pathname === `/$/${PAGES.WILD_WEST}`) {
+    if (userHasPremiumPlus || !SHOW_ADS || window.location.pathname === `/$/${PAGES.WILD_WEST}`) {
       return;
     }
 
     // inject ad into last visible card
     injectAd();
-  }, [isAuthenticated]);
+  }, [userHasPremiumPlus]);
 
   // Sync liveSection --> liveSectionStore
   React.useEffect(() => {
@@ -264,7 +264,7 @@ function DiscoverPage(props: Props) {
         hiddenNsfwMessage={<HiddenNsfw type="page" />}
         repostedClaimId={repostedClaim ? repostedClaim.claim_id : null}
         injectedItem={
-          SHOW_ADS && IS_WEB ? (SIMPLE_SITE ? false : !isAuthenticated && <Ads small type={'video'} />) : false
+          SHOW_ADS && IS_WEB ? (SIMPLE_SITE ? false : !userHasPremiumPlus && <Ads small type={'video'} />) : false
         }
         // Assume wild west page if no dynamicRouteProps
         // Not a very good solution, but just doing it for now
