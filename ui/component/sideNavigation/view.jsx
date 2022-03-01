@@ -147,6 +147,7 @@ function SideNavigation(props: Props) {
     activeChannelStakedLevel,
     wildWestDisabled,
     doClearClaimSearch,
+    odyseeMembership,
   } = props;
 
   const isLargeScreen = useIsLargeScreen();
@@ -252,6 +253,8 @@ function SideNavigation(props: Props) {
   const hideMenuFromView = menuCanCloseCompletely && !sidebarOpen;
 
   const [canDisposeMenu, setCanDisposeMenu] = React.useState(false);
+
+  const isOnMembershipPage = window.location.pathname === `/$/${PAGES.ODYSEE_MEMBERSHIP}`;
 
   React.useEffect(() => {
     if (hideMenuFromView || !menuInitialized) {
@@ -501,7 +504,7 @@ function SideNavigation(props: Props) {
               {getLink(getHomeButton(doClearClaimSearch))}
               {getLink(RECENT_FROM_FOLLOWING)}
               {getLink(PLAYLISTS)}
-              {getLink(PREMIUM)}
+              {!isOnMembershipPage && !odyseeMembership && getLink(PREMIUM)}
             </ul>
 
             <ul
