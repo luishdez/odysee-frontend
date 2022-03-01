@@ -4,7 +4,6 @@ import NoopUrlStorage from 'tus-js-client/lib/noopUrlStorage';
 import analytics from '../../ui/analytics';
 import { X_LBRY_AUTH_TOKEN } from '../../ui/constants/token';
 import { doUpdateUploadAdd, doUpdateUploadProgress, doUpdateUploadRemove } from '../../ui/redux/actions/publish';
-import { getLocalStorageSummary } from '../../ui/util/storage';
 import { LBRY_WEB_PUBLISH_API_V2 } from 'config';
 
 const RESUMABLE_ENDPOINT = LBRY_WEB_PUBLISH_API_V2;
@@ -23,6 +22,15 @@ const STATUS_LOCKED = 423;
  */
 function inStatusCategory(status, category) {
   return status >= category && status < category + 100;
+}
+
+function getTusErrorType(errMsg: string) {
+  if (errMsg.startsWith('tus: failed to upload chunk at offset')) {
+    // This is the only message that contains dynamic value prior to the first comma.
+    return 'tus: failed to upload chunk at offset';
+  } else {
+    return errMsg.startsWith('tus:') ? errMsg.substring(0, errMsg.indexOf(',')) : errMsg;
+  }
 }
 
 export function makeResumableUploadRequest(
@@ -87,19 +95,16 @@ export function makeResumableUploadRequest(
         }
 
         window.store.dispatch(doUpdateUploadProgress({ guid, status: 'error' }));
-        analytics.sentryError('tus-upload', err);
+        analytics.sentryError(getTusErrorType(errMsg), { onError: err, tusUpload: uploader });
 
         reject(
           // $FlowFixMe - flow's constructor for Error is incorrect.
           new Error(customErr || err, {
             cause: {
-              url: uploader.url,
-              status,
               ...(uploader._fingerprint ? { fingerprint: uploader._fingerprint } : {}),
               ...(uploader._retryAttempt ? { retryAttempt: uploader._retryAttempt } : {}),
               ...(uploader._offsetBeforeRetry ? { offsetBeforeRetry: uploader._offsetBeforeRetry } : {}),
               ...(customErr ? { original: errMsg } : {}),
-              localStorage: getLocalStorageSummary(),
             },
           })
         );

@@ -6,6 +6,7 @@ import React from 'react';
 import usePersistedState from 'effects/use-persisted-state';
 import { withRouter } from 'react-router';
 import { MATURE_TAGS } from 'constants/tags';
+import { resolveLangForClaimSearch } from 'util/default-languages';
 import { createNormalizedClaimSearchKey } from 'util/claim';
 import { splitBySeparator } from 'util/lbryURI';
 import Button from 'component/button';
@@ -14,6 +15,7 @@ import ClaimList from 'component/claimList';
 import ClaimPreview from 'component/claimPreview';
 import ClaimPreviewTile from 'component/claimPreviewTile';
 import I18nMessage from 'component/i18nMessage';
+import LangFilterIndicator from 'component/langFilterIndicator';
 import ClaimListHeader from 'component/claimListHeader';
 import useFetchViewCount from 'effects/use-fetch-view-count';
 import { useIsLargeScreen } from 'effects/use-screensize';
@@ -75,6 +77,7 @@ type Props = {
   hiddenNsfwMessage?: Node,
   injectedItem: ?Node,
   meta?: Node,
+  subSection?: Node, // Additional section below [Header|Meta]
   renderProperties?: (Claim) => Node,
 
   history: { action: string, push: (string) => void, replace: (string) => void },
@@ -118,6 +121,7 @@ function ClaimListDiscover(props: Props) {
     defaultTags,
     loading,
     meta,
+    subSection,
     channelIds,
     showNsfw,
     hideReposts,
@@ -198,18 +202,8 @@ function ClaimListDiscover(props: Props) {
   );
 
   const langParam = urlParams.get(CS.LANGUAGE_KEY) || null;
-  const languageParams =
-    searchInLanguage && !ignoreSearchInLanguage
-      ? langParam === null
-        ? languageSetting.concat(languageSetting === 'en' ? ',none' : '')
-        : langParam === 'any'
-        ? null
-        : langParam.concat(langParam === 'en' ? ',none' : '')
-      : langParam === null
-      ? null
-      : langParam === 'any'
-      ? null
-      : langParam.concat(langParam === 'en' ? ',none' : '');
+  const searchInSelectedLangOnly = searchInLanguage && !ignoreSearchInLanguage;
+  const languageParams = resolveLangForClaimSearch(languageSetting, searchInSelectedLangOnly, langParam);
 
   let claimTypeParam = claimType || defaultClaimType || null;
   let streamTypeParam = streamType || defaultStreamType || null;
@@ -245,7 +239,7 @@ function ClaimListDiscover(props: Props) {
         break;
 
       default:
-        console.log('Invalid or unhandled CONTENT_KEY:', contentTypeParam);
+        console.log('Invalid or unhandled CONTENT_KEY:', contentTypeParam); // eslint-disable-line no-console
         break;
     }
   }
@@ -477,14 +471,15 @@ function ClaimListDiscover(props: Props) {
   }
 
   const shouldPerformSearch =
-    claimSearchResult === undefined ||
-    didNavigateForward ||
-    (!loading &&
-      !claimSearchResultLastPageReached &&
-      claimSearchResult &&
-      claimSearchResult.length &&
-      claimSearchResult.length < dynamicPageSize * options.page &&
-      claimSearchResult.length % dynamicPageSize === 0);
+    !uris &&
+    (claimSearchResult === undefined ||
+      didNavigateForward ||
+      (!loading &&
+        !claimSearchResultLastPageReached &&
+        claimSearchResult &&
+        claimSearchResult.length &&
+        claimSearchResult.length < dynamicPageSize * options.page &&
+        claimSearchResult.length % dynamicPageSize === 0));
 
   // Don't use the query from createNormalizedClaimSearchKey for the effect since that doesn't include page & release_time
   const optionsStringForEffect = JSON.stringify(options);
@@ -581,6 +576,9 @@ function ClaimListDiscover(props: Props) {
       case CS.ORDER_BY_NEW_ASC:
         order_by = CS.ORDER_BY_NEW_ASC_VALUE;
         break;
+      case CS.ORDER_BY_NAME_ASC:
+        order_by = CS.ORDER_BY_NAME_ASC_VALUE;
+        break;
       default:
         order_by = CS.ORDER_BY_TOP_VALUE;
     }
@@ -657,12 +655,16 @@ function ClaimListDiscover(props: Props) {
       {headerLabel && <label className="claim-list__header-label">{headerLabel}</label>}
       {tileLayout ? (
         <div>
-          {!repostedClaimId && (
+          {!repostedClaimId && showHeader && (
             <div className="section__header--actions">
-              {headerToUse}
+              <div className="section__actions">
+                {headerToUse}
+                {searchInSelectedLangOnly && <LangFilterIndicator />}
+              </div>
               {meta && <div className="section__actions--no-margin">{meta}</div>}
             </div>
           )}
+          {subSection && <div>{subSection}</div>}
           <ClaimList
             tileLayout
             loading={loading}
@@ -696,10 +698,14 @@ function ClaimListDiscover(props: Props) {
         <div>
           {showHeader && (
             <div className="section__header--actions">
-              {headerToUse}
+              <div className="section__actions">
+                {headerToUse}
+                {searchInSelectedLangOnly && <LangFilterIndicator />}
+              </div>
               {meta && <div className="section__actions--no-margin">{meta}</div>}
             </div>
           )}
+          {subSection && <div>{subSection}</div>}
           <ClaimList
             type={type}
             loading={loading}

@@ -82,6 +82,10 @@ body {
 
   .main--auth-page {
     min-height: unset;
+
+    @media (min-width: $breakpoint-small) {
+      min-height: calc(100vh - var(--header-height) - var(--spacing-main-padding));
+    }
   }
 }
 
@@ -1128,6 +1132,14 @@ body {
   margin-left: auto;
   margin-right: auto;
   max-width: 32rem;
+}
+
+.main__discover {
+  .section__actions--no-margin {
+    @media (max-width: $breakpoint-small) {
+      width: unset; // It was being set to '100%' globally. Not sure why.
+    }
+  }
 }
 
 .main-wrapper--scrollbar {

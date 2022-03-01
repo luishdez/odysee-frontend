@@ -281,6 +281,7 @@ function CommentView(props: Props) {
                   link
                   uri={authorUri}
                   comment
+                  showAtSign
                 />
               )}
               {isGlobalMod && <CommentBadge label={__('Admin')} icon={ICONS.BADGE_MOD} />}

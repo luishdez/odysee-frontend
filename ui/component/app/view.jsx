@@ -23,6 +23,7 @@ import usePersistedState from 'effects/use-persisted-state';
 import useConnectionStatus from 'effects/use-connection-status';
 import Spinner from 'component/spinner';
 import LANGUAGES from 'constants/languages';
+import { SIDEBAR_SUBS_DISPLAYED } from 'constants/subscriptions';
 import YoutubeWelcome from 'web/component/youtubeReferralWelcome';
 import {
   useDegradedPerformance,
@@ -138,6 +139,7 @@ function App(props: Props) {
   const [upgradeNagClosed, setUpgradeNagClosed] = useState(false);
   const [resolvedSubscriptions, setResolvedSubscriptions] = useState(false);
   const [retryingSync, setRetryingSync] = useState(false);
+  const [langRenderKey, setLangRenderKey] = useState(0);
   const [sidebarOpen] = usePersistedState('sidebar', true);
   const [seenSunsestMessage, setSeenSunsetMessage] = usePersistedState('lbrytv-sunset', false);
   const showUpgradeButton =
@@ -476,11 +478,16 @@ function App(props: Props) {
   useLayoutEffect(() => {
     if (sidebarOpen && isPersonalized && subscriptions && !resolvedSubscriptions) {
       setResolvedSubscriptions(true);
-      resolveUris(subscriptions.map((sub) => sub.uri));
+      resolveUris(subscriptions.slice(0, SIDEBAR_SUBS_DISPLAYED).map((sub) => sub.uri));
     }
   }, [sidebarOpen, isPersonalized, resolvedSubscriptions, subscriptions, resolveUris, setResolvedSubscriptions]);
 
   useDegradedPerformance(setLbryTvApiStatus, user);
+
+  useEffect(() => {
+    // When language is changed or translations are fetched, we render.
+    setLangRenderKey(Date.now());
+  }, [language, languages]);
 
   // Require an internal-api user on lbry.tv
   // This also prevents the site from loading in the un-authed state while we wait for internal-apis to return for the first time
@@ -510,6 +517,7 @@ function App(props: Props) {
         // @endif
       })}
       ref={appRef}
+      key={langRenderKey}
       onContextMenu={IS_WEB ? undefined : (e) => openContextMenu(e)}
     >
       {IS_WEB && lbryTvApiStatus === STATUS_DOWN ? (

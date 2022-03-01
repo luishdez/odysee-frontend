@@ -8,7 +8,7 @@ import { selectActiveLivestreams } from 'redux/selectors/livestream';
 import { selectOdyseeMembershipIsPremiumPlus } from 'redux/selectors/user';
 import { selectFollowedTags } from 'redux/selectors/tags';
 import { doToggleTagFollowDesktop } from 'redux/actions/tags';
-import { selectClientSetting } from 'redux/selectors/settings';
+import { selectClientSetting, selectLanguage } from 'redux/selectors/settings';
 import Tags from './view';
 
 const select = (state, props) => {
@@ -23,6 +23,8 @@ const select = (state, props) => {
     tileLayout: selectClientSetting(state, SETTINGS.TILE_LAYOUT),
     activeLivestreams: selectActiveLivestreams(state),
     userHasPremiumPlus: selectOdyseeMembershipIsPremiumPlus(state),
+    languageSetting: selectLanguage(state),
+    searchInLanguage: selectClientSetting(state, SETTINGS.SEARCH_IN_LANGUAGE),
   };
 };
 

@@ -3,6 +3,7 @@ import type { Node } from 'react';
 import * as PAGES from 'constants/pages';
 import * as ICONS from 'constants/icons';
 import * as KEYCODES from 'constants/keycodes';
+import { SIDEBAR_SUBS_DISPLAYED } from 'constants/subscriptions';
 import React, { useEffect } from 'react';
 import Button from 'component/button';
 import ClaimPreviewTitle from 'component/claimPreviewTitle';
@@ -16,7 +17,6 @@ import { useIsMobile, useIsLargeScreen, isTouch } from 'effects/use-screensize';
 import { GetLinksData } from 'util/buildHomepage';
 import { DOMAIN, ENABLE_UI_NOTIFICATIONS, ENABLE_NO_SOURCE_CLAIMS } from 'config';
 
-const FOLLOWED_ITEM_INITIAL_LIMIT = 10;
 const touch = isTouch();
 
 type SideNavLink = {
@@ -238,7 +238,6 @@ function SideNavigation(props: Props) {
   );
 
   const [pulseLibrary, setPulseLibrary] = React.useState(false);
-  const [expandSubscriptions, setExpandSubscriptions] = React.useState(false);
   const [expandTags, setExpandTags] = React.useState(false);
 
   const isPersonalized = !IS_WEB || isAuthenticated;
@@ -274,28 +273,13 @@ function SideNavigation(props: Props) {
   const showPushMenu = sidebarOpen && !menuCanCloseCompletely;
   const showOverlay = isAbsolute && sidebarOpen;
 
-  const showSubscriptionSection = shouldRenderLargeMenu && isPersonalized && subscriptions && subscriptions.length > 0;
   const showTagSection = sidebarOpen && isPersonalized && followedTags && followedTags.length;
 
   const [subscriptionFilter, setSubscriptionFilter] = React.useState('');
 
-  const filteredSubscriptions = subscriptions.filter(
-    (sub) => !subscriptionFilter || sub.channelName.toLowerCase().includes(subscriptionFilter.toLowerCase())
-  );
-
-  let displayedSubscriptions = filteredSubscriptions;
-  if (
-    showSubscriptionSection &&
-    !subscriptionFilter &&
-    subscriptions.length > FOLLOWED_ITEM_INITIAL_LIMIT &&
-    !expandSubscriptions
-  ) {
-    displayedSubscriptions = subscriptions.slice(0, FOLLOWED_ITEM_INITIAL_LIMIT);
-  }
-
   let displayedFollowedTags = followedTags;
-  if (showTagSection && followedTags.length > FOLLOWED_ITEM_INITIAL_LIMIT && !expandTags) {
-    displayedFollowedTags = followedTags.slice(0, FOLLOWED_ITEM_INITIAL_LIMIT);
+  if (showTagSection && followedTags.length > SIDEBAR_SUBS_DISPLAYED && !expandTags) {
+    displayedFollowedTags = followedTags.slice(0, SIDEBAR_SUBS_DISPLAYED);
   }
 
   function getLink(props: SideNavLink) {
@@ -326,11 +310,20 @@ function SideNavigation(props: Props) {
   }
 
   function getSubscriptionSection() {
-    if (showSubscriptionSection) {
+    const showSubsSection = shouldRenderLargeMenu && isPersonalized && subscriptions && subscriptions.length > 0;
+    if (showSubsSection) {
+      let displayedSubscriptions;
+      if (subscriptionFilter) {
+        const filter = subscriptionFilter.toLowerCase();
+        displayedSubscriptions = subscriptions.filter((sub) => sub.channelName.toLowerCase().includes(filter));
+      } else {
+        displayedSubscriptions = subscriptions.slice(0, SIDEBAR_SUBS_DISPLAYED);
+      }
+
       return (
         <>
           <ul className="navigation__secondary navigation-links">
-            {subscriptions.length > FOLLOWED_ITEM_INITIAL_LIMIT && (
+            {subscriptions.length > SIDEBAR_SUBS_DISPLAYED && (
               <li className="navigation-item">
                 <DebouncedInput icon={ICONS.SEARCH} placeholder={__('Filter')} onChange={setSubscriptionFilter} />
               </li>
@@ -345,12 +338,12 @@ function SideNavigation(props: Props) {
                 </div>
               </li>
             )}
-            {!subscriptionFilter && subscriptions.length > FOLLOWED_ITEM_INITIAL_LIMIT && (
+            {!subscriptionFilter && (
               <Button
                 key="showMore"
-                label={expandSubscriptions ? __('Show less') : __('Show more')}
+                label={__('Manage')}
                 className="navigation-link"
-                onClick={() => setExpandSubscriptions(!expandSubscriptions)}
+                navigate={`/$/${PAGES.CHANNELS_FOLLOWING_MANAGE}`}
               />
             )}
           </ul>
@@ -370,7 +363,7 @@ function SideNavigation(props: Props) {
                 <Button navigate={`/$/discover?t=${name}`} label={`#${name}`} className="navigation-link" />
               </li>
             ))}
-            {followedTags.length > FOLLOWED_ITEM_INITIAL_LIMIT && (
+            {followedTags.length > SIDEBAR_SUBS_DISPLAYED && (
               <Button
                 key="showMore"
                 label={expandTags ? __('Show less') : __('Show more')}
