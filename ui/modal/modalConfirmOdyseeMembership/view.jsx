@@ -37,6 +37,8 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
     plan,
     setMembershipOptions,
     doToast,
+    updateUserOdyseeMembershipStatus,
+    user,
   } = props;
 
   const [waitingForBackend, setWaitingForBackend] = React.useState();
@@ -102,6 +104,8 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
 
       // clear the other membership options after making a purchase
       setMembershipOptions(false);
+
+      updateUserOdyseeMembershipStatus(user);
 
       closeModal();
     } catch (err) {

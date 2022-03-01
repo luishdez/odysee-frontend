@@ -111,7 +111,7 @@ function checkAuthBusy() {
  * @param user
  * @returns {Promise<void>}
  */
-async function doCheckUserOdyseeMemberships(dispatch, user) {
+export async function doCheckUserOdyseeMemberships(dispatch, user) {
   // get memberships for a given user
   // TODO: in the future, can we specify this just to @odysee?
   const response = await Lbryio.call(

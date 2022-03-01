@@ -47,7 +47,7 @@ export default function LivestreamSetupPage(props: Props) {
     channelId,
     channelName,
     user,
-    odyseeMembership
+    odyseeMembership,
   } = props;
 
   const [sigData, setSigData] = React.useState({ signature: undefined, signing_ts: undefined });

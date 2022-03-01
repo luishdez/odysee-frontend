@@ -38,7 +38,16 @@ type Props = {
 };
 
 const OdyseeMembershipPage = (props: Props) => {
-  const { openModal, activeChannelClaim, channels, claimsByUri, doFetchUserMemberships, incognito } = props;
+  const {
+    openModal,
+    activeChannelClaim,
+    channels,
+    claimsByUri,
+    doFetchUserMemberships,
+    updateUserOdyseeMembershipStatus,
+    incognito,
+    user,
+  } = props;
 
   const userChannelName = activeChannelClaim && activeChannelClaim.name;
   const userChannelClaimId = activeChannelClaim && activeChannelClaim.claim_id;
@@ -57,6 +66,8 @@ const OdyseeMembershipPage = (props: Props) => {
   const hasMembership = activeMemberships && activeMemberships.length > 0;
 
   const channelUrls = channels && channels.map((channel) => channel.permanent_url);
+
+  // check if membership data for user is already fetched, if it's needed then fetch it
   useGetUserMemberships(shouldFetchUserMemberships, channelUrls, claimsByUri, (value) => {
     doFetchUserMemberships(value);
     setFetchUserMemberships(false);
@@ -239,6 +250,8 @@ const OdyseeMembershipPage = (props: Props) => {
       plan: planName,
       populateMembershipData,
       setMembershipOptions,
+      updateUserOdyseeMembershipStatus,
+      user,
     });
   };
 
