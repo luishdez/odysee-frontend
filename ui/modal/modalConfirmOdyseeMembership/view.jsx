@@ -22,6 +22,8 @@ type Props = {
   plan: string,
   setMembershipOptions: (any) => void,
   doToast: ({ message: string }) => void,
+  updateUserOdyseeMembershipStatus: () => void,
+  user: ?User,
 };
 
 export default function ConfirmOdyseeMembershipPurchase(props: Props) {

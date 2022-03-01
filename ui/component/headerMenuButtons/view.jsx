@@ -1,7 +1,7 @@
 // @flow
 import 'scss/component/_header.scss';
 
-import { ENABLE_UI_NOTIFICATIONS, ENABLE_NO_SOURCE_CLAIMS, CHANNEL_STAKED_LEVEL_LIVESTREAM } from 'config';
+import { ENABLE_UI_NOTIFICATIONS, ENABLE_NO_SOURCE_CLAIMS } from 'config';
 import { Menu, MenuList, MenuButton, MenuItem } from '@reach/menu-button';
 import * as ICONS from 'constants/icons';
 import * as PAGES from 'constants/pages';

@@ -32,6 +32,7 @@ type Props = {
   channelName: ?string,
   user: ?User,
   activeChannelStakedLevel: number,
+  odyseeMembership: string,
 };
 
 export default function LivestreamSetupPage(props: Props) {
@@ -67,12 +68,12 @@ export default function LivestreamSetupPage(props: Props) {
   );
 
   let reasonAllowedToStream;
-  if(odyseeMembership) {
-    reasonAllowedToStream = 'you purchased Odysee Premium'
+  if (odyseeMembership) {
+    reasonAllowedToStream = 'you purchased Odysee Premium';
   } else if (user.odysee_live_enabled) {
-    reasonAllowedToStream = 'your livestreaming was turned on manually'
+    reasonAllowedToStream = 'your livestreaming was turned on manually';
   } else if (hasEnoughStakedLBC) {
-    reasonAllowedToStream = 'you have enough staked LBC'
+    reasonAllowedToStream = 'you have enough staked LBC';
   }
 
   function createStreamKey() {

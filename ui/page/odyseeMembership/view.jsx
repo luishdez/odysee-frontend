@@ -35,6 +35,8 @@ type Props = {
   claimsByUri: { [string]: any },
   doFetchUserMemberships: (claimIdCsv: string) => void,
   incognito: boolean,
+  updateUserOdyseeMembershipStatus: () => void,
+  user: ?User,
 };
 
 const OdyseeMembershipPage = (props: Props) => {
