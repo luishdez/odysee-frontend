@@ -17,7 +17,7 @@ import Card from 'component/common/card';
 import ClaimList from 'component/claimList';
 import usePersistedState from 'effects/use-persisted-state';
 import { LIVESTREAM_RTMP_URL } from 'constants/livestream';
-import { ENABLE_NO_SOURCE_CLAIMS } from '../../../config';
+import { ENABLE_NO_SOURCE_CLAIMS, CHANNEL_STAKED_LEVEL_LIVESTREAM } from '../../../config';
 
 type Props = {
   hasChannels: boolean,
@@ -31,6 +31,7 @@ type Props = {
   channelId: ?string,
   channelName: ?string,
   user: ?User,
+  activeChannelStakedLevel: number,
 };
 
 export default function LivestreamSetupPage(props: Props) {
@@ -48,6 +49,7 @@ export default function LivestreamSetupPage(props: Props) {
     channelName,
     user,
     odyseeMembership,
+    activeChannelStakedLevel,
   } = props;
 
   const [sigData, setSigData] = React.useState({ signature: undefined, signing_ts: undefined });
@@ -55,12 +57,23 @@ export default function LivestreamSetupPage(props: Props) {
 
   const hasLivestreamClaims = Boolean(myLivestreamClaims.length || pendingClaims.length);
 
+  const hasEnoughStakedLBC = activeChannelStakedLevel >= CHANNEL_STAKED_LEVEL_LIVESTREAM;
+
   const livestreamEnabled = Boolean(
     ENABLE_NO_SOURCE_CLAIMS &&
     user &&
     !user.odysee_live_disabled &&
-    (user.odysee_live_enabled || odyseeMembership)
+    (user.odysee_live_enabled || odyseeMembership || hasEnoughStakedLBC)
   );
+
+  let reasonAllowedToStream;
+  if(odyseeMembership) {
+    reasonAllowedToStream = 'you purchased Odysee Premium'
+  } else if (user.odysee_live_enabled) {
+    reasonAllowedToStream = 'your livestreaming was turned on manually'
+  } else if (hasEnoughStakedLBC) {
+    reasonAllowedToStream = 'you have enough staked LBC'
+  }
 
   function createStreamKey() {
     if (!channelId || !channelName || !sigData.signature || !sigData.signing_ts) return null;
@@ -199,6 +212,7 @@ export default function LivestreamSetupPage(props: Props) {
 
       {/* show livestreaming frontend */}
       { livestreamEnabled && (
+
         <div className="card-stack">
           {/* getting channel data */}
           {fetchingChannels && (
@@ -220,6 +234,22 @@ export default function LivestreamSetupPage(props: Props) {
             />
           )}
 
+          {/* channel selector */}
+          {!fetchingChannels && (
+            <>
+              <div className="section__actions--between">
+                <ChannelSelector hideAnon />
+              </div>
+            </>
+          )}
+
+          {/* getting livestreams */}
+          {fetchingLivestreams && !fetchingChannels && !hasLivestreamClaims && (
+            <div className="main--empty">
+              <Spinner delayed />
+            </div>
+          )}
+
           {!fetchingChannels && channelId && (
             <>
               <Card
@@ -227,7 +257,7 @@ export default function LivestreamSetupPage(props: Props) {
                   <Button button="close" icon={showHelp ? ICONS.UP : ICONS.DOWN} onClick={() => setShowHelp(!showHelp)} />
                 }
                 title={__('Go Live on Odysee')}
-                subtitle={<>{__(`You're invited to try out our new livestreaming service while in beta!`)} </>}
+                subtitle={<>{__(`Congratulations, you have access to livestreaming because ${reasonAllowedToStream}!`)} </>}
                 actions={showHelp && helpText}
               />
               {streamKey && totalLivestreamClaims.length > 0 && (
