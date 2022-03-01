@@ -179,7 +179,6 @@ function areEqual(prevProps: Props, nextProps: Props) {
   if (
     a.uri !== b.uri ||
     a.nextRecommendedUri !== b.nextRecommendedUri ||
-    a.isAuthenticated !== b.isAuthenticated ||
     a.isSearching !== b.isSearching ||
     (a.recommendedContentUris && !b.recommendedContentUris) ||
     (!a.recommendedContentUris && b.recommendedContentUris) ||

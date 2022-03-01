@@ -67,7 +67,7 @@ export default function LivestreamSetupPage(props: Props) {
     (user.odysee_live_enabled || odyseeMembership || hasEnoughStakedLBC)
   );
 
-  let reasonAllowedToStream;
+  let reasonAllowedToStream = '';
   if (odyseeMembership) {
     reasonAllowedToStream = 'you purchased Odysee Premium';
   } else if (user.odysee_live_enabled) {

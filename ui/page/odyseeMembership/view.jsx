@@ -51,7 +51,7 @@ const OdyseeMembershipPage = (props: Props) => {
     user,
   } = props;
 
-  const userChannelName = activeChannelClaim && activeChannelClaim.name;
+  const userChannelName = activeChannelClaim && activeChannelClaim.name || '';
   const userChannelClaimId = activeChannelClaim && activeChannelClaim.claim_id;
 
   const [cardSaved, setCardSaved] = React.useState();
