@@ -51,7 +51,15 @@ const OdyseeMembershipPage = (props: Props) => {
     user,
   } = props;
 
-  const userChannelName = activeChannelClaim && activeChannelClaim.name || '';
+  const shouldUseEuro = localStorage.getItem('gdprRequired');
+  let currencyToUse;
+  if (shouldUseEuro) {
+    currencyToUse = 'eur';
+  } else {
+    currencyToUse = 'usd';
+  }
+
+  const userChannelName = activeChannelClaim && (activeChannelClaim.name || '');
   const userChannelClaimId = activeChannelClaim && activeChannelClaim.claim_id;
 
   const [cardSaved, setCardSaved] = React.useState();
@@ -227,7 +235,7 @@ const OdyseeMembershipPage = (props: Props) => {
 
     let purchaseString =
       `You are purchasing a ${interval}ly membership, that is active immediately ` +
-      `and will resubscribe ${interval}ly at a price of USD $${price / 100}. ` +
+      `and will resubscribe ${interval}ly at a price of ${currencyToUse.toUpperCase()} ${currencyToUse === 'usd' ? '$' : '€'}${price / 100}. ` +
       featureString +
       'You can cancel the membership at any time and you can also close this window and choose a different subscription option.';
 
@@ -359,7 +367,7 @@ const OdyseeMembershipPage = (props: Props) => {
       <Page>
         {/** splash frontend **/}
         {!stillWaitingFromBackend && purchasedMemberships.length === 0 && !planValue && !hasShownModal ? (
-          <MembershipSplash pageLocation={'confirmPage'} />
+          <MembershipSplash pageLocation={'confirmPage'} currencyToUse={currencyToUse} />
         ) : (
           /** odysee membership page **/
           <div className={'card-stack'}>
@@ -422,7 +430,7 @@ const OdyseeMembershipPage = (props: Props) => {
                                 price.recurring.interval === 'month' && membershipOption.Membership.name === 'Premium'
                               ) && (
                                 <>
-                                  {price.currency !== 'eur' && (
+                                  {price.currency === currencyToUse && (
                                     <>
                                       <h4 className="membership_info">
                                         <b>Interval:</b> {convertPriceToString(price)}

@@ -14,10 +14,21 @@ import I18nMessage from 'component/i18nMessage';
 
 type Props = {
   pageLocation: string,
+  currencyToUse: string,
 };
 
 export default function MembershipSplash(props: Props) {
-  const { pageLocation } = props;
+  const { pageLocation, currencyToUse } = props;
+
+  const premiumDisplayAmounts = {
+    eur: '€0.89',
+    usd: '99¢',
+  };
+
+  const premiumPlusDisplayAmounts = {
+    eur: '€2.68',
+    usd: '$2.99',
+  };
 
   // const logo = <Icon className="header__logo" icon={ICONS.ODYSEE_WHITE_TEXT} />;
 
@@ -73,9 +84,12 @@ export default function MembershipSplash(props: Props) {
 
               <section>
                 <I18nMessage
-                  tokens={{ date_range: <div className="membership-splash__info-range">{__('A MONTH')}</div> }}
+                  tokens={{
+                    date_range: <div className="membership-splash__info-range">{__('A MONTH')}</div>,
+                    currencyToUseString: premiumDisplayAmounts[currencyToUse],
+                }}
                 >
-                  99¢ %date_range%
+                  %currencyToUseString% %date_range%
                 </I18nMessage>
               </section>
             </div>
@@ -99,7 +113,7 @@ export default function MembershipSplash(props: Props) {
             <div className="membership-splash__info-price">
               <img src={BadgePremiumPlus} />
               <section>
-                $2.99
+                {premiumPlusDisplayAmounts[currencyToUse]}
                 <div className="membership-splash__info-range">{__('A MONTH')}</div>
               </section>
             </div>
