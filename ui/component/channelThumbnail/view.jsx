@@ -67,7 +67,7 @@ function ChannelThumbnail(props: Props) {
   const isGif = channelThumbnail && channelThumbnail.endsWith('gif');
   const showThumb = (!obscure && !!thumbnail) || thumbnailPreview;
 
-  const badgeToShow = showMemberBadge && getBadgeToShow(odyseeMembership);
+  const badgeToShow = showMemberBadge ? getBadgeToShow(odyseeMembership) : null;
   const badgeProps = {
     badgeToShow,
     linkPage: isChannel,

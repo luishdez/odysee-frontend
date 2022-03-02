@@ -99,7 +99,7 @@ class UriIndicator extends React.PureComponent<Props> {
       showMemberBadge = true,
     } = this.props;
 
-    const badgeToShow = showMemberBadge && getBadgeToShow(odyseeMembership);
+    const badgeToShow = showMemberBadge ? getBadgeToShow(odyseeMembership) : null;
 
     if (!channelInfo && !claim) {
       return (
