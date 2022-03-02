@@ -42,3 +42,26 @@
 .explanation-text {
   margin-bottom: 16px;
 }
+
+.premium-explanation-text {
+  .icon--ChevronDown, .icon--ChevronUp {
+    height: 24px;
+    width: 24px;
+  }
+
+  .card__main-actions {
+    margin-bottom: 15px;
+  }
+
+  .button--close {
+    margin-top: 3px;
+    left: 223px;
+    width: 34px;
+  }
+
+  .section__subtitle {
+    margin-bottom: 25px;
+  }
+
+  margin-bottom: 21px;
+}

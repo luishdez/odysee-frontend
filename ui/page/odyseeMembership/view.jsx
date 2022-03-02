@@ -394,7 +394,7 @@ const OdyseeMembershipPage = (props: Props) => {
                     title={__('Get More Information')}
                     subtitle={<>{__(`Learn more about how Odysee Premium will work`)} </>}
                     actions={showHelp && helpText}
-                    className={'explanation-text'}
+                    className={'premium-explanation-text'}
                   />
                 </div>
               </>
