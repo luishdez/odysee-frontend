@@ -178,6 +178,7 @@ export const CONTENT = 'Content';
 export const STAR = 'star';
 export const MUSIC = 'MusicCategory';
 export const BADGE_MOD = 'BadgeMod';
+export const BADGE_ADMIN = 'BadgeAdmin';
 export const BADGE_STREAMER = 'BadgeStreamer';
 export const REPLAY = 'Replay';
 export const REPEAT = 'Repeat';

@@ -285,7 +285,7 @@ function CommentView(props: Props) {
                 />
               )}
               {isGlobalMod && <CommentBadge label={__('Admin')} icon={ICONS.BADGE_MOD} />}
-              {isModerator && <CommentBadge label={__('Moderator')} icon={ICONS.BADGE_MOD} />}
+              {isModerator && <CommentBadge label={__('Moderator')} icon={ICONS.BADGE_ADMIN} />}
               {badgeToShow && <PremiumBadge badgeToShow={badgeToShow} linkPage />}
               <Button
                 className="comment__time"
