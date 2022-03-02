@@ -178,7 +178,10 @@ function DiscoverPage(props: Props) {
   React.useEffect(() => {
     const hasAdOnPage = document.querySelector('.homepageAdContainer');
 
-    if (hasAdOnPage || userHasPremiumPlus || !SHOW_ADS || window.location.pathname === `/$/${PAGES.WILD_WEST}`) {
+    const userIsOnWildWest = window.location.pathname === `/$/${PAGES.WILD_WEST}`
+
+    // different reasons to not show ad
+    if (hasAdOnPage || userHasPremiumPlus || !SHOW_ADS || userIsOnWildWest) {
       return;
     }
     injectAd();

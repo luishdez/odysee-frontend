@@ -54,7 +54,7 @@ const OdyseeMembershipPage = (props: Props) => {
 
   const shouldUseEuro = localStorage.getItem('gdprRequired');
   let currencyToUse;
-  if (shouldUseEuro) {
+  if (shouldUseEuro === 'true') {
     currencyToUse = 'eur';
   } else {
     currencyToUse = 'usd';
