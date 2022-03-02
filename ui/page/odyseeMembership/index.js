@@ -18,10 +18,10 @@ const select = (state) => {
   };
 };
 
-const perform = dispatch => ({
+const perform = (dispatch) => ({
   openModal: (modal, props) => dispatch(doOpenModal(modal, props)),
   doFetchUserMemberships: (claimIds) => dispatch(doFetchUserMemberships(claimIds)),
-  updateUserOdyseeMembershipStatus: (user) => doCheckUserOdyseeMemberships(dispatch, user),
+  updateUserOdyseeMembershipStatus: (user) => dispatch(doCheckUserOdyseeMemberships(user)),
 });
 
 export default connect(select, perform)(OdyseeMembership);

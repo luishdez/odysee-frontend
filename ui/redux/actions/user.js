@@ -111,48 +111,50 @@ function checkAuthBusy() {
  * @param user
  * @returns {Promise<void>}
  */
-export async function doCheckUserOdyseeMemberships(dispatch, user) {
-  // get memberships for a given user
-  // TODO: in the future, can we specify this just to @odysee?
-  const response = await Lbryio.call(
-    'membership',
-    'mine',
-    {
-      environment: stripeEnvironment,
-    },
-    'post'
-  );
+export function doCheckUserOdyseeMemberships(user) {
+  return async (dispatch) => {
+    // get memberships for a given user
+    // TODO: in the future, can we specify this just to @odysee?
+    const response = await Lbryio.call(
+      'membership',
+      'mine',
+      {
+        environment: stripeEnvironment,
+      },
+      'post'
+    );
 
-  let savedMemberships = [];
-  let highestMembershipRanking;
+    let savedMemberships = [];
+    let highestMembershipRanking;
 
-  // TODO: this will work for now, but it should be adjusted
-  // TODO: to check if it's active, or if it's cancelled if it's still valid past current date
-  // loop through all memberships and save the @odysee ones
-  // maybe in the future we can only hit @odysee in the API call
-  for (const membership of response) {
-    if (membership.MembershipDetails.channel_name === '@odysee') {
-      savedMemberships.push(membership.MembershipDetails.name);
+    // TODO: this will work for now, but it should be adjusted
+    // TODO: to check if it's active, or if it's cancelled if it's still valid past current date
+    // loop through all memberships and save the @odysee ones
+    // maybe in the future we can only hit @odysee in the API call
+    for (const membership of response) {
+      if (membership.MembershipDetails.channel_name === '@odysee') {
+        savedMemberships.push(membership.MembershipDetails.name);
+      }
     }
-  }
 
-  // determine highest ranking membership based on returned data
-  // note: this is from an odd state in the API where a user can be both premium/Premium + at the same time
-  // I expect this can change once upgrade/downgrade is implemented
-  if (savedMemberships.length > 0) {
-    // if premium plus is a membership, return that, otherwise it's only premium
-    const premiumPlusExists = savedMemberships.includes('Premium+');
-    if (premiumPlusExists) {
-      highestMembershipRanking = 'Premium+';
-    } else {
-      highestMembershipRanking = 'Premium';
+    // determine highest ranking membership based on returned data
+    // note: this is from an odd state in the API where a user can be both premium/Premium + at the same time
+    // I expect this can change once upgrade/downgrade is implemented
+    if (savedMemberships.length > 0) {
+      // if premium plus is a membership, return that, otherwise it's only premium
+      const premiumPlusExists = savedMemberships.includes('Premium+');
+      if (premiumPlusExists) {
+        highestMembershipRanking = 'Premium+';
+      } else {
+        highestMembershipRanking = 'Premium';
+      }
     }
-  }
 
-  dispatch({
-    type: ACTIONS.ADD_ODYSEE_MEMBERSHIP_DATA,
-    data: { user, odyseeMembershipName: highestMembershipRanking },
-  });
+    dispatch({
+      type: ACTIONS.ADD_ODYSEE_MEMBERSHIP_DATA,
+      data: { user, odyseeMembershipName: highestMembershipRanking },
+    });
+  };
 }
 
 // TODO: Call doInstallNew separately so we don't have to pass appVersion and os_system params?
@@ -180,7 +182,7 @@ export function doAuthenticate(
 
           // if user is an Odysee member, get the membership details
           if (user.odysee_member) {
-            doCheckUserOdyseeMemberships(dispatch, user);
+            dispatch(doCheckUserOdyseeMemberships(user));
           }
 
           if (shareUsageData) {
