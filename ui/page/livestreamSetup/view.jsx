@@ -58,13 +58,13 @@ export default function LivestreamSetupPage(props: Props) {
 
   const hasLivestreamClaims = Boolean(myLivestreamClaims.length || pendingClaims.length);
 
-  const hasEnoughStakedLBC = activeChannelStakedLevel >= CHANNEL_STAKED_LEVEL_LIVESTREAM;
+  const hasEnoughLBCToStream = activeChannelStakedLevel >= CHANNEL_STAKED_LEVEL_LIVESTREAM;
 
   const livestreamEnabled = Boolean(
     ENABLE_NO_SOURCE_CLAIMS &&
     user &&
     !user.odysee_live_disabled &&
-    (user.odysee_live_enabled || odyseeMembership || hasEnoughStakedLBC)
+    (user.odysee_live_enabled || odyseeMembership || hasEnoughLBCToStream)
   );
 
   let reasonAllowedToStream = '';
@@ -72,7 +72,7 @@ export default function LivestreamSetupPage(props: Props) {
     reasonAllowedToStream = 'you purchased Odysee Premium';
   } else if (user.odysee_live_enabled) {
     reasonAllowedToStream = 'your livestreaming was turned on manually';
-  } else if (hasEnoughStakedLBC) {
+  } else if (hasEnoughLBCToStream) {
     reasonAllowedToStream = 'you have enough staked LBC';
   }
 
