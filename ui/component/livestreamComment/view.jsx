@@ -69,7 +69,7 @@ export default function LivestreamComment(props: Props) {
   const [hasUserMention, setUserMention] = React.useState(false);
 
   const shouldFetchUserMemberships = true;
-  useGetUserMemberships(shouldFetchUserMemberships, [authorUri], claimsByUri, doFetchUserMemberships);
+  useGetUserMemberships(shouldFetchUserMemberships, authorUri && [authorUri], claimsByUri, doFetchUserMemberships);
 
   const badgeToShow = getBadgeToShow(odyseeMembership);
 

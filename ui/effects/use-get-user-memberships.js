@@ -4,7 +4,7 @@ import { getChannelFromClaim } from 'util/claim';
 
 export default function useGetUserMemberships(
   shouldFetchUserMemberships: ?boolean,
-  arrayOfContentUris: Array<string>,
+  arrayOfContentUris: ?Array<string>,
   convertClaimUrlsToIds: any,
   doFetchUserMemberships: (string) => void // fetch membership values and save in redux
 ) {
