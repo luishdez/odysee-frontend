@@ -25,6 +25,7 @@ type Props = {
   header: Node | boolean,
   headerAltControls: Node,
   loading: boolean,
+  useLoadingSpinner?: boolean, // use built-in spinner when 'loading' is true. Else, roll your own at client-side.
   type: string,
   activeUri?: string,
   empty?: string,
@@ -66,6 +67,7 @@ export default function ClaimList(props: Props) {
     prefixUris,
     headerAltControls,
     loading,
+    useLoadingSpinner,
     persistedStorageKey,
     empty,
     defaultSort,
@@ -203,6 +205,7 @@ export default function ClaimList(props: Props) {
             swipeLayout={swipeLayout}
           />
         ))}
+      {loading && useLoadingSpinner && <ClaimPreviewTile placeholder="loading" swipeLayout={swipeLayout} />}
       {!timedOut && urisLength === 0 && !loading && <div className="empty main--empty">{empty || noResultMsg}</div>}
       {timedOut && timedOutMessage && <div className="empty main--empty">{timedOutMessage}</div>}
     </section>
@@ -292,6 +295,11 @@ export default function ClaimList(props: Props) {
 
       {!timedOut && urisLength === 0 && !loading && <div className="empty empty--centered">{empty || noResultMsg}</div>}
       {!loading && timedOut && timedOutMessage && <div className="empty empty--centered">{timedOutMessage}</div>}
+      {loading && useLoadingSpinner && (
+        <div className="spinnerArea--centered">
+          <Spinner type="small" />
+        </div>
+      )}
     </section>
   );
 }
