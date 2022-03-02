@@ -104,7 +104,7 @@ export default function SideNavigation(props: Props) {
     }
   }, [hideMenuFromView, menuInitialized]);
 
-  const shouldRenderLargeMenu = menuCanCloseCompletely || sidebarOpen;
+  const shouldRenderLargeMenu = (menuCanCloseCompletely && !isAbsolute) || sidebarOpen;
 
   const showMicroMenu = !sidebarOpen && !menuCanCloseCompletely;
   const showPushMenu = sidebarOpen && !menuCanCloseCompletely;
