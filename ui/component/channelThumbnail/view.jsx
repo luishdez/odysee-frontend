@@ -71,9 +71,9 @@ function ChannelThumbnail(props: Props) {
   const badgeProps = {
     badgeToShow,
     linkPage: isChannel,
-    placement: isChannel && 'bottom',
+    placement: isChannel ? 'bottom' : undefined,
     hideTooltip,
-    className: isChannel && 'profile-badge__tooltip',
+    className: isChannel ? 'profile-badge__tooltip' : undefined,
   };
 
   const shouldFetchUserMemberships = true;
