@@ -23,7 +23,7 @@ type Props = {
   doSetIncognito: (boolean) => void,
   claimsByUri: { [string]: any },
   doFetchUserMemberships: (claimIdCsv: string) => void,
-  selectOdyseeMembershipByUri: (uri: string) => string,
+  odyseeMembershipByUri: (uri: string) => string,
 };
 
 type ListItemProps = {
@@ -31,13 +31,13 @@ type ListItemProps = {
   isSelected?: boolean,
   claimsByUri: { [string]: any },
   doFetchUserMemberships: (claimIdCsv: string) => void,
-  selectOdyseeMembershipByUri: (uri: string) => string,
+  odyseeMembershipByUri: (uri: string) => string,
 };
 
 function ChannelListItem(props: ListItemProps) {
-  const { uri, isSelected = false, claimsByUri, doFetchUserMemberships, selectOdyseeMembershipByUri } = props;
+  const { uri, isSelected = false, claimsByUri, doFetchUserMemberships, odyseeMembershipByUri } = props;
 
-  const membership = selectOdyseeMembershipByUri(uri);
+  const membership = odyseeMembershipByUri(uri);
   const badgeToShow = getBadgeToShow(membership);
 
   const shouldFetchUserMemberships = true;
@@ -75,7 +75,7 @@ function ChannelSelector(props: Props) {
     hideAnon = false,
     incognito,
     doSetIncognito,
-    selectOdyseeMembershipByUri,
+    odyseeMembershipByUri,
     claimsByUri,
     doFetchUserMemberships,
   } = props;
@@ -99,15 +99,13 @@ function ChannelSelector(props: Props) {
           {(incognito && !hideAnon) || !activeChannelUrl ? (
             <IncognitoSelector isSelected />
           ) : (
-            <>
-              <ChannelListItem
-                selectOdyseeMembershipByUri={selectOdyseeMembershipByUri}
-                uri={activeChannelUrl}
-                isSelected
-                claimsByUri={claimsByUri}
-                doFetchUserMemberships={doFetchUserMemberships}
-              />
-            </>
+            <ChannelListItem
+              odyseeMembershipByUri={odyseeMembershipByUri}
+              uri={activeChannelUrl}
+              isSelected
+              claimsByUri={claimsByUri}
+              doFetchUserMemberships={doFetchUserMemberships}
+            />
           )}
         </MenuButton>
 
@@ -116,7 +114,7 @@ function ChannelSelector(props: Props) {
             channels.map((channel) => (
               <MenuItem key={channel.permanent_url} onSelect={() => handleChannelSelect(channel)}>
                 <ChannelListItem
-                  selectOdyseeMembershipByUri={selectOdyseeMembershipByUri}
+                  odyseeMembershipByUri={odyseeMembershipByUri}
                   uri={channel.permanent_url}
                   claimsByUri={claimsByUri}
                   doFetchUserMemberships={doFetchUserMemberships}

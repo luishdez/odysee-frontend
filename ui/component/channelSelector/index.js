@@ -13,7 +13,7 @@ const select = (state, props) => {
     channels: selectMyChannelClaims(state),
     activeChannelClaim,
     incognito: selectIncognito(state),
-    selectOdyseeMembershipByUri: (uri) => selectOdyseeMembershipByUri(state, uri),
+    odyseeMembershipByUri: (uri) => selectOdyseeMembershipByUri(state, uri),
     claimsByUri: selectClaimsByUri(state),
   };
 };
