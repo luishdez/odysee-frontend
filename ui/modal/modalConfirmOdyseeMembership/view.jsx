@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // @flow
 import React from 'react';
 import { Modal } from 'modal/modal';
@@ -76,9 +77,10 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
           errorMessageTimeout = 0;
         }
 
-        setTimeout(function() {
-          const genericErrorMessage =
-            __("Sorry, your purchase wasn't able to completed. Please contact support for possible next steps");
+        setTimeout(function () {
+          const genericErrorMessage = __(
+            "Sorry, your purchase wasn't able to completed. Please contact support for possible next steps"
+          );
 
           doToast({
             message: genericErrorMessage,
@@ -107,7 +109,7 @@ export default function ConfirmOdyseeMembershipPurchase(props: Props) {
       // clear the other membership options after making a purchase
       setMembershipOptions(false);
 
-      updateUserOdyseeMembershipStatus(user);
+      if (user) updateUserOdyseeMembershipStatus(user);
 
       closeModal();
     } catch (err) {

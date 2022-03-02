@@ -7,7 +7,7 @@ import CommentBadge from './comment-badge';
 import Button from 'component/button';
 
 type Props = {
-  badgeToShow: string,
+  badgeToShow: ?string,
   linkPage?: boolean,
   placement?: string,
   className?: string,
@@ -16,6 +16,8 @@ type Props = {
 
 export default function PremiumBadge(props: Props) {
   const { badgeToShow, linkPage, placement, className, hideTooltip } = props;
+
+  if (!badgeToShow) return null;
 
   const badgeProps = { size: 40, placement, hideTooltip, className };
 

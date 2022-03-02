@@ -99,7 +99,7 @@ function ChannelThumbnail(props: Props) {
   if (isGif && !allowGifs) {
     return (
       <FreezeframeWrapper src={channelThumbnail} className={classnames('channel-thumbnail', className)}>
-        {badgeToShow && <PremiumBadge {...badgeProps} />}
+        <PremiumBadge {...badgeProps} />
       </FreezeframeWrapper>
     );
   }
@@ -126,7 +126,7 @@ function ChannelThumbnail(props: Props) {
           }
         }}
       />
-      {badgeToShow && <PremiumBadge {...badgeProps} />}
+      <PremiumBadge {...badgeProps} />
     </div>
   );
 }

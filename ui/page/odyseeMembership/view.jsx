@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // @flow
 import React from 'react';
 import moment from 'moment';
@@ -59,7 +60,7 @@ const OdyseeMembershipPage = (props: Props) => {
     currencyToUse = 'usd';
   }
 
-  const userChannelName = activeChannelClaim && (activeChannelClaim.name || '');
+  const userChannelName = activeChannelClaim ? activeChannelClaim.name : '';
   const userChannelClaimId = activeChannelClaim && activeChannelClaim.claim_id;
 
   const [cardSaved, setCardSaved] = React.useState();
@@ -180,6 +181,7 @@ const OdyseeMembershipPage = (props: Props) => {
 
       populateMembershipData();
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stillWaitingFromBackend =
@@ -235,7 +237,9 @@ const OdyseeMembershipPage = (props: Props) => {
 
     let purchaseString =
       `You are purchasing a ${interval}ly membership, that is active immediately ` +
-      `and will resubscribe ${interval}ly at a price of ${currencyToUse.toUpperCase()} ${currencyToUse === 'usd' ? '$' : '€'}${price / 100}. ` +
+      `and will resubscribe ${interval}ly at a price of ${currencyToUse.toUpperCase()} ${
+        currencyToUse === 'usd' ? '$' : '€'
+      }${price / 100}. ` +
       featureString +
       'You can cancel the membership at any time and you can also close this window and choose a different subscription option.';
 
@@ -376,10 +380,7 @@ const OdyseeMembershipPage = (props: Props) => {
                 <h1 style={{ fontSize: '23px' }}>Odysee Premium</h1>
                 {/* let user switch channel */}
                 <div style={{ marginTop: '10px' }}>
-                  <ChannelSelector
-                    uri={activeChannelClaim && activeChannelClaim.permanent_url}
-                    key={shouldFetchUserMemberships}
-                  />
+                  <ChannelSelector uri={activeChannelClaim && activeChannelClaim.permanent_url} />
 
                   {/* explainer help text */}
                   <Card

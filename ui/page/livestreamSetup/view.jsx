@@ -59,18 +59,16 @@ export default function LivestreamSetupPage(props: Props) {
   const hasLivestreamClaims = Boolean(myLivestreamClaims.length || pendingClaims.length);
 
   const hasEnoughLBCToStream = activeChannelStakedLevel >= CHANNEL_STAKED_LEVEL_LIVESTREAM;
+  const { odysee_live_disabled: liveDisabled, odysee_live_enabled: liveEnabled } = user || {};
 
   const livestreamEnabled = Boolean(
-    ENABLE_NO_SOURCE_CLAIMS &&
-    user &&
-    !user.odysee_live_disabled &&
-    (user.odysee_live_enabled || odyseeMembership || hasEnoughLBCToStream)
+    ENABLE_NO_SOURCE_CLAIMS && user && !liveDisabled && (liveEnabled || odyseeMembership || hasEnoughLBCToStream)
   );
 
   let reasonAllowedToStream = '';
   if (odyseeMembership) {
     reasonAllowedToStream = 'you purchased Odysee Premium';
-  } else if (user.odysee_live_enabled) {
+  } else if (liveEnabled) {
     reasonAllowedToStream = 'your livestreaming was turned on manually';
   } else if (hasEnoughLBCToStream) {
     reasonAllowedToStream = 'you have enough staked LBC';
@@ -195,11 +193,9 @@ export default function LivestreamSetupPage(props: Props) {
   return (
     <Page>
       {/* no livestreaming privs because no premium membership */}
-      { !livestreamEnabled && !odyseeMembership && (
+      {!livestreamEnabled && !odyseeMembership && (
         <div>
-          <h2 className={''}>
-            Please purchase an Odysee Premium membership to be able to live-stream
-          </h2>
+          <h2 className={''}>Please purchase an Odysee Premium membership to be able to live-stream</h2>
 
           <Button
             button="primary"
@@ -212,8 +208,7 @@ export default function LivestreamSetupPage(props: Props) {
       )}
 
       {/* show livestreaming frontend */}
-      { livestreamEnabled && (
-
+      {livestreamEnabled && (
         <div className="card-stack">
           {/* getting channel data */}
           {fetchingChannels && (
@@ -255,10 +250,16 @@ export default function LivestreamSetupPage(props: Props) {
             <>
               <Card
                 titleActions={
-                  <Button button="close" icon={showHelp ? ICONS.UP : ICONS.DOWN} onClick={() => setShowHelp(!showHelp)} />
+                  <Button
+                    button="close"
+                    icon={showHelp ? ICONS.UP : ICONS.DOWN}
+                    onClick={() => setShowHelp(!showHelp)}
+                  />
                 }
                 title={__('Go Live on Odysee')}
-                subtitle={<>{__(`Congratulations, you have access to livestreaming because ${reasonAllowedToStream}!`)} </>}
+                subtitle={
+                  <>{__(`Congratulations, you have access to livestreaming because ${reasonAllowedToStream}!`)} </>
+                }
                 actions={showHelp && helpText}
               />
               {streamKey && totalLivestreamClaims.length > 0 && (
@@ -416,7 +417,6 @@ export default function LivestreamSetupPage(props: Props) {
           )}
         </div>
       )}
-
     </Page>
   );
 }

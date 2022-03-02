@@ -47,7 +47,7 @@ function ChannelListItem(props: ListItemProps) {
     <div className={classnames('channel__list-item', { 'channel__list-item--selected': isSelected })}>
       <ChannelThumbnail uri={uri} hideStakedIndicator xsmall noLazyLoad />
       <ChannelTitle uri={uri} />
-      {badgeToShow && <PremiumBadge badgeToShow={badgeToShow} />}
+      <PremiumBadge badgeToShow={badgeToShow} />
       {isSelected && <Icon icon={ICONS.DOWN} />}
     </div>
   );

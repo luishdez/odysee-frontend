@@ -69,7 +69,12 @@ export default function LivestreamComment(props: Props) {
   const [hasUserMention, setUserMention] = React.useState(false);
 
   const shouldFetchUserMemberships = true;
-  useGetUserMemberships(shouldFetchUserMemberships, authorUri && [authorUri], claimsByUri, doFetchUserMemberships);
+  useGetUserMemberships(
+    shouldFetchUserMemberships,
+    authorUri ? [authorUri] : undefined,
+    claimsByUri,
+    doFetchUserMemberships
+  );
 
   const badgeToShow = getBadgeToShow(odyseeMembership);
 
@@ -130,7 +135,7 @@ export default function LivestreamComment(props: Props) {
           {isGlobalMod && <CommentBadge label={__('Moderator')} icon={ICONS.BADGE_ADMIN} size={16} />}
           {isModerator && <CommentBadge label={__('Admin')} icon={ICONS.BADGE_MOD} size={16} />}
           {isStreamer && <CommentBadge label={__('Streamer')} icon={ICONS.BADGE_STREAMER} size={16} />}
-          {badgeToShow && <PremiumBadge badgeToShow={badgeToShow} />}
+          <PremiumBadge badgeToShow={badgeToShow} />
 
           {/* Use key to force timestamp update */}
           <DateTime date={timePosted} timeAgo key={forceUpdate} genericSeconds />
