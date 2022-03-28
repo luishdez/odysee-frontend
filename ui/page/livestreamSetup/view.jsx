@@ -203,7 +203,7 @@ export default function LivestreamSetupPage(props: Props) {
             button="primary"
             label={__('Join Odysee Premium')}
             icon={ICONS.FINANCE}
-            navigate={`/$/${PAGES.ODYSEE_MEMBERSHIP}`}
+            navigate={`/$/${PAGES.ODYSEE_PREMIUM}`}
             className="membership_button"
             style={{ maxWidth: '238px' }}
           />

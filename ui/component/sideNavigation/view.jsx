@@ -87,7 +87,7 @@ const PLAYLISTS = {
 
 const PREMIUM = {
   title: 'Premium',
-  link: `/$/${PAGES.ODYSEE_MEMBERSHIP}`,
+  link: `/$/${PAGES.ODYSEE_PREMIUM}`,
   icon: ICONS.UPGRADE,
   hideForUnauth: true,
 };
