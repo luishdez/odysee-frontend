@@ -124,6 +124,11 @@ export function getClaimTitle(claim: ?Claim) {
   return metadata && metadata.title;
 }
 
+export function getClaimVideoInfo(claim: ?StreamClaim) {
+  // $FlowFixMe
+  return getClaimMetadata(claim)?.video;
+}
+
 export const isStreamPlaceholderClaim = (claim: ?StreamClaim) => {
   return claim ? Boolean(claim.value_type === 'stream' && !claim.value.source) : false;
 };
