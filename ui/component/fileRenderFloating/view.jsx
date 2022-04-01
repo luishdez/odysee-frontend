@@ -1,4 +1,9 @@
 // @flow
+
+// $FlowFixMe
+import { Global } from '@emotion/react';
+
+import type { ElementRef } from 'react';
 import * as ICONS from 'constants/icons';
 import * as RENDER_MODES from 'constants/file_render_modes';
 import React from 'react';
@@ -18,7 +23,17 @@ import { useHistory } from 'react-router';
 import { isURIEqual } from 'util/lbryURI';
 import AutoplayCountdown from 'component/autoplayCountdown';
 import usePlayNext from 'effects/use-play-next';
-import { getScreenWidth, getScreenHeight, clampFloatingPlayerToScreen, calculateRelativePos } from './helper-functions';
+import {
+  getRootEl,
+  getScreenWidth,
+  getScreenHeight,
+  clampFloatingPlayerToScreen,
+  calculateRelativePos,
+  getAspectRatio,
+  getMaxLandscapeHeight,
+  getAmountNeededToCenterVideo,
+  getPossiblePlayerHeight,
+} from './helper-functions';
 
 // scss/init/vars.scss
 // --header-height
@@ -26,9 +41,10 @@ const HEADER_HEIGHT = 60;
 // --header-height-mobile
 export const HEADER_HEIGHT_MOBILE = 56;
 
-const IS_DESKTOP_MAC = typeof process === 'object' ? process.platform === 'darwin' : false;
 const DEBOUNCE_WINDOW_RESIZE_HANDLER_MS = 100;
+
 export const INLINE_PLAYER_WRAPPER_CLASS = 'inline-player__wrapper';
+export const CONTENT_VIEWER_CLASS = 'content__viewer';
 export const FLOATING_PLAYER_CLASS = 'content__viewer--floating';
 
 // ****************************************************************************
@@ -55,11 +71,11 @@ type Props = {
   doUriInitiatePlay: (playingOptions: PlayingUri, isPlayable: ?boolean, isFloating: ?boolean) => void,
   doSetPlayingUri: ({ uri?: ?string }) => void,
   isCurrentClaimLive?: boolean,
-  mobilePlayerDimensions?: any,
+  playerDimensions: { height: ?number, width: ?number },
   socketConnected: boolean,
   isLivestreamClaim: boolean,
   geoRestriction: ?GeoRestriction,
-  doSetMobilePlayerDimensions: ({ height?: ?number, width?: ?number }) => void,
+  appDrawerOpen: boolean,
   doCommentSocketConnect: (string, string, string) => void,
   doCommentSocketDisconnect: (string, string) => void,
 };
@@ -88,14 +104,18 @@ export default function FileRenderFloating(props: Props) {
     doUriInitiatePlay,
     doSetPlayingUri,
     isCurrentClaimLive,
-    mobilePlayerDimensions,
+    playerDimensions,
     geoRestriction,
-    doSetMobilePlayerDimensions,
+    appDrawerOpen,
     doCommentSocketConnect,
     doCommentSocketDisconnect,
   } = props;
 
   const isMobile = useIsMobile();
+
+  const resizedPlayerHeight = React.useRef();
+  const initialRect = React.useRef();
+  const resizedBetweenFloating = React.useRef();
 
   const {
     location: { state },
@@ -103,8 +123,9 @@ export default function FileRenderFloating(props: Props) {
   const hideFloatingPlayer = state && state.hideFloatingPlayer;
 
   const { uri: playingUrl, source: playingUriSource, primaryUri: playingPrimaryUri } = playingUri;
+
   const isComment = playingUriSource === 'comment';
-  const mainFilePlaying = !isFloating && primaryUri && isURIEqual(uri, primaryUri);
+  const mainFilePlaying = Boolean(!isFloating && primaryUri && isURIEqual(uri, primaryUri));
   const noFloatingPlayer = !isFloating || !floatingPlayerEnabled || hideFloatingPlayer;
 
   const [fileViewerRect, setFileViewerRect] = React.useState();
@@ -151,13 +172,20 @@ export default function FileRenderFloating(props: Props) {
       x: rect.x,
     };
 
+    if (playerDimensions.height && playerDimensions.width && !initialRect.current) {
+      initialRect.current = { ...objectRect, windowOffset: window.pageYOffset };
+      // $FlowFixMe -- already considered above
+      const aspectRatio = getAspectRatio(playerDimensions.height, playerDimensions.width);
+      const heightForViewer = aspectRatio * rect.width;
+      const heightResult = getPossiblePlayerHeight(heightForViewer, isMobile);
+      const newHeight = resizedPlayerHeight.current || heightResult;
+
+      if (!resizedPlayerHeight.current) resizedPlayerHeight.current = newHeight;
+    }
+
     // $FlowFixMe
     setFileViewerRect({ ...objectRect, windowOffset: window.pageYOffset });
-
-    if (!mobilePlayerDimensions || mobilePlayerDimensions.height !== rect.height) {
-      doSetMobilePlayerDimensions({ height: rect.height, width: getScreenWidth() });
-    }
-  }, [doSetMobilePlayerDimensions, mainFilePlaying, mobilePlayerDimensions]);
+  }, [isMobile, mainFilePlaying, playerDimensions.height, playerDimensions.width]);
 
   const restoreToRelativePosition = React.useCallback(() => {
     const SCROLL_BAR_PX = 12; // root: --body-scrollbar-width
@@ -222,11 +250,16 @@ export default function FileRenderFloating(props: Props) {
 
   // Listen to main-window resizing and adjust the floating player position accordingly:
   React.useEffect(() => {
+    // intended to only run once: when floating player switches between true - false
+    // otherwise handleResize() can run twice when this effect re-runs, so use
+    // resizedBetweenFloating ref
     if (isFloating) {
       // Ensure player is within screen when 'isFloating' changes.
       restoreToRelativePosition();
-    } else {
+      resizedBetweenFloating.current = false;
+    } else if (!resizedBetweenFloating.current) {
       handleResize();
+      resizedBetweenFloating.current = true;
     }
 
     function onWindowResize() {
@@ -234,11 +267,11 @@ export default function FileRenderFloating(props: Props) {
     }
 
     window.addEventListener('resize', onWindowResize);
-    if (!isFloating) onFullscreenChange(window, 'add', handleResize);
+    if (!isFloating && !isMobile) onFullscreenChange(window, 'add', handleResize);
 
     return () => {
       window.removeEventListener('resize', onWindowResize);
-      if (!isFloating) onFullscreenChange(window, 'remove', handleResize);
+      if (!isFloating && !isMobile) onFullscreenChange(window, 'remove', handleResize);
     };
 
     // Only listen to these and avoid infinite loops
@@ -267,10 +300,15 @@ export default function FileRenderFloating(props: Props) {
   }, [doFetchRecommendedContent, isFloating, uri]);
 
   React.useEffect(() => {
-    if (isFloating && isMobile) {
-      doSetMobilePlayerDimensions({ height: null, width: null });
-    }
-  }, [doSetMobilePlayerDimensions, doSetPlayingUri, isFloating, isMobile]);
+    return () => {
+      // basically if switched videos (playingUrl change or unmount),
+      // erase the data so it can be re-calculated
+      if (playingUrl) {
+        resizedPlayerHeight.current = undefined;
+        initialRect.current = undefined;
+      }
+    };
+  }, [playingUrl]);
 
   if (
     geoRestriction ||
@@ -329,7 +367,7 @@ export default function FileRenderFloating(props: Props) {
       cancel=".button"
     >
       <div
-        className={classnames('content__viewer', {
+        className={classnames([CONTENT_VIEWER_CLASS], {
           [FLOATING_PLAYER_CLASS]: isFloating,
           'content__viewer--inline': !isFloating,
           'content__viewer--secondary': isComment,
@@ -341,18 +379,29 @@ export default function FileRenderFloating(props: Props) {
           !isFloating && fileViewerRect
             ? {
                 width: fileViewerRect.width,
-                height: fileViewerRect.height,
+                height: appDrawerOpen ? `${getMaxLandscapeHeight()}px` : fileViewerRect.height,
                 left: fileViewerRect.x,
                 top:
                   isMobile && !playingUriSource
                     ? HEADER_HEIGHT_MOBILE
-                    : fileViewerRect.windowOffset +
-                      fileViewerRect.top -
-                      (!isMobile ? HEADER_HEIGHT - (IS_DESKTOP_MAC ? 24 : 0) : 0),
+                    : fileViewerRect.windowOffset + fileViewerRect.top - HEADER_HEIGHT,
               }
             : {}
         }
       >
+        {uri && playerDimensions.height && playerDimensions.width && fileViewerRect ? (
+          <PlayerGlobalStyles
+            playerDimensions={playerDimensions}
+            videoTheaterMode={videoTheaterMode}
+            appDrawerOpen={appDrawerOpen}
+            resizedPlayerHeight={resizedPlayerHeight}
+            isFloating={isFloating}
+            fileViewerRect={fileViewerRect}
+            mainFilePlaying={mainFilePlaying}
+            playingUrl={playingUrl}
+          />
+        ) : null}
+
         <div className={classnames('content__wrapper', { 'content__wrapper--floating': isFloating })}>
           {isFloating && (
             <Button
@@ -398,3 +447,157 @@ export default function FileRenderFloating(props: Props) {
     </Draggable>
   );
 }
+
+type GlobalStylesProps = {
+  playerDimensions: any,
+  videoTheaterMode: boolean,
+  appDrawerOpen: boolean,
+  resizedPlayerHeight: ElementRef<any>,
+  isFloating: boolean,
+  fileViewerRect: any,
+  mainFilePlaying: boolean,
+  playingUrl: ?string,
+};
+
+const PlayerGlobalStyles = (props: GlobalStylesProps) => {
+  const {
+    playerDimensions,
+    videoTheaterMode,
+    appDrawerOpen,
+    resizedPlayerHeight,
+    playingUrl,
+    isFloating,
+    fileViewerRect,
+    mainFilePlaying,
+  } = props;
+
+  const isMobile = useIsMobile();
+  const isMobilePlayer = isMobile && !isFloating; // to avoid miniplayer -> file page only
+
+  const previousPlayingUri = React.useRef(playingUrl);
+
+  // $FlowFixMe -- already considered before calling component
+  const videoAspectRatio = getAspectRatio(playerDimensions.height, playerDimensions.width);
+  const heightForViewer = getPossiblePlayerHeight(videoAspectRatio * fileViewerRect.width, isMobile);
+  const widthForViewer = heightForViewer / videoAspectRatio;
+  const maxLandscapeHeight = getMaxLandscapeHeight(widthForViewer);
+  const heightResult = appDrawerOpen ? `${maxLandscapeHeight}px` : `${heightForViewer}px`;
+  const amountToFullyCenterVideo = getAmountNeededToCenterVideo(heightForViewer, maxLandscapeHeight);
+
+  const forceDefaults = !mainFilePlaying || videoTheaterMode || isFloating || isMobile;
+  const videoGreaterThanLandscape = heightForViewer > maxLandscapeHeight;
+
+  const switchedVids = previousPlayingUri.current !== playingUrl;
+
+  React.useEffect(() => {
+    if (switchedVids) {
+      previousPlayingUri.current = playingUrl;
+    }
+  }, [playingUrl, previousPlayingUri, switchedVids]);
+
+  React.useEffect(() => {
+    if (!isMobilePlayer || !mainFilePlaying || appDrawerOpen) return;
+
+    const viewer = document.querySelector(`.${CONTENT_VIEWER_CLASS}`);
+    if (viewer) viewer.style.height = `${heightForViewer}px`;
+
+    function handleScroll() {
+      const rootEl = getRootEl();
+
+      const viewer = document.querySelector(`.${CONTENT_VIEWER_CLASS}`);
+      const videoNode = document.querySelector('.vjs-tech');
+      const touchOverlay = document.querySelector('.vjs-touch-overlay');
+
+      if (rootEl && viewer) {
+        const scrollTop = window.pageYOffset || rootEl.scrollTop;
+        const isHigherThanLandscape = scrollTop < resizedPlayerHeight.current - maxLandscapeHeight;
+
+        if (videoNode) {
+          if (isHigherThanLandscape) {
+            if (resizedPlayerHeight.current > maxLandscapeHeight) {
+              const result = resizedPlayerHeight.current - scrollTop;
+              const amountNeededToCenter = getAmountNeededToCenterVideo(videoNode.offsetHeight, result);
+
+              videoNode.style.top = `${amountNeededToCenter}px`;
+              if (touchOverlay) touchOverlay.style.height = `${result}px`;
+              viewer.style.height = `${result}px`;
+            }
+          } else {
+            if (touchOverlay) touchOverlay.style.height = `${maxLandscapeHeight}px`;
+            viewer.style.height = `${maxLandscapeHeight}px`;
+          }
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      const viewer = document.querySelector(`.${CONTENT_VIEWER_CLASS}`);
+      const videoNode = document.querySelector('.vjs-tech');
+      const touchOverlay = document.querySelector('.vjs-touch-overlay');
+      if (videoNode && touchOverlay && viewer) {
+        // clear the added styles on unmount
+        videoNode.removeAttribute('style');
+        touchOverlay.removeAttribute('style');
+        // $FlowFixMe
+        viewer.style.height = undefined;
+      }
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [appDrawerOpen, heightForViewer, isMobilePlayer, mainFilePlaying, maxLandscapeHeight, resizedPlayerHeight]);
+
+  // -- render styles --
+
+  const transparentBackground = {
+    background: videoGreaterThanLandscape && mainFilePlaying && !forceDefaults ? 'transparent !important' : undefined,
+  };
+  const maxHeight = { maxHeight: !videoTheaterMode ? 'var(--desktop-portrait-player-max-height)' : undefined };
+
+  return (
+    <Global
+      styles={{
+        [`.${PRIMARY_PLAYER_WRAPPER_CLASS}`]: {
+          height: !videoTheaterMode && mainFilePlaying && !switchedVids ? `${heightResult} !important` : undefined,
+          opacity: !videoTheaterMode && mainFilePlaying ? '0 !important' : undefined,
+        },
+
+        '.file-render--video': {
+          ...transparentBackground,
+          ...maxHeight,
+
+          video: maxHeight,
+        },
+        '.content__wrapper': transparentBackground,
+        '.video-js': transparentBackground,
+
+        '.vjs-fullscreen': {
+          video: {
+            top: 'unset !important',
+            height: '100% !important',
+          },
+          '.vjs-touch-overlay': {
+            height: '100% !important',
+            maxHeight: 'unset !important',
+          },
+        },
+
+        '.vjs-tech': {
+          opacity: '1',
+          height:
+            isMobilePlayer && ((appDrawerOpen && videoGreaterThanLandscape) || videoGreaterThanLandscape)
+              ? 'unset !important'
+              : '100%',
+          position: 'absolute',
+          top: appDrawerOpen ? `${amountToFullyCenterVideo}px !important` : '0px',
+        },
+
+        [`.${CONTENT_VIEWER_CLASS}`]: {
+          height:
+            !forceDefaults && !switchedVids && (!isMobile || isMobilePlayer) ? `${heightResult} !important` : undefined,
+          ...maxHeight,
+        },
+      }}
+    />
+  );
+};
