@@ -480,7 +480,7 @@ const PlayerGlobalStyles = (props: GlobalStylesProps) => {
   const videoAspectRatio = getAspectRatio(playerDimensions.height, playerDimensions.width);
   const heightForViewer = getPossiblePlayerHeight(videoAspectRatio * fileViewerRect.width, isMobile);
   const widthForViewer = heightForViewer / videoAspectRatio;
-  const maxLandscapeHeight = getMaxLandscapeHeight(widthForViewer);
+  const maxLandscapeHeight = getMaxLandscapeHeight(isMobile ? undefined : widthForViewer);
   const heightResult = appDrawerOpen ? `${maxLandscapeHeight}px` : `${heightForViewer}px`;
   const amountToFullyCenterVideo = getAmountNeededToCenterVideo(heightForViewer, maxLandscapeHeight);
 

@@ -80,11 +80,12 @@ export function getPossiblePlayerHeight(height: number, isMobile: boolean) {
   // min player height = landscape size based on screen width (only for mobile, since
   // comment expansion will default to landscape view height)
   const minHeight = getMaxLandscapeHeight();
-  // max player height = 80% of screen
-  const maxHeight = (getScreenHeight() * 80) / 100;
+  // max player height = 80% of screen desktop, 70% mobile
+  const maxPercent = isMobile ? 70 : 80;
+  const maxHeight = (getScreenHeight() * maxPercent) / 100;
 
   const forceMaxHeight = height < maxHeight ? height : maxHeight;
-  const forceMinHeight = isMobile && height < minHeight ? minHeight : height;
+  const forceMinHeight = isMobile && height < minHeight ? minHeight : forceMaxHeight;
 
-  return forceMinHeight || forceMaxHeight;
+  return forceMinHeight;
 }
